@@ -1,98 +1,67 @@
 [*]
-[*] GTKWave Analyzer v3.3.116 (w)1999-2023 BSI
-[*] Sat Jun  8 19:40:02 2024
+[*] GTKWave Analyzer v3.3.120 (w)1999-2024 BSI
+[*] Thu Dec 26 14:04:08 2024
 [*]
-[dumpfile] "/home/c/w/tang-nano-9k--step-8/qa/1/log.vcd"
-[dumpfile_mtime] "Sat Jun  8 19:39:18 2024"
-[dumpfile_size] 35911
-[savefile] "/home/c/w/tang-nano-9k--step-8/qa/1/log.gtkw"
-[timestart] 0
+[dumpfile] "/home/c/w/tang-nano-20k--riscv--cache-sdram/qa/3/log.vcd"
+[dumpfile_mtime] "Thu Dec 26 14:02:50 2024"
+[dumpfile_size] 24805448
+[savefile] "/home/c/w/tang-nano-20k--riscv--cache-sdram/qa/3/log.gtkw"
+[timestart] 118127260
 [size] 1910 1024
 [pos] -1 -1
-*-15.722638 198000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
-[treeopen] TestBench.
-[sst_width] 269
+*-11.722638 118141380 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] testbench.
+[sst_width] 273
 [signals_width] 390
 [sst_expanded] 1
 [sst_vpaned_height] 304
-@28
-TestBench.sys_rst_n
-TestBench.clk
-TestBench.clkout
-TestBench.lock
 @200
 -testbench
-@22
-TestBench.address[31:0]
-@c00022
-TestBench.data_in[31:0]
 @28
-(0)TestBench.data_in[31:0]
-(1)TestBench.data_in[31:0]
-(2)TestBench.data_in[31:0]
-(3)TestBench.data_in[31:0]
-(4)TestBench.data_in[31:0]
-(5)TestBench.data_in[31:0]
-(6)TestBench.data_in[31:0]
-(7)TestBench.data_in[31:0]
-(8)TestBench.data_in[31:0]
-(9)TestBench.data_in[31:0]
-(10)TestBench.data_in[31:0]
-(11)TestBench.data_in[31:0]
-(12)TestBench.data_in[31:0]
-(13)TestBench.data_in[31:0]
-(14)TestBench.data_in[31:0]
-(15)TestBench.data_in[31:0]
-(16)TestBench.data_in[31:0]
-(17)TestBench.data_in[31:0]
-(18)TestBench.data_in[31:0]
-(19)TestBench.data_in[31:0]
-(20)TestBench.data_in[31:0]
-(21)TestBench.data_in[31:0]
-(22)TestBench.data_in[31:0]
-(23)TestBench.data_in[31:0]
-(24)TestBench.data_in[31:0]
-(25)TestBench.data_in[31:0]
-(26)TestBench.data_in[31:0]
-(27)TestBench.data_in[31:0]
-(28)TestBench.data_in[31:0]
-(29)TestBench.data_in[31:0]
-(30)TestBench.data_in[31:0]
-(31)TestBench.data_in[31:0]
-@1401200
--group_end
-@28
-TestBench.data_out_ready
+testbench.I_sdrc_clk
+testbench.I_sdrc_rst_n
+testbench.I_sdram_selfrefresh
+testbench.I_sdram_power_down
+testbench.I_sdrc_cmd_en
+testbench.I_sdrc_cmd[2:0]
 @22
-TestBench.data_out[31:0]
-TestBench.write_enable[3:0]
-@29
-TestBench.busy
+testbench.I_sdrc_addr[20:0]
+testbench.I_sdrc_dqm[3:0]
+testbench.I_sdrc_data_len[7:0]
+testbench.I_sdrc_data[31:0]
+testbench.O_sdrc_data[31:0]
+@28
+testbench.O_sdrc_init_done
+testbench.O_sdrc_cmd_ack
+testbench.I_sdram_clk
 @200
--cache
+-
+@23
+testbench.IO_sdram_dq[31:0]
 @28
-TestBench.cache.data_out_ready
-@24
-TestBench.cache.command_delay_interval_counter[5:0]
-@28
-TestBench.cache.br_cmd
-TestBench.cache.br_cmd_en
-TestBench.cache.cache_line_hit
-TestBench.cache.busy
+testbench.I_sdrc_precharge_ctrl
 @22
-TestBench.cache.state[10:0]
-@200
--burst_ram
+testbench.O_sdram_addr[10:0]
 @28
-TestBench.burst_ram.rd_data_valid
-TestBench.burst_ram.busy
+testbench.O_sdram_ba[1:0]
+testbench.O_sdram_cas_n
+testbench.O_sdram_cke
+testbench.O_sdram_clk
+testbench.O_sdram_cs_n
 @22
-TestBench.burst_ram.state[4:0]
+testbench.O_sdram_dqm[3:0]
 @28
-TestBench.burst_ram.cmd
-TestBench.burst_ram.cmd_en
-@22
-TestBench.cache.burst_write_enable_tag[3:0]
-TestBench.cache.write_enable_tag[3:0]
+testbench.O_sdram_ras_n
+testbench.O_sdram_wen_n
+@420
+testbench.RAM_ADDRESS_BIT_WIDTH
+@28
+testbench.clk
+@420
+testbench.clk_tk
+@28
+testbench.rpll_clkout
+testbench.rpll_lock
+testbench.rst
 [pattern_trace] 1
 [pattern_trace] 0

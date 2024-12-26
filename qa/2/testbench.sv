@@ -14,9 +14,17 @@ module testbench;
   localparam int unsigned clk_tk = 36;
   always #(clk_tk / 2) clk = ~clk;
 
-  wire clkin = clk;
-  wire clkout = clk;
-  wire lock = 1;
+  // ----------------------------------------------------------
+  // -- Gowin_rPLL
+  // ----------------------------------------------------------
+  wire rpll_lock;
+  wire rpll_clkout;
+
+  Gowin_rPLL rpll (
+      .clkin(clk),  // 27 MHz
+      .lock(rpll_lock),
+      .clkout(rpll_clkout)  // 66 MHz
+  );
 
   // SDRAM wires
   wire O_sdram_clk;
@@ -33,7 +41,7 @@ module testbench;
   // wires between 'sdram_controller' interface and 'cache'
   wire I_sdrc_rst_n = !rst;
   wire I_sdrc_clk = clk;  // 27 MHz
-  wire I_sdram_clk = clkout;  // 143 MHz
+  wire I_sdram_clk = clk;  // 66 MHz
   wire I_sdrc_cmd_en;
   wire [2:0] I_sdrc_cmd;
   wire I_sdrc_precharge_ctrl;
@@ -143,37 +151,45 @@ module testbench;
     rst <= 0;
 
     // wait for burst RAM to initiate
-    while (!O_sdrc_init_done || !lock) #clk_tk;
+    while (!O_sdrc_init_done || !rpll_lock) #clk_tk;
 
     // keep enabled
     enable <= 1;
 
-    // read; cache miss
+    // write, cache miss, not dirty
     while (busy) #clk_tk;
     address <= 4;
     write_enable <= 4'b1111;
     data_in <= 32'h1234_5678;
     #clk_tk;
 
+    // read, cache hit
     while (busy) #clk_tk;
     write_enable <= 0;
     address <= 4;
     #clk_tk;
-
     assert (data_out == 32'h1234_5678 && data_out_ready)
     else $error();
 
+    // cache miss, dirty, evict
     while (busy) #clk_tk;
     address <= 70;
     write_enable <= 4'b1111;
     data_in <= 32'habcd_ef01;
     #clk_tk;
 
+    // cache hit
     while (busy) #clk_tk;
+    address <= 70;
+    write_enable <= 0;
+    #clk_tk;
+    assert (data_out == 32'habcd_ef01 && data_out_ready)
+    else $error();
+
+    // cache miss, dirty, evict
     address <= 4;
     write_enable <= '0;
     while (!data_out_ready) #clk_tk;
-
     assert (data_out == 32'h1234_5678)
     else $error();
 
