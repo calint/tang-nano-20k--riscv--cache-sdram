@@ -125,7 +125,7 @@ module testbench;
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b100;  // write
     I_sdrc_addr <= 0;
-    I_sdrc_data_len <= 8;
+    I_sdrc_data_len <= 7;
     I_sdrc_data <= 32'h1234_5678;
     I_sdrc_dqm <= 4'b0000;
     #clk_tk;
@@ -161,7 +161,7 @@ module testbench;
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b101;  // read
     I_sdrc_addr <= 0;
-    I_sdrc_data_len <= 4;
+    I_sdrc_data_len <= 3;
     #clk_tk;
     I_sdrc_cmd_en <= 0;
     #clk_tk;

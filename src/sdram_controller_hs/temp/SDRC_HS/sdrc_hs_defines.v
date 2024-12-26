@@ -4,7 +4,7 @@
 `define SDRAM_ADDR_COLUMN_WIDTH 8
 `define SDRAM_CL 2
 `define SDRAM_tRP 4
-`define SDRAM_tRFC 16
+`define SDRAM_tRFC 15
 `define SDRAM_tMRD 3
 `define SDRAM_tRCD 2
 `define SDRAM_tWR 2

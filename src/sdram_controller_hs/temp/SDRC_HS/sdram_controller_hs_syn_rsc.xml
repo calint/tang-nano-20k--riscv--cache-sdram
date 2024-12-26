@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Module name="SDRAM_Controller_HS_Top" Register="170" Alu="15" Lut="255" T_Register="170(170)" T_Alu="15(15)" T_Lut="255(255)"/>
+<Module name="SDRAM_Controller_HS_Top" Register="170" Alu="15" Lut="282" T_Register="170(170)" T_Alu="15(15)" T_Lut="282(282)"/>
