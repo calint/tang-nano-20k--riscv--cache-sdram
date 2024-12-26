@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE gowin-synthesis-project>
+<Project>
+    <Version>beta</Version>
+    <Device id="GW2AR-18C" package="QFN88" speed="8" partNumber="GW2AR-LV18QN88C8/I7"/>
+    <FileList>
+        <File path="/home/c/apps/gowin/IDE/ipcore/SDRC_HS/data/SDRAM_Controller_HS_Top.v" type="verilog"/>
+        <File path="/home/c/apps/gowin/IDE/ipcore/SDRC_HS/data/sdrc_hs_top.vp" type="verilog"/>
+    </FileList>
+    <OptionList>
+        <Option type="disable_insert_pad" value="1"/>
+        <Option type="include_path" value="/home/c/apps/gowin/IDE/ipcore/SDRC_HS/data"/>
+        <Option type="include_path" value="/home/c/w/tang-nano-20k--riscv--cache-sdram/src/sdram_controller_hs/temp/SDRC_HS"/>
+        <Option type="output_file" value="sdram_controller_hs.vg"/>
+        <Option type="output_template" value="sdram_controller_hs_tmp.v"/>
+        <Option type="ram_balance" value="1"/>
+        <Option type="ram_rw_check" value="1"/>
+        <Option type="vcc" value="1.0"/>
+        <Option type="vccx" value="3.3"/>
+        <Option type="verilog_language" value="sysv-2017"/>
+    </OptionList>
+</Project>

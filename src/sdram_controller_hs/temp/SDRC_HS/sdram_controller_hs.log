@@ -1,0 +1,37 @@
+GowinSynthesis start
+Running parser ...
+Analyzing Verilog file '/home/c/apps/gowin/IDE/ipcore/SDRC_HS/data/SDRAM_Controller_HS_Top.v'
+Analyzing included file 'sdrc_hs_defines.v'("/home/c/apps/gowin/IDE/ipcore/SDRC_HS/data/SDRAM_Controller_HS_Top.v":2)
+Back to file '/home/c/apps/gowin/IDE/ipcore/SDRC_HS/data/SDRAM_Controller_HS_Top.v'("/home/c/apps/gowin/IDE/ipcore/SDRC_HS/data/SDRAM_Controller_HS_Top.v":2)
+Analyzing included file 'sdrc_hs_name.v'("/home/c/apps/gowin/IDE/ipcore/SDRC_HS/data/SDRAM_Controller_HS_Top.v":3)
+Back to file '/home/c/apps/gowin/IDE/ipcore/SDRC_HS/data/SDRAM_Controller_HS_Top.v'("/home/c/apps/gowin/IDE/ipcore/SDRC_HS/data/SDRAM_Controller_HS_Top.v":3)
+Analyzing Verilog file '/home/c/apps/gowin/IDE/ipcore/SDRC_HS/data/sdrc_hs_top.vp'
+Analyzing included file 'sdrc_hs_defines.v'("/home/c/apps/gowin/IDE/ipcore/SDRC_HS/data/sdrc_hs_top.vp":702)
+Back to file '/home/c/apps/gowin/IDE/ipcore/SDRC_HS/data/sdrc_hs_top.vp'("/home/c/apps/gowin/IDE/ipcore/SDRC_HS/data/sdrc_hs_top.vp":702)
+Analyzing included file 'sdrc_hs_name.v'("/home/c/apps/gowin/IDE/ipcore/SDRC_HS/data/sdrc_hs_top.vp":702)
+Back to file '/home/c/apps/gowin/IDE/ipcore/SDRC_HS/data/sdrc_hs_top.vp'("/home/c/apps/gowin/IDE/ipcore/SDRC_HS/data/sdrc_hs_top.vp":702)
+Compiling module 'SDRAM_Controller_HS_Top'("/home/c/apps/gowin/IDE/ipcore/SDRC_HS/data/SDRAM_Controller_HS_Top.v":6)
+Compiling module '**'("/home/c/apps/gowin/IDE/ipcore/SDRC_HS/data/sdrc_hs_top.vp":702)
+WARN  (EX3670) : Actual bit length ** differs from formal bit length *** for port '**'("/home/c/apps/gowin/IDE/ipcore/SDRC_HS/data/sdrc_hs_top.vp":702)
+WARN  (EX3791) : Expression size ** truncated to fit in target size **("/home/c/apps/gowin/IDE/ipcore/SDRC_HS/data/sdrc_hs_top.vp":702)
+NOTE  (EX0101) : Current top module is "SDRAM_Controller_HS_Top"
+[5%] Running netlist conversion ...
+Running device independent optimization ...
+[10%] Optimizing Phase 0 completed
+[15%] Optimizing Phase 1 completed
+[25%] Optimizing Phase 2 completed
+Running inference ...
+[30%] Inferring Phase 0 completed
+[40%] Inferring Phase 1 completed
+[50%] Inferring Phase 2 completed
+[55%] Inferring Phase 3 completed
+Running technical mapping ...
+[60%] Tech-Mapping Phase 0 completed
+[65%] Tech-Mapping Phase 1 completed
+[75%] Tech-Mapping Phase 2 completed
+[80%] Tech-Mapping Phase 3 completed
+[90%] Tech-Mapping Phase 4 completed
+[95%] Generate netlist file "/home/c/w/tang-nano-20k--riscv--cache-sdram/src/sdram_controller_hs/temp/SDRC_HS/sdram_controller_hs.vg" completed
+Generate template file "/home/c/w/tang-nano-20k--riscv--cache-sdram/src/sdram_controller_hs/temp/SDRC_HS/sdram_controller_hs_tmp.v" completed
+[100%] Generate report file "/home/c/w/tang-nano-20k--riscv--cache-sdram/src/sdram_controller_hs/temp/SDRC_HS/sdram_controller_hs_syn.rpt.html" completed
+GowinSynthesis finish

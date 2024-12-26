@@ -1,0 +1,31 @@
+[*]
+[*] GTKWave Analyzer v3.3.116 (w)1999-2023 BSI
+[*] Tue Jun 25 11:28:18 2024
+[*]
+[dumpfile] "/home/c/w/tang-nano-9k--riscv--cache-psram/qa/4/log.vcd"
+[dumpfile_mtime] "Tue Jun 25 11:25:25 2024"
+[dumpfile_size] 34849
+[savefile] "/home/c/w/tang-nano-9k--riscv--cache-psram/qa/4/log.gtkw"
+[timestart] 154200
+[size] 1910 1024
+[pos] -1 -1
+*-13.814335 212400 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] testbench.
+[treeopen] testbench.ramio.
+[sst_width] 269
+[signals_width] 303
+[sst_expanded] 1
+[sst_vpaned_height] 304
+@28
+testbench.rst_n
+testbench.clk
+@200
+-ramio
+@23
+testbench.ramio.address[31:0]
+@22
+testbench.ramio.uartrx_data_received[7:0]
+@28
+testbench.ramio.uart_rx
+[pattern_trace] 1
+[pattern_trace] 0
