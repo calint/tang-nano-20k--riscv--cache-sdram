@@ -1,158 +1,185 @@
 //
-// burst_ram
+// cache
 //
-`timescale 1ns / 1ps
+`timescale 100ps / 100ps
 //
 `default_nettype none
 
 module testbench;
 
-  logic rst_n;
-  localparam int unsigned clk_tk = 10;
-  logic clk = 0;
+  localparam int unsigned RAM_ADDRESS_BIT_WIDTH = 4;
+
+  logic rst;
+  logic clk = 1;
+  localparam int unsigned clk_tk = 36;
   always #(clk_tk / 2) clk = ~clk;
 
-  burst_ram #(
-      .DataFilePath("ram.mem"),
-      .AddressBitWidth(4),
-      .DataBitWidth(64),
-      .BurstDataCount(4),
-      .CyclesBeforeInitiated(10),
-      .CyclesBeforeDataValid(4)
-  ) burst_ram (
-      .clk,
-      .rst_n,
-      .cmd,
-      .cmd_en,
-      .addr,
-      .wr_data,
-      .data_mask,
-      .rd_data,
-      .rd_data_valid,
-      .busy
+  wire clkin = clk;
+  wire clkout = clk;
+  wire lock = 1;
+
+  // SDRAM wires
+  wire O_sdram_clk;
+  wire O_sdram_cke;
+  wire O_sdram_cs_n;  // chip select
+  wire O_sdram_cas_n;  // columns address select
+  wire O_sdram_ras_n;  // row address select
+  wire O_sdram_wen_n;  // write enable
+  wire [31:0] IO_sdram_dq;  // 32 bit bidirectional data bus
+  wire [10:0] O_sdram_addr;  // 11 bit multiplexed address bus
+  wire [1:0] O_sdram_ba;  // two banks
+  wire [3:0] O_sdram_dqm;  // 32/4
+
+  // wires between 'sdram_controller' interface and 'cache'
+  wire I_sdrc_rst_n = !rst;
+  wire I_sdrc_clk = clk;  // 27 MHz
+  wire I_sdram_clk = clkout;  // 143 MHz
+  wire I_sdrc_cmd_en;
+  wire [2:0] I_sdrc_cmd;
+  wire I_sdrc_precharge_ctrl;
+  wire I_sdram_power_down;
+  wire I_sdram_selfrefresh;
+  wire [20:0] I_sdrc_addr;
+  wire [3:0] I_sdrc_dqm;
+  wire [31:0] I_sdrc_data;
+  wire [7:0] I_sdrc_data_len;
+  wire [31:0] O_sdrc_data;
+  wire O_sdrc_init_done;
+  wire O_sdrc_cmd_ack;
+
+  SDRAM_Controller_HS_Top sdram_controller (
+      // inferred ports connecting to SDRAM
+      .O_sdram_clk,
+      .O_sdram_cke,
+      .O_sdram_cs_n,
+      .O_sdram_cas_n,
+      .O_sdram_ras_n,
+      .O_sdram_wen_n,
+      .O_sdram_dqm,
+      .O_sdram_addr,
+      .O_sdram_ba,
+      .IO_sdram_dq,
+
+      // interface
+      .I_sdrc_rst_n,
+      .I_sdrc_clk,
+      .I_sdram_clk,
+      .I_sdrc_cmd_en,
+      .I_sdrc_cmd,
+      .I_sdrc_precharge_ctrl,
+      .I_sdram_power_down,
+      .I_sdram_selfrefresh,
+      .I_sdrc_addr,
+      .I_sdrc_dqm,
+      .I_sdrc_data,
+      .I_sdrc_data_len,
+      .O_sdrc_data,
+      .O_sdrc_init_done,
+      .O_sdrc_cmd_ack
   );
 
-  logic cmd = 0;
-  logic cmd_en = 0;
-  logic [3:0] addr = 0;
-  logic [63:0] wr_data = 0;
-  logic [7:0] data_mask = 0;
-  logic [63:0] rd_data;
-  logic rd_data_valid;
+
+  mt48lc2m32b2 sdram (
+      .Clk(O_sdram_clk),
+      .Cke(O_sdram_cke),
+      .Cs_n(O_sdram_cs_n),
+      .Cas_n(O_sdram_cas_n),
+      .Ras_n(O_sdram_ras_n),
+      .We_n(O_sdram_wen_n),
+      .Dq(IO_sdram_dq),
+      .Addr(O_sdram_addr),
+      .Ba(O_sdram_ba),
+      .Dqm(O_sdram_dqm)
+  );
+
+  logic enable;
+  logic [31:0] address;
+  logic [31:0] data_out;
+  logic data_out_ready;
+  logic [31:0] data_in;
+  logic [3:0] write_enable;
   logic busy;
+
+  cache #(
+      .LineIndexBitWidth (1),
+      .RamAddressBitWidth(8)
+  ) cache (
+      .rst_n(!rst),
+      .clk,
+
+      .enable(enable),
+      .address(address),
+      .data_out(data_out),
+      .data_out_ready(data_out_ready),
+      .data_in(data_in),
+      .write_enable(write_enable),
+      .busy(busy),
+
+      // sdram controller wires
+      // to preserve names for consistency, invert I_ and O_ to output and input
+      //   .I_sdrc_rst_n,
+      //   .I_sdrc_clk,
+      //   .I_sdram_clk,
+      .I_sdrc_cmd_en,
+      .I_sdrc_cmd,
+      .I_sdrc_precharge_ctrl,
+      .I_sdram_power_down,
+      .I_sdram_selfrefresh,
+      .I_sdrc_addr,
+      .I_sdrc_dqm,
+      .I_sdrc_data,
+      .I_sdrc_data_len,
+      .O_sdrc_data,
+      .O_sdrc_init_done,
+      .O_sdrc_cmd_ack
+  );
 
   initial begin
     $dumpfile("log.vcd");
     $dumpvars(0, testbench);
 
-    // reset
-    rst_n <= 0;
+    rst <= 1;
     #clk_tk;
-    #(clk_tk / 2);
-    rst_n <= 1;
+    rst <= 0;
 
-    // wait for initiation to complete
+    // wait for burst RAM to initiate
+    while (!O_sdrc_init_done || !lock) #clk_tk;
+
+    // keep enabled
+    enable <= 1;
+
+    // read; cache miss
     while (busy) #clk_tk;
-
-    // read
-    cmd <= 0;
-    addr <= 0;
-    cmd_en <= 1;
-    #clk_tk;
-    cmd_en <= 0;
+    address <= 4;
+    write_enable <= 4'b1111;
+    data_in <= 32'h1234_5678;
     #clk_tk;
 
-    // delay before burst (DELAY_BEFORE_RD_DATA_AVAILABLE)
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
+    while (busy) #clk_tk;
+    write_enable <= 0;
+    address <= 4;
     #clk_tk;
 
-    assert (rd_data_valid)
+    assert (data_out == 32'h1234_5678 && data_out_ready)
     else $error();
 
-    // first data
-    assert (rd_data == 64'h3F5A2E14B7C6A980)
+    while (busy) #clk_tk;
+    address <= 70;
+    write_enable <= 4'b1111;
+    data_in <= 32'habcd_ef01;
+    #clk_tk;
+
+    while (busy) #clk_tk;
+    address <= 4;
+    write_enable <= '0;
+    while (!data_out_ready) #clk_tk;
+
+    assert (data_out == 32'h1234_5678)
     else $error();
-
-    #clk_tk;
-
-    // second data
-    assert (rd_data == 64'h9D8E2F17AB4C3E6F)
-    else $error();
-
-    #clk_tk;
-
-    // third data
-    assert (rd_data == 64'hA1C3F7E2D5B8A9C4)
-    else $error();
-
-    #clk_tk;
-
-    // fourth data
-    assert (rd_data == 64'h7D4E9F2C1B6A3D8F)
-    else $error();
-
-    #clk_tk;
-
-    assert (!rd_data_valid)
-    else $error();
-
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-
-    // read
-    cmd_en <= 1;
-    cmd <= 0;
-    addr <= 32 / 8;  // 8 bytes words
-    #clk_tk;
-    cmd_en <= 0;
-    #clk_tk;
-
-    // delay before burst (DELAY_BEFORE_RD_DATA_AVAILABLE)
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-
-    assert (rd_data_valid)
-    else $error();
-
-    // first data
-    assert (rd_data == 64'h6C4B9A8D2F5E3C7A)
-    else $error();
-
-    #clk_tk;
-
-    // second data
-    assert (rd_data == 64'hE1A7D0B5C8F3E6A9)
-    else $error();
-
-    #clk_tk;
-
-    // third data
-    assert (rd_data == 64'hF8E9D2C3B4A5F6E7)
-    else $error();
-
-    #clk_tk;
-
-    // fourth data
-    assert (rd_data == 64'hD4E7F2C5B8A3D6E9)
-    else $error();
-
-    #clk_tk;
-
-    assert (!rd_data_valid)
-    else $error();
-
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
 
     $finish;
   end
 
 endmodule
+
+`default_nettype wire

@@ -1,5 +1,5 @@
 //
-// cache + burst_ram
+// cpu with verification program
 //
 `timescale 100ps / 100ps
 //
@@ -112,7 +112,10 @@ module testbench;
     #clk_tk;
 
     // wait for burst RAM to initiate
-    while (!top.O_sdrc_init_done) #clk_tk;
+    while (!top.O_sdrc_init_done) begin
+      // $display("waiting for init");
+      #clk_tk;
+    end
 
     while (top.core.state != top.core.CpuExecute) #clk_tk;
 

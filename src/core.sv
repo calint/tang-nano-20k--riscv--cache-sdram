@@ -7,7 +7,7 @@
 //
 `default_nettype none
 `define DBG
-`define INFO
+// `define INFO
 
 module core #(
     parameter int unsigned StartupWaitCycles = 10,
@@ -189,6 +189,10 @@ module core #(
 
         BootStartWrite: begin
           if (!ramio_busy) begin
+`ifdef DBG
+            $display("flash write 0%h = %h", ramio_address_next, {
+                     flash_data_out[3], flash_data_out[2], flash_data_out[1], flash_data_out[0]});
+`endif
             ramio_enable <= 1;
             ramio_read_type <= 0;
             ramio_write_type <= 2'b11;
