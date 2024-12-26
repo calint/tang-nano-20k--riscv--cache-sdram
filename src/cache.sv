@@ -9,8 +9,8 @@
 `timescale 100ps / 100ps
 //
 `default_nettype none
-// `define DBG
-// `define INFO
+`define DBG
+`define INFO
 
 module cache #(
     parameter int unsigned LineIndexBitWidth = 8,
@@ -338,7 +338,7 @@ module cache #(
 
         ReadLoop: begin
 `ifdef DBG
-          $display("@(c) read line, column %0d: 0x%h", write_to_column, O_sdrc_data);
+          $display("@(c) read line, column %0d: 0x%h", write_column, O_sdrc_data);
 `endif
           burst_write_enable[write_column-1] <= 0;
           burst_write_enable[write_column] <= 4'b1111;
@@ -366,8 +366,8 @@ module cache #(
 
         WriteLoop: begin
 `ifdef DBG
-          $display("@(c) write line, column %0d: 0x%h%h", write_to_column,
-                   column_data_out[write_to_column]);
+          $display("@(c) write line, column %0d: 0x%h", write_column,
+                   column_data_out[write_column]);
 `endif
           // reset signals that are rquired to be held one cycle
           I_sdrc_cmd_en <= 0;

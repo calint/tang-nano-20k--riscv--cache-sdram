@@ -6,11 +6,11 @@
 `timescale 100ps / 100ps
 //
 `default_nettype none
-// `define DBG
-// `define INFO
+`define DBG
+`define INFO
 
 module core #(
-    parameter int unsigned StartupWaitCycles = 1_000_000,
+    parameter int unsigned StartupWaitCycles = 10,
     // arbitrary number of cycles to wait for flash circuit to be initiated
 
     parameter int unsigned FlashTransferBytes = 32'h0010_0000
@@ -126,6 +126,9 @@ module core #(
       unique case (state)
 
         BootInit: begin
+`ifdef DBG
+          $display("flash counter: %0d", flash_counter);
+`endif
           flash_counter <= flash_counter + 1;
           if (flash_counter >= StartupWaitCycles) begin
             flash_counter <= 0;
@@ -226,7 +229,7 @@ module core #(
 
           if (ramio_data_out_ready) begin
 `ifdef DBG
-            $display("fetched: %h", ramio_data_out);
+            $display("pc: %h  instruction: %h", pc, ramio_data_out);
 `endif
             // copy instruction from RAM output
             ir <= ramio_data_out;
