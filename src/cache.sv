@@ -286,7 +286,7 @@ module cache #(
               I_sdrc_cmd_en <= 1;
               I_sdrc_cmd = 3'b011;  // command write ???
               I_sdrc_addr <= cached_line_address;
-              I_sdrc_data_len <= COLUMN_COUNT;
+              I_sdrc_data_len <= COLUMN_COUNT - 1;
               I_sdrc_data <= column_data_out[0];
               burst_is_writing <= 1;
               write_column = 1;
@@ -313,7 +313,7 @@ module cache #(
           // I_sdrc_cmd_en <= 1;
           // I_sdrc_cmd = 3'b010;  // command read ???
           // I_sdrc_addr <= burst_line_address;
-          // I_sdrc_data_len <= COLUMN_COUNT;
+          // I_sdrc_data_len <= COLUMN_COUNT-1;
           // data_available_delay_counter <= 2;
           // // note: 2 because 4 cycle delay from this cycle to data ready where the counter is -1
           // burst_is_reading <= 1;
