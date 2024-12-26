@@ -139,3 +139,94 @@ IO_LOC "flash_cs" 60;
 IO_PORT "flash_cs" IO_TYPE=LVCMOS33;
  ----------------------
  
+
+ `timescale 100ps / 100ps
+//
+`default_nettype none
+
+module testbench;
+
+  localparam int unsigned RAM_ADDRESS_BIT_WIDTH = 4;
+
+  logic rst;
+  logic clk = 1;
+  localparam int unsigned clk_tk = 36;
+  always #(clk_tk / 2) clk = ~clk;
+
+  //------------------------------------------------------------------------
+  logic flash_clk;
+  logic flash_miso;
+  logic flash_mosi;
+  logic flash_cs;
+
+  flash #(
+      .DataFilePath("ram.mem"),
+      .AddressBitWidth(12)  // in bytes 2^12 = 4096 B
+  ) flash (
+      .rst_n(!rst),
+      .clk(flash_clk),
+      .miso(flash_miso),
+      .mosi(flash_mosi),
+      .cs(flash_cs)
+  );
+
+  // SDRAM wires
+  wire        O_sdram_clk;
+  wire        O_sdram_cke;
+  wire        O_sdram_cs_n;  // chip select
+  wire        O_sdram_cas_n;  // columns address select
+  wire        O_sdram_ras_n;  // row address select
+  wire        O_sdram_wen_n;  // write enable
+  wire [31:0] IO_sdram_dq;  // 32 bit bidirectional data bus
+  wire [10:0] O_sdram_addr;  // 11 bit multiplexed address bus
+  wire [ 1:0] O_sdram_ba;  // two banks
+  wire [ 3:0] O_sdram_dqm;  // 32/4
+
+  mt48lc2m32b2 sdram (
+      .Clk(O_sdram_clk),
+      .Cke(O_sdram_cke),
+      .Cs_n(O_sdram_cs_n),
+      .Cas_n(O_sdram_cas_n),
+      .Ras_n(O_sdram_ras_n),
+      .We_n(O_sdram_wen_n),
+      .Dq(IO_sdram_dq),
+      .Addr(O_sdram_addr),
+      .Ba(O_sdram_ba),
+      .Dqm(O_sdram_dqm)
+  );
+
+  //
+  wire [5:0] led;
+  logic uart_rx;
+  wire uart_tx;
+  logic btn1;
+
+  top top (
+      .rst,
+      .clk,  // 27 MHz
+
+      .led,
+      .uart_rx,
+      .uart_tx,
+      .btn1,
+
+      .flash_clk,
+      .flash_miso,
+      .flash_mosi,
+      .flash_cs,
+
+      // "Magic" port names that the gowin compiler connects to the on-chip SDRAM
+      .O_sdram_clk,
+      .O_sdram_cke,
+      .O_sdram_cs_n,  // chip select
+      .O_sdram_cas_n,  // columns address select
+      .O_sdram_ras_n,  // row address select
+      .O_sdram_wen_n,  // write enable
+      .IO_sdram_dq,  // 32 bit bidirectional data bus
+      .O_sdram_addr,  // 11 bit multiplexed address bus
+      .O_sdram_ba,  // two banks
+      .O_sdram_dqm  // 32/4
+  );
+
+
+  

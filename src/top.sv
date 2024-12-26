@@ -8,8 +8,8 @@
 `default_nettype none
 
 module top (
-    input wire rst_n,
-    input wire clk,    // 27 MHz
+    input wire rst,
+    input wire clk,  // 27 MHz
 
     output logic [5:0] led,
     input wire uart_rx,
@@ -39,8 +39,6 @@ module top (
   // ----------------------------------------------------------
   logic rpll_lock;
   logic rpll_clkout;
-  logic rpll_clkoutp;
-  logic rpll_clkoutd;
 
   Gowin_rPLL rpll (
       .clkin(clk),  // 27 MHz
@@ -53,7 +51,7 @@ module top (
   // ----------------------------------------------------------
 
   // wires between 'sdram_controller' interface and 'cache'
-  wire I_sdrc_rst_n = rst_n;
+  wire I_sdrc_rst_n = !rst;
   wire I_sdrc_clk = clk;  // 27 MHz
   wire I_sdram_clk = rpll_clkout;  // 143 MHz
   wire I_sdrc_cmd_en;
@@ -122,7 +120,7 @@ module top (
       .ClockFrequencyHz(CLOCK_FREQUENCY_HZ),
       .BaudRate(configuration::UART_BAUD_RATE)
   ) ramio (
-      .rst_n(rst_n && rpll_lock && O_sdrc_init_done),
+      .rst_n(!rst && rpll_lock && O_sdrc_init_done),
       .clk  (I_sdrc_clk),
 
       // interface
@@ -167,7 +165,7 @@ module top (
       .StartupWaitCycles (configuration::STARTUP_WAIT_CYCLES),
       .FlashTransferBytes(configuration::FLASH_TRANSFER_BYTES)
   ) core (
-      .rst_n(rst_n && rpll_lock && O_sdrc_init_done),
+      .rst_n(!rst && rpll_lock && O_sdrc_init_done),
       .clk  (I_sdrc_clk),
       .led  (led[0]),
 
