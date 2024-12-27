@@ -27,7 +27,7 @@ module cache #(
     //       3: 8 B
 
     parameter int unsigned WaitsAfterBurstWrite   = 4,
-    parameter int unsigned WaitsPriorToDataAtRead = 5
+    parameter int unsigned WaitsPriorToDataAtRead = 4
 ) (
     input wire rst_n,
     input wire clk,
@@ -262,7 +262,7 @@ module cache #(
 
   state_e state;
 
-  int counter;  // used in read / write FSM
+  logic [4:0] counter;  // used in read / write FSM
 
   always_ff @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
@@ -387,7 +387,7 @@ module cache #(
           I_sdrc_cmd <= 3'b101;  // read
           I_sdrc_addr <= burst_line_address;
           I_sdrc_data_len <= COLUMN_COUNT - 1;
-          counter <= 1;
+          counter <= 0;
           state <= Read3;
         end
 

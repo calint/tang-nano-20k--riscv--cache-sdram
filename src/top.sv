@@ -115,7 +115,7 @@ module top (
   ramio #(
       .RamAddressBitWidth(configuration::RAM_ADDRESS_BITWIDTH),
       .RamAddressingMode(0),  // addressing 8 bit words
-      .CacheLineIndexBitWidth(1),
+      .CacheLineIndexBitWidth(configuration::CACHE_LINE_INDEX_BITWIDTH),
       .ClockFrequencyHz(CLOCK_FREQUENCY_HZ),
       .BaudRate(configuration::UART_BAUD_RATE)
   ) ramio (
@@ -166,8 +166,8 @@ module top (
   // ----------------------------------------------------------
 
   core #(
-      .StartupWaitCycles (1),
-      .FlashTransferBytes(4096)
+      .StartupWaitCycles (configuration::STARTUP_WAIT_CYCLES),
+      .FlashTransferBytes(configuration::FLASH_TRANSFER_BYTES)
   ) core (
       .rst_n(!rst && rpll_lock && O_sdrc_init_done),
       .clk  (I_sdrc_clk),

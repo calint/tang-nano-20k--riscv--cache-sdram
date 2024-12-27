@@ -397,7 +397,7 @@ module testbench;
     while (top.core.state != top.core.CpuExecute) #clk_tk;
     #clk_tk;
     #clk_tk;
-    while (top.core.state != top.core.CpuFetch) #clk_tk;
+    while (top.core.state != top.core.CpuExecute) #clk_tk;
     assert (top.core.registers.data[22] == 32'h0001_0000)
     else $fatal;
 
@@ -531,6 +531,7 @@ module testbench;
     while (top.core.state != top.core.CpuExecute) #clk_tk;
     #clk_tk;
     #clk_tk;
+    while (top.core.state != top.core.CpuExecute) #clk_tk;
     assert (top.core.registers.data[2] == 32'hffff_f438)
     else $fatal;
 
@@ -540,6 +541,7 @@ module testbench;
     assert (top.core.pc == 32'h0000_00d8)
     else $fatal;
 
+    $display(" *** all tests passed ***");
     $finish;
 
   end
