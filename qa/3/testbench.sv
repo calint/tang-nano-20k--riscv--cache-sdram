@@ -153,8 +153,8 @@ module testbench;
     I_sdrc_dqm <= 4'b0000;
     I_sdrc_data <= 32'h1234_5678;
     #clk_tk;
-    I_sdrc_cmd_en <= 0;
 
+    I_sdrc_cmd_en <= 0;
     I_sdrc_data   <= 32'habcd_ef01;
     #clk_tk;
 
@@ -247,13 +247,11 @@ module testbench;
     #clk_tk;
     #clk_tk;
     #clk_tk;
-    #clk_tk;
-
-    assert (O_sdrc_data == 'h1234_5678)
-    else $fatal;
 
     // data arrives
     #clk_tk;
+    assert (O_sdrc_data == 'h1234_5678)
+    else $fatal;
     #clk_tk;
     #clk_tk;
     #clk_tk;
@@ -280,13 +278,11 @@ module testbench;
     #clk_tk;
     #clk_tk;
     #clk_tk;
-    #clk_tk;
 
+    // data arrives
+    #clk_tk;
     assert (O_sdrc_data == 'h10102020)
     else $fatal;
-
-    // data arrived
-    #clk_tk;
     #clk_tk;
     #clk_tk;
     #clk_tk;
