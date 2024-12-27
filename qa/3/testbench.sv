@@ -114,7 +114,7 @@ module testbench;
   // );
 
 
-  localparam SDRAM_BANKS = 2;
+  localparam SDRAM_BANKS_WIDTH = 2;
   localparam SDRAM_ROWS_WIDTH = 12;
   localparam SDRAM_COLS_WIDTH = 8;
 
@@ -132,82 +132,135 @@ module testbench;
     // wait for burst RAM to initiate
     while (!O_sdrc_init_done || !rpll_lock) #clk_tk;
 
-    I_sdrc_precharge_ctrl = 0;
+    I_sdrc_precharge_ctrl = 1;
     I_sdram_power_down = 0;
     I_sdram_selfrefresh = 0;
 
-    for (int i = 0; i < 1024; i += 4 * 8) begin
-      address = i;
-      $display(" *** write address: %h", address);
-      if (address[32-1-:24-SDRAM_ROWS_WIDTH] == previous_active_bank_row) begin
-      end else begin
-        $display(" *** activate: %h", address[32-1-:24-SDRAM_ROWS_WIDTH]);
-        I_sdrc_cmd_en <= 1;
-        I_sdrc_cmd <= 3'b011;  // active
-        I_sdrc_addr <= address[32-1-:24];
-        previous_active_bank_row <= address[32-1-:24];
-        #clk_tk;
-      end
-      I_sdrc_cmd_en <= 1;
-      I_sdrc_cmd <= 3'b100;  // write
-      I_sdrc_addr <= address;
-      I_sdrc_data_len <= 7;
-      data = i & 8'hff;
-      I_sdrc_data <= {4{data}};
-      I_sdrc_dqm  <= 4'b0000;
-      #clk_tk;
-      I_sdrc_cmd_en <= 0;
-      for (int j = 1; j < 8; j++) begin
-        data = (i + j) & 8'hff;
-        I_sdrc_data <= {4{data}};
-        #clk_tk;
-      end
-    end
+    I_sdrc_cmd_en <= 1;
+    I_sdrc_cmd <= 3'b011;  // active
+    I_sdrc_addr <= 0;
+    #clk_tk;
+
+    I_sdrc_cmd_en <= 1;
+    I_sdrc_cmd <= 3'b100;  // write
+    I_sdrc_addr <= 0;
+    I_sdrc_data_len <= 7;
+    I_sdrc_dqm <= 4'b0000;
+
+    I_sdrc_data <= 32'h1234_5678;
+    #clk_tk;
+
+    I_sdrc_cmd_en <= 0;
+    I_sdrc_data   <= 32'habcd_ef01;
+    #clk_tk;
+
+    I_sdrc_data <= 32'h5678_1010;
+    #clk_tk;
+
+    I_sdrc_data <= 32'habcd_fefe;
+    #clk_tk;
+
+    I_sdrc_data <= 32'habce_ef01;
+    #clk_tk;
+
+    I_sdrc_data <= 32'habcd_ef02;
+    #clk_tk;
+
+    I_sdrc_data <= 32'habcd_ef03;
+    #clk_tk;
+
+    I_sdrc_data <= 32'habcd_ef04;
+    #clk_tk;
+
 
     #clk_tk;
     #clk_tk;
     #clk_tk;
+
+
+    I_sdrc_cmd_en <= 1;
+    I_sdrc_cmd <= 3'b011;  // Active
+    I_sdrc_addr <= 32'h100;
     #clk_tk;
+    I_sdrc_cmd_en <= 0;
+
+    I_sdrc_cmd_en <= 1;
+    I_sdrc_cmd <= 3'b100;  // write
+    I_sdrc_addr <= 32'h100;
+    I_sdrc_data_len <= 7;
+    I_sdrc_dqm <= 4'b0000;
+
+    I_sdrc_data <= 32'h1010_2020;
     #clk_tk;
+    I_sdrc_cmd_en <= 0;
+    I_sdrc_data   <= 32'habcd_ef01;
     #clk_tk;
-    // I_sdrc_cmd_en <= 1;
-    // I_sdrc_cmd <= 3'b011;  // active
-    // I_sdrc_addr <= 0;
-    // #clk_tk;
+    I_sdrc_data <= 32'h5678_1010;
+    #clk_tk;
+    I_sdrc_data <= 32'habcd_fefe;
+    #clk_tk;
+    I_sdrc_data <= 32'habce_ef01;
+    #clk_tk;
+    I_sdrc_data <= 32'habcd_ef02;
+    #clk_tk;
+    I_sdrc_data <= 32'habcd_ef03;
+    #clk_tk;
+    I_sdrc_data <= 32'habcd_ef04;
+    #clk_tk;
+
+    // read the data
+    I_sdrc_cmd_en <= 1;
+    I_sdrc_cmd <= 3'b011;  // Active
+    I_sdrc_addr <= 32'h000;
+    #clk_tk;
+    I_sdrc_cmd_en <= 0;
+
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b101;  // read
     I_sdrc_addr <= 0;
+    I_sdrc_data_len <= 7;
+    // delay
+    #clk_tk;
+    I_sdrc_cmd_en <= 0;
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
+
+    // data arrived
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
+
+    // activate row 2
+    I_sdrc_cmd_en <= 1;
+    I_sdrc_cmd <= 3'b011;  // Active
+    I_sdrc_addr <= 32'h100;
+    #clk_tk;
+    I_sdrc_cmd_en <= 0;
+    #clk_tk;
+
+    // read starting from 4'th column 4 data
+    I_sdrc_cmd_en <= 1;
+    I_sdrc_cmd <= 3'b101;  // read
+    I_sdrc_addr <= 4;
     I_sdrc_data_len <= 3;
     #clk_tk;
     I_sdrc_cmd_en <= 0;
     #clk_tk;
     #clk_tk;
     #clk_tk;
+
+    // data arrived
     #clk_tk;
     #clk_tk;
     #clk_tk;
     #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
+
 
     $finish;
   end
