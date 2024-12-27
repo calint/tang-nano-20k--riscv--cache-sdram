@@ -27,7 +27,7 @@ module cache #(
     //       3: 8 B
 
     parameter int unsigned WaitsAfterBurstWrite   = 10,  // 4
-    parameter int unsigned WaitsPriorToDataAtRead = 3
+    parameter int unsigned WaitsPriorToDataAtRead = 5
 ) (
     input wire rst_n,
     input wire clk,
@@ -301,8 +301,8 @@ module cache #(
 `ifdef DBG
               $display("%m: %t: line %0d dirty, evict to RAM address 0x%h", $time, line_ix,
                        cached_line_address);
+              $display("%m: %t: activating for write bank/row: 0x%h", $time, cached_line_address);
 `endif
-              $display("%m: %t: activating bank/row: 0x%h", $time, cached_line_address);
               I_sdrc_cmd_en <= 1;
               I_sdrc_cmd <= 3'b011;  // activate bank and row of cache line
               I_sdrc_addr <= cached_line_address;
@@ -313,8 +313,8 @@ module cache #(
                 $display("%m: %t: line %0d not dirty", $time, line_ix);
               end
               $display("%m: %t: read line from RAM address 0x%h", $time, burst_line_address);
+              $display("%m: %t: activating for read bank/row: 0x%h", $time, burst_line_address);
 `endif
-              $display("%m: %t: activating bank/row: 0x%h", $time, burst_line_address);
               I_sdrc_cmd_en <= 1;
               I_sdrc_cmd <= 3'b011;  // activate bank and row of cache line
               I_sdrc_addr <= burst_line_address;  // activate bank 0 row 0

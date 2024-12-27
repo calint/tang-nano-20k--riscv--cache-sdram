@@ -167,7 +167,7 @@ module top (
 
   core #(
       .StartupWaitCycles (1),
-      .FlashTransferBytes(1024)
+      .FlashTransferBytes(4096)
   ) core (
       .rst_n(!rst && rpll_lock && O_sdrc_init_done),
       .clk  (I_sdrc_clk),
