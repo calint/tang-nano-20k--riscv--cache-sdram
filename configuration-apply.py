@@ -51,6 +51,8 @@ with open('src/configuration.sv', 'w') as file:
         cfg.CACHE_LINE_INDEX_BITWIDTH))
     file.write('  parameter int unsigned UART_BAUD_RATE = {};\n'.format(
         cfg.UART_BAUD_RATE))
+    file.write('  parameter int unsigned FLASH_FROM_ADDRESS = 32\'h{};\n'.format(
+        f'{cfg.FLASH_FROM_ADDRESS:08x}'))
     file.write('  parameter int unsigned FLASH_TRANSFER_BYTES = 32\'h{};\n'.format(
         f'{cfg.FLASH_TRANSFER_BYTES:08x}'))
     file.write('  parameter int unsigned STARTUP_WAIT_CYCLES = {};\n'.format(

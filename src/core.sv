@@ -13,8 +13,12 @@ module core #(
     parameter int unsigned StartupWaitCycles = 10,
     // arbitrary number of cycles to wait for flash circuit to be initiated
 
+    parameter int unsigned FlashFromAddress = 0,
+    // flash read start address
+
     parameter int unsigned FlashTransferBytes = 32'h0010_0000
     // number of bytes to transfer from flash to 'ramio'
+
 ) (
     input wire rst_n,
     input wire clk,
@@ -145,7 +149,7 @@ module core #(
         end
 
         BootLoadAddressToSend: begin
-          flash_data_to_send <= 0;  // address 0x0
+          flash_data_to_send <= FlashFromAddress;
           flash_num_bits_to_send <= 24;
           flash_current_byte_num <= 0;
           state <= BootSend;
@@ -232,9 +236,9 @@ module core #(
           rd_write_enable <= 0;
 
           if (ramio_data_out_ready) begin
-`ifdef DBG
+            // `ifdef DBG
             $display("%m: %t: pc: %h  instruction: %h", $time, pc, ramio_data_out);
-`endif
+            // `endif
             // copy instruction from RAM output
             ir <= ramio_data_out;
 

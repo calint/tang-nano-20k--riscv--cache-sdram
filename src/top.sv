@@ -168,6 +168,7 @@ module top (
 
   core #(
       .StartupWaitCycles (configuration::STARTUP_WAIT_CYCLES),
+      .FlashFromAddress  (configuration::FLASH_FROM_ADDRESS),
       .FlashTransferBytes(configuration::FLASH_TRANSFER_BYTES)
   ) core (
       .rst_n(!rst && rpll_lock && O_sdrc_init_done),
