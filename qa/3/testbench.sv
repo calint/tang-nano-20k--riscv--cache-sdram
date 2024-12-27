@@ -306,7 +306,7 @@ module testbench;
     #clk_tk;
 
     // tRCD (Row to Column Delay): The minimum time between an ACTIVE command and a READ or WRITE command.
-
+    // CAS Latency (CL)
     // note: tRAS violation without the delay
     #clk_tk;
     #clk_tk;
@@ -364,5 +364,21 @@ module testbench;
   end
 
 endmodule
+
+// Writes vs. Reads: The Key Difference
+
+// The core reason for this difference lies in how SDRAM handles write and read operations internally:
+// Writes are Buffered: When you perform a write operation to SDRAM, the data is typically written into
+// a write buffer within the SDRAM chip. The actual writing to the memory array happens later,
+// asynchronously to the system clock. This buffering allows the controller to proceed with other 
+// operations without waiting for the actual memory write to complete. This is why you often don't
+// need explicit delays after the ACTIVE and WRITE commands in your testbench as long as you respect tRCD.
+// The SDRAM controller and the SDRAM itself handle the internal timing.
+
+// Reads are Direct (with Latency): When you perform a read operation, the data is read directly from the
+// memory array (after being loaded into the sense amplifiers by the ACTIVE command). This process takes 
+// time, and this is where the CAS Latency (CL) comes into play. The SDRAM needs time to access the data,
+// transfer it to the output buffers, and drive it onto the data bus. This is why you must wait for CL 
+// clock cycles after the READ command before sampling the data.
 
 `default_nettype wire
