@@ -137,16 +137,20 @@ module testbench;
     I_sdram_power_down = 0;
     I_sdram_selfrefresh = 0;
 
+    // -----------------------------------------------------------------------
     // activate bank 0 row 0 then write
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b011;  // active
     I_sdrc_addr <= 0;  // activate bank 0 row 0
     #clk_tk;
+
     I_sdrc_cmd_en <= 0;
     #clk_tk;
     assert (O_sdrc_cmd_ack)
     else $fatal;
 
+    // -----------------------------------------------------------------------
+    // activate and write 8 data to bank 0 row 0
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b100;  // write
     I_sdrc_addr <= 0;  // bank 0, row 0
@@ -185,11 +189,13 @@ module testbench;
     assert (O_sdrc_cmd_ack)
     else $fatal;
 
-    // activate bank 0 row 1 and write
+    // -----------------------------------------------------------------------
+    // activate and write 8 data to bank 0 row 1
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b011;  // active
     I_sdrc_addr <= 'h1_00;  // bank 0, row 1
     #clk_tk;
+
     I_sdrc_cmd_en <= 0;
     #clk_tk;
     assert (O_sdrc_cmd_ack)
@@ -200,7 +206,6 @@ module testbench;
     I_sdrc_addr <= 32'h100;
     I_sdrc_data_len <= 7;
     I_sdrc_dqm <= 4'b0000;
-
     I_sdrc_data <= 32'h1010_2020;
     #clk_tk;
 
@@ -234,7 +239,8 @@ module testbench;
     assert (O_sdrc_cmd_ack)
     else $fatal;
 
-    // activate bank 0 row 2 and write
+    // -----------------------------------------------------------------------
+    // activate and write 1 data to bank 0 row 2 
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b011;  // active
     I_sdrc_addr <= 'h2_00;  // bank 0, row 2
@@ -244,7 +250,7 @@ module testbench;
     assert (O_sdrc_cmd_ack)
     else $fatal;
 
-    // avoid tRAS violation
+    // avoid tRAS violation ??
     #clk_tk;
 
     I_sdrc_cmd_en <= 1;
@@ -258,17 +264,20 @@ module testbench;
     I_sdrc_cmd_en <= 0;
     #clk_tk;
 
+    // wait for ack
     #clk_tk;
     #clk_tk;
     #clk_tk;
     assert (O_sdrc_cmd_ack)
     else $fatal;
 
-    // activate bank 0 row 0 then read
+    // -----------------------------------------------------------------------
+    // activate and read 8 data from bank 0 row 0
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b011;  // active
     I_sdrc_addr <= 0;  // bank 0, row 0
     #clk_tk;
+
     I_sdrc_cmd_en <= 0;
     #clk_tk;
     assert (O_sdrc_cmd_ack)
@@ -279,28 +288,41 @@ module testbench;
     I_sdrc_addr <= 0;  // bank 0 row 0 col 0
     I_sdrc_data_len <= 7;
     #clk_tk;
+
     I_sdrc_cmd_en <= 0;
     #clk_tk;
+
     #clk_tk;
+
     #clk_tk;
 
     // data arrives
-    #clk_tk;
+    #clk_tk;  // 1st
     assert (O_sdrc_data == 'h1234_5678)
     else $fatal;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
 
-    // activate bank 0 row 1 then read
+    #clk_tk;  // 2nd
+
+    #clk_tk;  // 3rd
+
+    #clk_tk;  // 4th
+
+    #clk_tk;  // 5th
+
+    #clk_tk;  // 6th
+
+    #clk_tk;  // 7th
+
+    #clk_tk;  // 8th
+
+
+    // -----------------------------------------------------------------------
+    // activate and read 4 data from bank 0 row 1
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b011;  // active
     I_sdrc_addr <= 32'h100;
     #clk_tk;
+
     I_sdrc_cmd_en <= 0;
     #clk_tk;
 
@@ -310,8 +332,10 @@ module testbench;
     I_sdrc_addr <= 'h1_00;  // bank 0, row 1, column 0
     I_sdrc_data_len <= 3;
     #clk_tk;
+
     I_sdrc_cmd_en <= 0;
     #clk_tk;
+
     #clk_tk;
     #clk_tk;
 
@@ -319,19 +343,23 @@ module testbench;
     #clk_tk;
     assert (O_sdrc_data == 'h10102020)
     else $fatal;
+
     #clk_tk;
+
     #clk_tk;
+
     #clk_tk;
     assert (O_sdrc_data == 'habcd_fefe)
     else $fatal;
 
-    // tRAS specifies the minimum time this row must remain open (active) to ensure reliable data access and internal refresh operations
 
-    // activate bank 0 row 0 then read
+    // -----------------------------------------------------------------------
+    // activate and read 1 data from bank 0 row 0
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b011;  // active
     I_sdrc_addr <= 32'h000;
     #clk_tk;
+
     I_sdrc_cmd_en <= 0;
     #clk_tk;
 
@@ -347,8 +375,10 @@ module testbench;
     I_sdrc_addr <= 'h1_01;  // bank 0, row 1, column 0
     I_sdrc_data_len <= 0;
     #clk_tk;
+
     I_sdrc_cmd_en <= 0;
     #clk_tk;
+
     #clk_tk;
     #clk_tk;
 
@@ -357,7 +387,8 @@ module testbench;
     assert (O_sdrc_data == 'habcd_ef01)
     else $fatal;
 
-    // activate bank 0 row 1 then read
+    // -----------------------------------------------------------------------
+    // activate and read 1 data from bank 0 row 1
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b011;  // active
     I_sdrc_addr <= 32'h100;
@@ -366,7 +397,6 @@ module testbench;
     #clk_tk;
 
     // tRCD (Row to Column Delay): The minimum time between an ACTIVE command and a READ or WRITE command.
-
     // note: tRAS violation without the delay
     #clk_tk;
     #clk_tk;
@@ -377,8 +407,10 @@ module testbench;
     I_sdrc_addr <= 'h1_02;  // bank 0, row 1, column 0
     I_sdrc_data_len <= 0;
     #clk_tk;
+
     I_sdrc_cmd_en <= 0;
     #clk_tk;
+
     #clk_tk;
     #clk_tk;
 
