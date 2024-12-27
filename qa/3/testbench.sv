@@ -18,12 +18,12 @@ module testbench;
   // -- Gowin_rPLL
   // ----------------------------------------------------------
   wire rpll_lock;
-  wire rpll_clkout;
+  wire rpll_clkoutp;
 
   Gowin_rPLL rpll (
       .clkin(clk),  // 27 MHz
       .lock(rpll_lock),
-      .clkout(rpll_clkout)  // 66 MHz
+      .clkoutp(rpll_clkoutp)  // 66 MHz phased 180 deg
   );
 
   // SDRAM wires
@@ -41,7 +41,7 @@ module testbench;
   // wires between 'sdram_controller' interface and 'cache'
   wire I_sdrc_rst_n = !rst;
   wire I_sdrc_clk = clk;  // 27 MHz
-  wire I_sdram_clk = rpll_clkout;  // 66 MHz
+  wire I_sdram_clk = clk;  // 66 MHz
   logic I_sdrc_cmd_en;
   logic [2:0] I_sdrc_cmd;
   logic I_sdrc_precharge_ctrl;
@@ -99,6 +99,19 @@ module testbench;
       .Ba(O_sdram_ba),
       .Dqm(O_sdram_dqm)
   );
+
+  // sdram sdram (
+  //     .SDRAM_DQ(IO_sdram_dq),    // Bidirectional data bus
+  //     .SDRAM_A(O_sdram_addr),     // Address bus
+  //     .SDRAM_DQM(O_sdram_dqm),   // High/low byte mask
+  //     .SDRAM_BA(O_sdram_ba),    // Bank select (single bits)
+  //     .SDRAM_nCS(O_sdram_cs_n),   // Chip select, neg triggered
+  //     //output wire                  SDRAM_nWE,   // Write enable, neg triggered
+  //     .SDRAM_nRAS(O_sdram_ras_n),  // Select row address, neg triggered
+  //     .SDRAM_nCAS(O_sdram_cas_n),  // Select column address, neg triggered
+  //     .SDRAM_CKE(O_sdram_cke),   // Clock enable
+  //     .SDRAM_CLK(O_sdram_clk)    // Chip clock
+  // );
 
   initial begin
     $dumpfile("log.vcd");
