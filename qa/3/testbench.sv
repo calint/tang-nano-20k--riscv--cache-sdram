@@ -1,7 +1,7 @@
 //
 // cache
 //
-`timescale 100ps / 100ps
+`timescale 1ns / 1ps
 //
 `default_nettype none
 
@@ -113,6 +113,14 @@ module testbench;
   //     .SDRAM_CLK(O_sdram_clk)    // Chip clock
   // );
 
+
+  localparam SDRAM_BANKS = 2;
+  localparam SDRAM_ROWS_WIDTH = 12;
+  localparam SDRAM_COLS_WIDTH = 8;
+
+  reg [32-1:0] address = -1;
+  reg [32-8-1:0] previous_active_bank_row = -1;
+  reg [7:0] data;
   initial begin
     $dumpfile("log.vcd");
     $dumpvars(0, testbench);
@@ -124,39 +132,37 @@ module testbench;
     // wait for burst RAM to initiate
     while (!O_sdrc_init_done || !rpll_lock) #clk_tk;
 
-    I_sdrc_precharge_ctrl <= 0;
-    I_sdram_power_down <= 0;
-    I_sdram_selfrefresh <= 0;
+    I_sdrc_precharge_ctrl = 0;
+    I_sdram_power_down = 0;
+    I_sdram_selfrefresh = 0;
 
-    I_sdrc_cmd_en <= 1;
-    I_sdrc_cmd <= 3'b011;  // active
-    I_sdrc_addr <= 0;
-    #clk_tk;
-    I_sdrc_cmd_en <= 0;
-    I_sdrc_cmd <= 3'b111;  // nop
-    #clk_tk;
-    I_sdrc_cmd_en <= 1;
-    I_sdrc_cmd <= 3'b100;  // write
-    I_sdrc_addr <= 0;
-    I_sdrc_data_len <= 7;
-    I_sdrc_data <= 32'h1234_5678;
-    I_sdrc_dqm <= 4'b0000;
-    #clk_tk;
-    I_sdrc_cmd_en <= 0;
-    I_sdrc_data   <= 32'habcd_ef01;
-    #clk_tk;
-    I_sdrc_data <= 32'hbaba_fefe;
-    #clk_tk;
-    I_sdrc_data <= 32'habba_5a5a;
-    #clk_tk;
-    I_sdrc_data <= 32'h0234_5670;
-    #clk_tk;
-    I_sdrc_data <= 32'h0bcd_ef00;
-    #clk_tk;
-    I_sdrc_data <= 32'h0aba_fef0;
-    #clk_tk;
-    I_sdrc_data <= 32'h0bba_5a50;
-    #clk_tk;
+    for (int i = 0; i < 1024; i += 4 * 8) begin
+      address = i;
+      $display(" *** write address: %h", address);
+      if (address[32-1-:24-SDRAM_ROWS_WIDTH] == previous_active_bank_row) begin
+      end else begin
+        $display(" *** activate: %h", address[32-1-:24-SDRAM_ROWS_WIDTH]);
+        I_sdrc_cmd_en <= 1;
+        I_sdrc_cmd <= 3'b011;  // active
+        I_sdrc_addr <= address[32-1-:24];
+        previous_active_bank_row <= address[32-1-:24];
+        #clk_tk;
+      end
+      I_sdrc_cmd_en <= 1;
+      I_sdrc_cmd <= 3'b100;  // write
+      I_sdrc_addr <= address;
+      I_sdrc_data_len <= 7;
+      data = i & 8'hff;
+      I_sdrc_data <= {4{data}};
+      I_sdrc_dqm  <= 4'b0000;
+      #clk_tk;
+      I_sdrc_cmd_en <= 0;
+      for (int j = 1; j < 8; j++) begin
+        data = (i + j) & 8'hff;
+        I_sdrc_data <= {4{data}};
+        #clk_tk;
+      end
+    end
 
     #clk_tk;
     #clk_tk;
@@ -167,10 +173,7 @@ module testbench;
     // I_sdrc_cmd_en <= 1;
     // I_sdrc_cmd <= 3'b011;  // active
     // I_sdrc_addr <= 0;
-    #clk_tk;
-    I_sdrc_cmd_en <= 0;
-    I_sdrc_cmd <= 3'b111;  // nop
-    #clk_tk;
+    // #clk_tk;
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b101;  // read
     I_sdrc_addr <= 0;
