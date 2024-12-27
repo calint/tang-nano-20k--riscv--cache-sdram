@@ -20,12 +20,12 @@ module testbench;
   // -- Gowin_rPLL
   // ----------------------------------------------------------
   wire rpll_lock;
-  wire rpll_clkoutp;
+  wire rpll_clkout;
 
   Gowin_rPLL rpll (
       .clkin(clk),  // 27 MHz
       .lock(rpll_lock),
-      .clkoutp(rpll_clkoutp)  // 66 MHz phased 180 deg
+      .clkout(rpll_clkout)  // 66 MHz phased 180 deg
   );
 
   // SDRAM wires

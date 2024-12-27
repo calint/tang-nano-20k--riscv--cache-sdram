@@ -9,8 +9,8 @@
 `timescale 1ns / 1ps
 //
 `default_nettype none
-// `define DBG
-// `define INFO
+//`define DBG
+`define INFO
 
 module cache #(
     parameter int unsigned LineIndexBitWidth = 8,
@@ -69,7 +69,8 @@ module cache #(
 
   assign I_sdram_power_down = '0;
   assign I_sdram_selfrefresh = '0;
-  assign I_sdrc_precharge_ctrl = '0;
+  assign I_sdrc_precharge_ctrl = '1;
+  assign I_sdrc_dqm = 4'b0000;  // writing whole words, no data mask
 
 `ifdef INFO
   initial begin
@@ -130,8 +131,6 @@ module cache #(
   logic [31:0] cached_tag_and_flags;
   logic [3:0] tag_write_enable;  // true when cache hit; write to set line dirty
   logic [31:0] tag_data_in;  // tag and flags written when cache hit write
-
-  assign I_sdrc_dqm = 4'b0000;  // writing whole cache lines, whole words, no data mask
 
   bram #(
       .AddressBitWidth(LineIndexBitWidth)
@@ -247,10 +246,12 @@ module cache #(
     Write2,
     Write3,
     Write4,
+    Write5,
     Read1,
     Read2,
     Read3,
-    Read4
+    Read4,
+    Read5
   } state_e;
 
   state_e state;
@@ -298,7 +299,6 @@ module cache #(
               end
               $display("%m: %t: read line from RAM address 0x%h", $time, burst_line_address);
 `endif
-              $display("%m: %t: activate sdram", $time);
               I_sdrc_cmd_en <= 1;
               I_sdrc_cmd <= 3'b011;  // activate bank and row of cache line
               I_sdrc_addr <= burst_line_address;  // activate bank 0 row 0
@@ -318,16 +318,15 @@ module cache #(
           I_sdrc_cmd <= 3'b100;  // write
           I_sdrc_addr <= burst_line_address;
           I_sdrc_data_len <= COLUMN_COUNT - 1;
-          I_sdrc_dqm <= 4'b0000;
           I_sdrc_data <= column_data_out[0];
           state <= Write3;
         end
 
         Write3: begin
           I_sdrc_cmd_en <= 0;
-          I_sdrc_data   <= column_data_out[1];
-          write_column  <= 2;
-          state Write4;
+          I_sdrc_data <= column_data_out[1];
+          write_column <= 2;
+          state <= Write4;
         end
 
         Write4: begin
@@ -374,6 +373,7 @@ module cache #(
           if (counter == COLUMN_COUNT - 1) begin
             state <= Read4;
           end
+          counter <= counter + 1;
         end
 
         Read4: begin
