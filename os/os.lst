@@ -8,13 +8,13 @@ Disassembly of section .text:
 # # generated - do not edit (see `configuration.py`)
 # .global _start
 # _start:
-#     li sp, 0x200000
-       0:	00200137          	lui	sp,0x200
+#     li sp, 0x800000
+       0:	00800137          	lui	sp,0x800
 #     j run
        4:	0040006f          	j	8 <run>
 
 00000008 <run>:
-       8:	f8010113          	addi	sp,sp,-128 # 1fff80 <__bss_end+0x1fe2e8>
+       8:	f8010113          	addi	sp,sp,-128 # 7fff80 <__bss_end+0x7fe2e8>
        c:	06112e23          	sw	ra,124(sp)
       10:	06812c23          	sw	s0,120(sp)
       14:	07212823          	sw	s2,112(sp)
@@ -1740,25 +1740,25 @@ Disassembly of section .text:
 #   char *ptr = &__heap_start;
     10dc:	00002437          	lui	s0,0x2
 #   while (ptr < end) {
-    10e0:	00200737          	lui	a4,0x200
+    10e0:	00800737          	lui	a4,0x800
 #   char *ptr = &__heap_start;
     10e4:	c9840793          	addi	a5,s0,-872 # 1c98 <__bss_end>
 #   char ch = 0;
     10e8:	00000693          	li	a3,0
     10ec:	c9840413          	addi	s0,s0,-872
 #   while (ptr < end) {
-    10f0:	bff70713          	addi	a4,a4,-1025 # 1ffbff <__bss_end+0x1fdf67>
+    10f0:	bff70713          	addi	a4,a4,-1025 # 7ffbff <__bss_end+0x7fdf67>
     10f4:	02f77663          	bgeu	a4,a5,1120 <_ZL15action_mem_testv+0x5c>
 #   uart_send_str("testing memory (read)\r\n");
     10f8:	00002537          	lui	a0,0x2
     10fc:	85850513          	addi	a0,a0,-1960 # 1858 <_ZN4listIhLj32EE15remove_at_indexEj.isra.0+0x668>
     1100:	f85ff0ef          	jal	1084 <_ZL13uart_send_strPKc>
 #   while (ptr < end) {
-    1104:	002006b7          	lui	a3,0x200
+    1104:	008006b7          	lui	a3,0x800
 #   ptr = &__heap_start;
     1108:	00040793          	mv	a5,s0
 #   while (ptr < end) {
-    110c:	bff68693          	addi	a3,a3,-1025 # 1ffbff <__bss_end+0x1fdf67>
+    110c:	bff68693          	addi	a3,a3,-1025 # 7ffbff <__bss_end+0x7fdf67>
     1110:	02f6f263          	bgeu	a3,a5,1134 <_ZL15action_mem_testv+0x70>
 #   uart_send_str("testing memory succeeded\r\n");
     1114:	00002537          	lui	a0,0x2
