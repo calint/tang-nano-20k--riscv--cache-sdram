@@ -64,7 +64,7 @@ module testbench;
 
   top top (
       .rst,
-      .clk,  // 27 MHz
+      .clk,
 
       .led,
       .uart_rx,

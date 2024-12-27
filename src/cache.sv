@@ -1,6 +1,7 @@
 //
-// Cache for burst RAM
-// see: IPUG943-1.2E Gowin PSRAM Memory Interface HS & HS 2CH IP
+// Cache for SDRAM
+// see: IPUG756-1.0.1E - Gowin SDRAM HS IP User Guide.pdf
+//      SDRAM model used in simulation: MT48LC2M32B2.v
 //
 // reviewed 2024-06-07
 // reviewed 2024-06-12
@@ -26,8 +27,11 @@ module cache #(
     //       2: 4 B
     //       3: 8 B
 
-    parameter int unsigned WaitsAfterBurstWrite   = 4,
+    parameter int unsigned WaitsAfterBurstWrite = 4,
+    // empirically found to not violate timing constraints
+
     parameter int unsigned WaitsPriorToDataAtRead = 4
+    // according to specification in IPUG756-1.0.1E
 ) (
     input wire rst_n,
     input wire clk,
