@@ -182,7 +182,6 @@ module testbench;
     #clk_tk;
     #clk_tk;
     #clk_tk;
-
     assert (O_sdrc_cmd_ack)
     else $fatal;
 
@@ -232,7 +231,36 @@ module testbench;
     #clk_tk;
     #clk_tk;
     #clk_tk;
+    assert (O_sdrc_cmd_ack)
+    else $fatal;
 
+    // activate bank 0 row 2 and write
+    I_sdrc_cmd_en <= 1;
+    I_sdrc_cmd <= 3'b011;  // active
+    I_sdrc_addr <= 'h2_00;  // bank 0, row 2
+    #clk_tk;
+    I_sdrc_cmd_en <= 0;
+    #clk_tk;
+    assert (O_sdrc_cmd_ack)
+    else $fatal;
+
+    // avoid tRAS violation
+    #clk_tk;
+
+    I_sdrc_cmd_en <= 1;
+    I_sdrc_cmd <= 3'b100;  // write
+    I_sdrc_addr <= 32'h204;
+    I_sdrc_data_len <= 0;
+    I_sdrc_dqm <= 4'b0000;
+    I_sdrc_data <= 32'h1e1f_2a2b;
+    #clk_tk;
+
+    I_sdrc_cmd_en <= 0;
+    #clk_tk;
+
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
     assert (O_sdrc_cmd_ack)
     else $fatal;
 
