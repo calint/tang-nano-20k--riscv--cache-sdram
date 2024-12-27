@@ -115,7 +115,7 @@ module testbench;
 
 
   localparam SDRAM_BANKS_WIDTH = 2;
-  localparam SDRAM_ROWS_WIDTH = 12;
+  localparam SDRAM_ROWS_WIDTH = 11;
   localparam SDRAM_COLS_WIDTH = 8;
 
   reg [32-1:0] address = -1;
