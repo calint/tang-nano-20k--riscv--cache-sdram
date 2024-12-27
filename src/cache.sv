@@ -26,7 +26,7 @@ module cache #(
     //       2: 4 B
     //       3: 8 B
 
-    parameter int unsigned WaitsAfterBurstWrite   = 10,  // 4
+    parameter int unsigned WaitsAfterBurstWrite   = 4,
     parameter int unsigned WaitsPriorToDataAtRead = 5
 ) (
     input wire rst_n,
