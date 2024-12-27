@@ -1,5 +1,7 @@
 //
 // SDRAM
+//   data width=32  bank width=2  row width=11  column width=8
+//   tRP=3  tRFC=9  tMRD=3  tRCD=2  LWR=2  CL=2
 //
 `timescale 1ns / 1ps
 //
