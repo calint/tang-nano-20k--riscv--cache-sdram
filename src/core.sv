@@ -236,9 +236,9 @@ module core #(
           rd_write_enable <= 0;
 
           if (ramio_data_out_ready) begin
-            // `ifdef DBG
+`ifdef DBG
             $display("%m: %t: pc: %h  instruction: %h", $time, pc, ramio_data_out);
-            // `endif
+`endif
             // copy instruction from RAM output
             ir <= ramio_data_out;
 
