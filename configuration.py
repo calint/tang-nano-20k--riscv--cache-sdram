@@ -3,7 +3,7 @@
 #
 
 RAM_ADDRESS_BITWIDTH = 23
-# 2^23 = 8 MB SDRAM (according to hardware)
+# 2 ^ 23 = 8 MB SDRAM (according to hardware)
 
 UART_BAUD_RATE = 115200
 # 115200 baud, 8 bits, 1 stop bit, no parity
