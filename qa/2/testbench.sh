@@ -9,7 +9,7 @@ cd $(dirname "$0")
 
 SRCPTH=../../src
 
-iverilog -g2005-sv -Winfloop -pfileline=1 -o iverilog.vvp -s testbench testbench.sv \
+iverilog -g2012 -Winfloop -pfileline=1 -o iverilog.vvp -s testbench testbench.sv \
     ~/apps/gowin/IDE/simlib/gw2a/prim_sim.v \
     $SRCPTH/configuration.sv \
     $SRCPTH/emulators/flash.sv \
