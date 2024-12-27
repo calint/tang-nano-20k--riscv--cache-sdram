@@ -1,5 +1,5 @@
 //
-// cache
+// SDRAM
 //
 `timescale 1ns / 1ps
 //
@@ -11,7 +11,7 @@ module testbench;
 
   logic rst;
   logic clk = 1;
-  localparam int unsigned clk_tk = 36;
+  localparam int unsigned clk_tk = 10;
   always #(clk_tk / 2) clk = ~clk;
 
   // ----------------------------------------------------------
@@ -113,7 +113,6 @@ module testbench;
   //     .SDRAM_CLK(O_sdram_clk)    // Chip clock
   // );
 
-
   localparam SDRAM_BANKS_WIDTH = 2;
   localparam SDRAM_ROWS_WIDTH = 11;
   localparam SDRAM_COLS_WIDTH = 8;
@@ -203,19 +202,26 @@ module testbench;
 
     I_sdrc_data <= 32'h1010_2020;
     #clk_tk;
+
     I_sdrc_cmd_en <= 0;
     I_sdrc_data   <= 32'habcd_ef01;
     #clk_tk;
+
     I_sdrc_data <= 32'h5678_1010;
     #clk_tk;
+
     I_sdrc_data <= 32'habcd_fefe;
     #clk_tk;
+
     I_sdrc_data <= 32'habce_ef01;
     #clk_tk;
+
     I_sdrc_data <= 32'habcd_ef02;
     #clk_tk;
+
     I_sdrc_data <= 32'habcd_ef03;
     #clk_tk;
+
     I_sdrc_data <= 32'habcd_ef04;
     #clk_tk;
 
@@ -286,7 +292,70 @@ module testbench;
     #clk_tk;
     #clk_tk;
     #clk_tk;
+    assert (O_sdrc_data == 'habcd_fefe)
+    else $fatal;
 
+
+    // tRAS specifies the minimum time this row must remain open (active) to ensure reliable data access and internal refresh operations
+
+    // activate bank 0 row 0 then read
+    I_sdrc_cmd_en <= 1;
+    I_sdrc_cmd <= 3'b011;  // active
+    I_sdrc_addr <= 32'h000;
+    #clk_tk;
+    I_sdrc_cmd_en <= 0;
+    #clk_tk;
+
+    // tRCD (Row to Column Delay): The minimum time between an ACTIVE command and a READ or WRITE command.
+    #clk_tk;
+    #clk_tk;
+
+    // read 1 data starting from column 1
+    I_sdrc_cmd_en <= 1;
+    I_sdrc_cmd <= 3'b101;  // read
+    I_sdrc_addr <= 'h1_01;  // bank 0, row 1, column 0
+    I_sdrc_data_len <= 0;
+    #clk_tk;
+    I_sdrc_cmd_en <= 0;
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
+
+    // data arrives
+    #clk_tk;
+    assert (O_sdrc_data == 'habcd_ef01)
+    else $fatal;
+
+    // activate bank 0 row 1 then read
+    I_sdrc_cmd_en <= 1;
+    I_sdrc_cmd <= 3'b011;  // active
+    I_sdrc_addr <= 32'h100;
+    #clk_tk;
+    I_sdrc_cmd_en <= 0;
+    #clk_tk;
+
+    // tRCD (Row to Column Delay): The minimum time between an ACTIVE command and a READ or WRITE command.
+    #clk_tk;
+    #clk_tk;
+
+    // read 1 data starting from column 2
+    I_sdrc_cmd_en <= 1;
+    I_sdrc_cmd <= 3'b101;  // read
+    I_sdrc_addr <= 'h1_02;  // bank 0, row 1, column 0
+    I_sdrc_data_len <= 0;
+    #clk_tk;
+    I_sdrc_cmd_en <= 0;
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
+
+    // data arrives
+    #clk_tk;
+    assert (O_sdrc_data == 'h5678_1010)
+    else $fatal;
+
+    // ----------------------------------------
+    #clk_tk;
 
     $finish;
   end
