@@ -567,6 +567,7 @@ module testbench;
 
 endmodule
 
+// from gemini:
 // Writes vs. Reads: The Key Difference
 
 // The core reason for this difference lies in how SDRAM handles write and read operations internally:
