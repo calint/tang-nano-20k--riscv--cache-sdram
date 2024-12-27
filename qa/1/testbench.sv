@@ -540,7 +540,9 @@ module testbench;
     assert (top.core.pc == 32'h0000_00d8)
     else $fatal;
 
+    $display("");
     $display(" *** all tests passed ***");
+    $display("");
     $finish;
 
   end

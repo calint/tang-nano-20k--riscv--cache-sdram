@@ -571,7 +571,11 @@ module testbench;
     #clk_tk;
     // -----------------------------------------------------------------------
 
+    $display("");
+    $display(" *** all tests passed ***");
+    $display("");
     $finish;
+
   end
 
 endmodule
