@@ -27,6 +27,8 @@ module cache #(
     //       2: 4 B
     //       3: 8 B
 
+    parameter int unsigned ColumnIxBitwidth = 3,
+
     parameter int unsigned WaitsAfterBurstWrite = 4,
     // empirically found to not violate timing constraints
 
@@ -80,23 +82,22 @@ module cache #(
   initial begin
     $display("Cache");
     $display("      lines: %0d", LINE_COUNT);
-    $display("    columns: %0d x 4 B", 2 ** COLUMN_IX_BITWIDTH);
+    $display("    columns: %0d x 4 B", 2 ** ColumnIxBitwidth);
     $display("        tag: %0d bits", TAG_BITWIDTH);
-    $display(" cache size: %0d B", LINE_COUNT * (2 ** COLUMN_IX_BITWIDTH) * 4);
+    $display(" cache size: %0d B", LINE_COUNT * (2 ** ColumnIxBitwidth) * 4);
   end
 `endif
 
   localparam int unsigned ZEROS_BITWIDTH = 2;  // leading zeros in the address
-  localparam int unsigned COLUMN_IX_BITWIDTH = 3;  // 2 ^ 3 = 8 elements per line
-  localparam int unsigned COLUMN_COUNT = 2 ** COLUMN_IX_BITWIDTH;
+  localparam int unsigned COLUMN_COUNT = 2 ** ColumnIxBitwidth;
   localparam int unsigned LINE_COUNT = 2 ** LineIndexBitWidth;
   localparam int unsigned TAG_BITWIDTH = 
-    RamAddressBitWidth + RamAddressingMode - LineIndexBitWidth - COLUMN_IX_BITWIDTH - ZEROS_BITWIDTH;
+    RamAddressBitWidth + RamAddressingMode - LineIndexBitWidth - ColumnIxBitwidth - ZEROS_BITWIDTH;
   // note: assumes there are 2 bits free after 'TAG_BITWIDTH' for 'valid' and 'dirty' flags in storage
 
   localparam int unsigned LINE_VALID_BIT = TAG_BITWIDTH;
   localparam int unsigned LINE_DIRTY_BIT = TAG_BITWIDTH + 1;
-  localparam int unsigned LINE_TO_RAM_ADDRESS_LEFT_SHIFT = COLUMN_IX_BITWIDTH + ZEROS_BITWIDTH - RamAddressingMode;
+  localparam int unsigned LINE_TO_RAM_ADDRESS_LEFT_SHIFT = ColumnIxBitwidth + ZEROS_BITWIDTH - RamAddressingMode;
 
   // wires dividing the address into components
   // |tag|line| col |00| address
@@ -106,22 +107,22 @@ module cache #(
   // |tag|               address_tag: upper bits followed by 'valid' and 'dirty' flag
 
   // extract cache line info from current address
-  wire [COLUMN_IX_BITWIDTH-1:0] column_ix = address[
-    COLUMN_IX_BITWIDTH+ZEROS_BITWIDTH-1
-    -:COLUMN_IX_BITWIDTH
+  wire [ColumnIxBitwidth-1:0] column_ix = address[
+    ColumnIxBitwidth+ZEROS_BITWIDTH-1
+    -:ColumnIxBitwidth
   ];
   wire [LineIndexBitWidth-1:0] line_ix =  address[
-    LineIndexBitWidth+COLUMN_IX_BITWIDTH+ZEROS_BITWIDTH-1
+    LineIndexBitWidth+ColumnIxBitwidth+ZEROS_BITWIDTH-1
     -:LineIndexBitWidth
   ];
   wire [TAG_BITWIDTH-1:0] address_tag = address[
-    TAG_BITWIDTH+LineIndexBitWidth+COLUMN_IX_BITWIDTH+ZEROS_BITWIDTH-1
+    TAG_BITWIDTH+LineIndexBitWidth+ColumnIxBitwidth+ZEROS_BITWIDTH-1
     -:TAG_BITWIDTH
   ];
 
   // starting address of cache line in RAM for current address
   wire [RamAddressBitWidth-1:0] burst_line_address = {
-    address[TAG_BITWIDTH+LineIndexBitWidth+COLUMN_IX_BITWIDTH+ZEROS_BITWIDTH-1:COLUMN_IX_BITWIDTH+ZEROS_BITWIDTH],
+    address[TAG_BITWIDTH+LineIndexBitWidth+ColumnIxBitwidth+ZEROS_BITWIDTH-1:ColumnIxBitwidth+ZEROS_BITWIDTH],
     {LINE_TO_RAM_ADDRESS_LEFT_SHIFT{1'b0}}
   };
 
@@ -162,7 +163,7 @@ module cache #(
   logic [2:0] data_available_delay_counter;
 
   // which column is active during burst read and write
-  logic [COLUMN_IX_BITWIDTH-1:0] write_column;
+  logic [ColumnIxBitwidth-1:0] write_column;
 
   assign busy = enable && !cache_line_hit;
 

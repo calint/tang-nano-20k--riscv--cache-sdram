@@ -3,6 +3,7 @@
 package configuration;
 
   parameter int unsigned RAM_ADDRESS_BITWIDTH = 23;
+  parameter int unsigned CACHE_COLUMN_INDEX_BITWIDTH = 4;
   parameter int unsigned CACHE_LINE_INDEX_BITWIDTH = 1;
   parameter int unsigned UART_BAUD_RATE = 115200;
   parameter int unsigned FLASH_TRANSFER_BYTES = 32'h00001000;

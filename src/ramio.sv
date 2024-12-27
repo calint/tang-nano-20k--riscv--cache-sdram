@@ -20,6 +20,9 @@ module ramio #(
     parameter int unsigned CacheLineIndexBitWidth = 1,
     // passed to 'cache': 2 ^ value * 32 B cache size
 
+    parameter int unsigned CacheColumnIndexBitWidth = 3,
+    // passed to 'cache': 2 ^ value entries per cache line
+
     parameter int unsigned AddressBitWidth = 32,
     // client address bit width
 
@@ -339,6 +342,7 @@ module ramio #(
 
   cache #(
       .LineIndexBitWidth (CacheLineIndexBitWidth),
+      .ColumnIxBitwidth  (CacheColumnIndexBitWidth),
       .RamAddressBitWidth(RamAddressBitWidth)
   ) cache (
       .rst_n,
