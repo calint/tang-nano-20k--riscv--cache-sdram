@@ -8,7 +8,7 @@ RAM_ADDRESS_BITWIDTH = 23
 UART_BAUD_RATE = 115200
 # 115200 baud, 8 bits, 1 stop bit, no parity
 
-CACHE_LINE_INDEX_BITWIDTH = 7
+CACHE_LINE_INDEX_BITWIDTH = 1
 # 2^7*32 = 4 KB unified instruction and data cache
 
 FLASH_TRANSFER_BYTES = 4096  # 0x0020_0000

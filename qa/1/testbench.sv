@@ -323,7 +323,7 @@ module testbench;
     while (top.core.state != top.core.CpuExecute) #clk_tk;
     #clk_tk;
     #clk_tk;
-    while (top.core.state != top.core.CpuFetch) #clk_tk;
+    while (top.core.state != top.core.CpuExecute) #clk_tk;
 
     // 78: 006a1a83 lh x21,6(x20) # x21 = [1006] = 0x00001
     while (top.core.state != top.core.CpuExecute) #clk_tk;
@@ -337,7 +337,7 @@ module testbench;
     while (top.core.state != top.core.CpuExecute) #clk_tk;
     #clk_tk;
     #clk_tk;
-    while (top.core.state != top.core.CpuFetch) #clk_tk;
+    while (top.core.state != top.core.CpuExecute) #clk_tk;
 
     // 80: 007a0a83 lb x21,7(x20) # x21 = [1007] = 0x01
     while (top.core.state != top.core.CpuExecute) #clk_tk;
@@ -397,7 +397,6 @@ module testbench;
     while (top.core.state != top.core.CpuExecute) #clk_tk;
     #clk_tk;
     #clk_tk;
-    while (top.core.state != top.core.CpuExecute) #clk_tk;
     assert (top.core.registers.data[22] == 32'h0001_0000)
     else $fatal;
 
