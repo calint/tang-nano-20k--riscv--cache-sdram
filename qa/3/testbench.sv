@@ -129,14 +129,14 @@ module testbench;
     #clk_tk;
     rst <= 0;
 
-    // wait for burst RAM to initiate
+    // wait for SDRAM to initiate
     while (!O_sdrc_init_done || !rpll_lock) #clk_tk;
 
     I_sdrc_precharge_ctrl = 1;
     I_sdram_power_down = 0;
     I_sdram_selfrefresh = 0;
 
-    // activate bank 0 row 0 and write
+    // activate bank 0 row 0 then write
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b011;  // active
     I_sdrc_addr <= 0;  // activate bank 0 row 0
@@ -148,7 +148,7 @@ module testbench;
 
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b100;  // write
-    I_sdrc_addr <= 'h0_0_00;  // bank 0, row 0
+    I_sdrc_addr <= 0;  // bank 0, row 0
     I_sdrc_data_len <= 7;
     I_sdrc_dqm <= 4'b0000;
     I_sdrc_data <= 32'h1234_5678;
@@ -188,7 +188,7 @@ module testbench;
     // activate bank 0 row 1 and write
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b011;  // active
-    I_sdrc_addr <= 'h0_1_00;  // bank 0, row 1
+    I_sdrc_addr <= 'h1_00;  // bank 0, row 1
     #clk_tk;
     I_sdrc_cmd_en <= 0;
     #clk_tk;
@@ -228,10 +228,10 @@ module testbench;
     assert (O_sdrc_cmd_ack)
     else $fatal;
 
-    // read the data
+    // activate bank 0 row 0 then read
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b011;  // active
-    I_sdrc_addr <= 32'h0_00_00;  // bank 0, row 0
+    I_sdrc_addr <= 0;  // bank 0, row 0
     #clk_tk;
     I_sdrc_cmd_en <= 0;
     #clk_tk;
@@ -240,7 +240,7 @@ module testbench;
 
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b101;  // read
-    I_sdrc_addr <= 'h0_00_00;  // bank 0, row 0, col 0
+    I_sdrc_addr <= 0;  // bank 0 row 0 col 0
     I_sdrc_data_len <= 7;
     #clk_tk;
     I_sdrc_cmd_en <= 0;
@@ -262,18 +262,18 @@ module testbench;
     #clk_tk;
     #clk_tk;
 
-    // activate row 1 and read
+    // activate bank 0 row 1 then read
     I_sdrc_cmd_en <= 1;
-    I_sdrc_cmd <= 3'b011;  // Active
+    I_sdrc_cmd <= 3'b011;  // active
     I_sdrc_addr <= 32'h100;
     #clk_tk;
     I_sdrc_cmd_en <= 0;
     #clk_tk;
 
-    // read starting from column 0, 4 data
+    // read 4 data starting from column 0
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b101;  // read
-    I_sdrc_addr <= 'h0_01_00;  // bank 0, row 1, column 0
+    I_sdrc_addr <= 'h1_00;  // bank 0, row 1, column 0
     I_sdrc_data_len <= 3;
     #clk_tk;
     I_sdrc_cmd_en <= 0;
