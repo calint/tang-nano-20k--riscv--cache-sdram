@@ -22,7 +22,7 @@
 * then `./make-and-flash-os.sh` to flash program
 * connect with serial terminal to the tty (e.g. `/dev/ttyUSB1`) at 115200 baud, 8 bit data, 1 stop bit, no parity, no flow control
 
-![1](https://github.com/calint/tang-nano-9k--riscv--cache-psram/blob/main/notes/serial-terminal-settings/1.png)
+![1](notes/serial-terminal-settings/1.png)
 
 * press button S1 to reset and view the greeting
 
