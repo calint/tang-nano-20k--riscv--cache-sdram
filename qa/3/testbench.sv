@@ -138,7 +138,7 @@ module testbench;
 
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b011;  // active
-    I_sdrc_addr <= 0;
+    I_sdrc_addr <= 0;  // activate bank 0 row 0
     #clk_tk;
 
     I_sdrc_cmd_en <= 1;
@@ -180,7 +180,7 @@ module testbench;
 
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b011;  // Active
-    I_sdrc_addr <= 32'h100;
+    I_sdrc_addr <= 32'h100;  // activate bank 0, row 1
     #clk_tk;
     I_sdrc_cmd_en <= 0;
 
