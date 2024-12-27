@@ -43,7 +43,7 @@ module top (
   Gowin_rPLL rpll (
       .clkin(clk),  // 27 MHz
       .lock(rpll_lock),
-      .clkout(rpll_clkout)  // 143 MHz
+      .clkout(rpll_clkout)  //  66 MHz
   );
 
   // ----------------------------------------------------------

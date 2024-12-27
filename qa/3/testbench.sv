@@ -417,10 +417,10 @@ module testbench;
     assert (O_sdrc_data == 'h5678_1010)
     else $fatal;
 
-    // ----------------------------------------
-
+    // -----------------------------------------------------------------------
     // test cache like operation
-    // write dirty line and read new data from same row
+    // write dirty line and read new data from new row
+    //
 
     // evict
     // -----------------------------------------------------------------------
@@ -520,7 +520,7 @@ module testbench;
     assert (O_sdrc_data == 'habcd_ef04)
     else $fatal;
 
-    // fetch from same row (note: result expected to be xxxxxxxx testing for timing violations)
+    // fetch from same row (note: result expected to be xxxxxxxx. testing for timing violations)
     // -----------------------------------------------------------------------
     // activate and read 8 data from bank 0 row 1
     I_sdrc_cmd_en <= 1;
