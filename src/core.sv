@@ -6,8 +6,8 @@
 `timescale 1ns / 1ps
 //
 `default_nettype none
-//`define DBG
-// `define INFO
+// `define DBG
+//`define INFO
 
 module core #(
     parameter int unsigned StartupWaitCycles = 10,
@@ -121,13 +121,13 @@ module core #(
 
     end else begin
 `ifdef DBG
-      $display("state: %0d", state);
+      $display("%m: %t: state: %0d", $time, state);
 `endif
       unique case (state)
 
         BootInit: begin
 `ifdef DBG
-          $display("flash counter: %0d", flash_counter);
+          $display("%m: %t: flash counter: %0d", $time, flash_counter);
 `endif
           flash_counter <= flash_counter + 1;
           if (flash_counter >= StartupWaitCycles) begin
@@ -190,7 +190,7 @@ module core #(
         BootStartWrite: begin
           if (!ramio_busy) begin
 `ifdef DBG
-            $display("flash write 0%h = %h", ramio_address_next, {
+            $display("%m: %t: flash write 0%h = %h", $time, ramio_address_next, {
                      flash_data_out[3], flash_data_out[2], flash_data_out[1], flash_data_out[0]});
 `endif
             ramio_enable <= 1;
@@ -232,9 +232,9 @@ module core #(
           rd_write_enable <= 0;
 
           if (ramio_data_out_ready) begin
-`ifdef DBG
-            $display("pc: %h  instruction: %h", pc, ramio_data_out);
-`endif
+            // `ifdef DBG
+            $display("%m: %t: pc: %h  instruction: %h", $time, pc, ramio_data_out);
+            // `endif
             // copy instruction from RAM output
             ir <= ramio_data_out;
 
@@ -440,7 +440,7 @@ module core #(
             rd_write_enable <= 1;
             rd_data_in <= ramio_data_out;
 `ifdef DBG
-            $display("write register[%0d] = 0x%h", rd, ramio_data_out);
+            $display("%m: %t: write register[%0d] = 0x%h", $time, rd, ramio_data_out);
 `endif
             // fetch next instruction
             // note: 'ramio' already enabled

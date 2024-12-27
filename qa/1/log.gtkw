@@ -1,32 +1,45 @@
 [*]
-[*] GTKWave Analyzer v3.3.116 (w)1999-2023 BSI
-[*] Mon Jun 24 16:16:21 2024
+[*] GTKWave Analyzer v3.3.120 (w)1999-2024 BSI
+[*] Fri Dec 27 15:08:26 2024
 [*]
-[dumpfile] "/home/c/w/tang-nano-9k--riscv--cache-psram/qa/1/log.vcd"
-[dumpfile_mtime] "Mon Jun 24 16:13:12 2024"
-[dumpfile_size] 37568
-[savefile] "/home/c/w/tang-nano-9k--riscv--cache-psram/qa/1/log.gtkw"
-[timestart] 0
-[size] 1910 1024
+[dumpfile] "/home/c/w/tang-nano-20k--riscv--cache-sdram/qa/1/log.vcd"
+[dumpfile_mtime] "Fri Dec 27 15:01:42 2024"
+[dumpfile_size] 33146298
+[savefile] "/home/c/w/tang-nano-20k--riscv--cache-sdram/qa/1/log.gtkw"
+[timestart] 1184553000
+[size] 2230 1344
 [pos] -1 -1
-*-16.081718 147600 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-18.081718 1185624000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] testbench.
-[sst_width] 269
+[treeopen] testbench.top.
+[sst_width] 273
 [signals_width] 390
 [sst_expanded] 1
-[sst_vpaned_height] 304
+[sst_vpaned_height] 415
 @200
 -testbench
 @28
-testbench.rst_n
-testbench.clk
+testbench.top.I_sdrc_clk
+testbench.top.I_sdrc_cmd_en
+testbench.top.I_sdrc_cmd[2:0]
 @22
-testbench.address[31:0]
+testbench.top.I_sdrc_addr[20:0]
+testbench.top.I_sdrc_data_len[7:0]
+testbench.top.I_sdrc_data[31:0]
+testbench.top.I_sdrc_dqm[3:0]
 @28
-testbench.br_busy
+testbench.top.I_sdrc_precharge_ctrl
+testbench.top.I_sdram_power_down
 @29
-testbench.br_rd_data_valid
+testbench.top.I_sdram_power_down
+@28
+testbench.top.O_sdrc_cmd_ack
 @22
-testbench.data_out[31:0]
+testbench.top.O_sdrc_data[31:0]
+@28
+testbench.top.O_sdrc_init_done
+testbench.top.I_sdrc_rst_n
+@420
+testbench.top.ramio.cache.state
 [pattern_trace] 1
 [pattern_trace] 0

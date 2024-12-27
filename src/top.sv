@@ -55,7 +55,7 @@ module top (
   // wires between 'sdram_controller' interface and 'cache'
   wire I_sdrc_rst_n = !rst;
   wire I_sdrc_clk = clk;  // 27 MHz
-  wire I_sdram_clk = clk; 
+  wire I_sdram_clk = clk;
   wire I_sdrc_cmd_en;
   wire [2:0] I_sdrc_cmd;
   wire I_sdrc_precharge_ctrl;
@@ -119,7 +119,7 @@ module top (
       .ClockFrequencyHz(CLOCK_FREQUENCY_HZ),
       .BaudRate(configuration::UART_BAUD_RATE)
   ) ramio (
-      .rst_n(!(rst || rpll_lock || O_sdrc_init_done)),
+      .rst_n(!(rst || !rpll_lock || !O_sdrc_init_done)),
       .clk  (I_sdrc_clk),
 
       // interface
