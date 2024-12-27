@@ -136,27 +136,25 @@ module testbench;
     I_sdram_power_down = 0;
     I_sdram_selfrefresh = 0;
 
+    // activate bank 0 row 0 and write
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b011;  // active
     I_sdrc_addr <= 0;  // activate bank 0 row 0
     #clk_tk;
     I_sdrc_cmd_en <= 0;
     #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-
+    assert (O_sdrc_cmd_ack)
+    else $fatal;
 
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b100;  // write
-    I_sdrc_addr <= 0;
+    I_sdrc_addr <= 'h0_0_00;  // bank 0, row 0
     I_sdrc_data_len <= 7;
     I_sdrc_dqm <= 4'b0000;
-
     I_sdrc_data <= 32'h1234_5678;
     #clk_tk;
-
     I_sdrc_cmd_en <= 0;
+
     I_sdrc_data   <= 32'habcd_ef01;
     #clk_tk;
 
@@ -178,18 +176,24 @@ module testbench;
     I_sdrc_data <= 32'habcd_ef04;
     #clk_tk;
 
-
-    // wait tRP (3)
+    // wait for ack
     #clk_tk;
     #clk_tk;
     #clk_tk;
+    #clk_tk;
 
+    assert (O_sdrc_cmd_ack)
+    else $fatal;
 
+    // activate bank 0 row 1 and write
     I_sdrc_cmd_en <= 1;
-    I_sdrc_cmd <= 3'b011;  // Active
-    I_sdrc_addr <= 32'h100;  // activate bank 0, row 1
+    I_sdrc_cmd <= 3'b011;  // active
+    I_sdrc_addr <= 'h0_1_00;  // bank 0, row 1
     #clk_tk;
     I_sdrc_cmd_en <= 0;
+    #clk_tk;
+    assert (O_sdrc_cmd_ack)
+    else $fatal;
 
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b100;  // write
@@ -215,40 +219,50 @@ module testbench;
     I_sdrc_data <= 32'habcd_ef04;
     #clk_tk;
 
-    // wait tRP (3)
+    // wait for ack
     #clk_tk;
     #clk_tk;
     #clk_tk;
+    #clk_tk;
+
+    assert (O_sdrc_cmd_ack)
+    else $fatal;
 
     // read the data
     I_sdrc_cmd_en <= 1;
-    I_sdrc_cmd <= 3'b011;  // Active
-    I_sdrc_addr <= 32'h000;
+    I_sdrc_cmd <= 3'b011;  // active
+    I_sdrc_addr <= 32'h0_00_00;  // bank 0, row 0
     #clk_tk;
     I_sdrc_cmd_en <= 0;
+    #clk_tk;
+    assert (O_sdrc_cmd_ack)
+    else $fatal;
 
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b101;  // read
-    I_sdrc_addr <= 0;
+    I_sdrc_addr <= 'h0_00_00;  // bank 0, row 0, col 0
     I_sdrc_data_len <= 7;
-    // delay
     #clk_tk;
     I_sdrc_cmd_en <= 0;
     #clk_tk;
     #clk_tk;
     #clk_tk;
-
-    // data arrived
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
     #clk_tk;
 
-    // activate row 2
+    assert (O_sdrc_data == 'h1234_5678)
+    else $fatal;
+
+    // data arrives
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
+
+    // activate row 1 and read
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b011;  // Active
     I_sdrc_addr <= 32'h100;
@@ -256,16 +270,20 @@ module testbench;
     I_sdrc_cmd_en <= 0;
     #clk_tk;
 
-    // read starting from 4'th column 4 data
+    // read starting from column 0, 4 data
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b101;  // read
-    I_sdrc_addr <= 4;
+    I_sdrc_addr <= 'h0_01_00;  // bank 0, row 1, column 0
     I_sdrc_data_len <= 3;
     #clk_tk;
     I_sdrc_cmd_en <= 0;
     #clk_tk;
     #clk_tk;
     #clk_tk;
+    #clk_tk;
+
+    assert (O_sdrc_data == 'h10102020)
+    else $fatal;
 
     // data arrived
     #clk_tk;
