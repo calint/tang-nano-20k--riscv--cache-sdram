@@ -567,6 +567,16 @@ module testbench;
 
 endmodule
 
+// from https://www.anandtech.com/show/3851/everything-you-always-wanted-to-know-about-sdram-memory-but-were-afraid-to-ask/3
+// ... The time to activate a bank is called the Row-Column (or Command) Delay and is denoted by the symbol tRCD.
+// ... The time to read a byte of data from the open page is called the Column Address Strobe (CAS) Latency and is denoted by the symbol CL or tCAS. 
+// ... Only one page per bank may be open at a time. 
+// ... This is done by either issuing a Precharge (PR) command to close the specified bank only or a Precharge All (PRA) command to close all open banks in the rank.
+// ... Alternatively, the Precharge command can be effectively combined with the last read or write operation to the open bank by sending a Read with Auto-Precharge (RDA) or Write with Auto-Precharge (WRA) command in place of the final READ or WRI command. 
+// ... The time to Precharge an open bank is called the Row Access Strobe (RAS) Precharge Delay and is denoted by the symbol tRP. 
+// ... The minimum time interval between successive ACT commands to the same bank is determined by the Row Cycle Time of the device, tRC, found by simply summing tRAS and tRP (to be defined).
+// ... The minimum time interval between ACT commands to different banks is the Read-to-Read Delay (tRRD).
+
 // from gemini:
 // Writes vs. Reads: The Key Difference
 
