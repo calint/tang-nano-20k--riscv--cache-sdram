@@ -19,7 +19,7 @@ module top (
     output logic flash_clk,
     input  wire  flash_miso,
     output logic flash_mosi,
-    output logic flash_cs,
+    output logic flash_cs_n,
 
     // "Magic" port names that the gowin compiler connects to the on-chip SDRAM
     output wire        O_sdram_clk,
@@ -42,8 +42,8 @@ module top (
 
   Gowin_rPLL rpll (
       .clkin(clk),  // 27 MHz
-      .lock(rpll_lock),
-      .clkout(rpll_clkout)  //  66 MHz
+      .clkout(rpll_clkout),  //  66 MHz
+      .lock(rpll_lock)
   );
 
   // ----------------------------------------------------------
@@ -53,7 +53,7 @@ module top (
   // wires between 'sdram_controller' interface and 'cache'
   wire I_sdrc_rst_n = !rst;
   wire I_sdrc_clk = clk;  // 27 MHz
-  wire I_sdram_clk = rpll_clkout;  // 143 MHz
+  wire I_sdram_clk = rpll_clkout;  // 66 MHz
   wire I_sdrc_cmd_en;
   wire [2:0] I_sdrc_cmd;
   wire I_sdrc_precharge_ctrl;
@@ -98,8 +98,7 @@ module top (
       .O_sdrc_cmd_ack
   );
 
-  localparam int unsigned CLOCK_FREQUENCY_HZ = 30_000_000;
-  // note: = br_clk_out = memory_clk / 2 = 60 / 2 = 30 MHz
+  localparam int unsigned CLOCK_FREQUENCY_HZ = 66_000_000;
 
   // ----------------------------------------------------------
   // -- ramio
@@ -156,6 +155,11 @@ module top (
       .O_sdrc_init_done,
       .O_sdrc_cmd_ack
   );
+
+  // note: tang nano 20k has negative active chip select
+  //       invert it to not modify the 'core'
+  wire flash_cs;
+  assign flash_cs_n = !flash_cs;
 
   // ----------------------------------------------------------
   // -- core
