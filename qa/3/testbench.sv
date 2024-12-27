@@ -130,12 +130,21 @@ module testbench;
     #clk_tk;
     rst <= 0;
 
+    I_sdrc_precharge_ctrl = 1;
+    I_sdram_power_down = 0;
+    I_sdram_selfrefresh <= 0;
+
     // wait for SDRAM to initiate
     while (!O_sdrc_init_done || !rpll_lock) #clk_tk;
 
-    I_sdrc_precharge_ctrl = 1;
-    I_sdram_power_down = 0;
-    I_sdram_selfrefresh = 0;
+    // I_sdram_selfrefresh <= 1;
+    I_sdrc_cmd_en <= 1;
+    I_sdrc_cmd <= 3'b001;  // auto-refresh
+    #clk_tk;
+    I_sdrc_cmd_en <= 0;
+    while (!O_sdrc_cmd_ack) #clk_tk;
+    // I_sdram_selfrefresh <= 0;
+    // #1000;
 
     // -----------------------------------------------------------------------
     // activate and write 8 data to bank 0 row 0

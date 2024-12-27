@@ -67,9 +67,9 @@ module cache #(
     input wire O_sdrc_cmd_ack
 );
 
-  assign I_sdram_power_down = '0;
-  assign I_sdram_selfrefresh = '0;
-  assign I_sdrc_precharge_ctrl = '1;
+  assign I_sdram_power_down = 0;
+  assign I_sdram_selfrefresh = 0;
+  assign I_sdrc_precharge_ctrl = 1;
   assign I_sdrc_dqm = 4'b0000;  // writing whole words, no data mask
 
 `ifdef INFO
@@ -244,6 +244,8 @@ module cache #(
   end
 
   typedef enum {
+    InitSDRAM1,
+    InitSDRAM2,
     Idle,
     Write1,
     Write2,
@@ -271,13 +273,23 @@ module cache #(
       burst_is_reading <= 0;
       burst_is_writing <= 0;
       write_column <= 0;
-      state <= Idle;
+      state <= InitSDRAM1;
     end else begin
 `ifdef DBG
       $display("%m: %t: state: %0d", $time, state);
 `endif
       unique case (state)
-
+        InitSDRAM1: begin
+          I_sdrc_cmd_en <= 1;
+          I_sdrc_cmd <= 3'b001;  // auto-refresh
+          state <= InitSDRAM2;
+        end
+        InitSDRAM2: begin
+          I_sdrc_cmd_en <= 0;
+          if (O_sdrc_cmd_ack) begin
+            state <= Idle;
+          end
+        end
         Idle: begin
           if (enable && !cache_line_hit) begin
             // cache miss, start reading the addressed cache line
@@ -290,6 +302,7 @@ module cache #(
               $display("%m: %t: line %0d dirty, evict to RAM address 0x%h", $time, line_ix,
                        cached_line_address);
 `endif
+              $display("%m: %t: activating bank/row: 0x%h", $time, burst_line_address);
               I_sdrc_cmd_en <= 1;
               I_sdrc_cmd <= 3'b011;  // activate bank and row of cache line
               I_sdrc_addr <= burst_line_address;  // activate bank and row
@@ -301,10 +314,11 @@ module cache #(
               end
               $display("%m: %t: read line from RAM address 0x%h", $time, burst_line_address);
 `endif
-              burst_is_reading <= 1;
+              $display("%m: %t: activating bank/row: 0x%h", $time, burst_line_address);
               I_sdrc_cmd_en <= 1;
               I_sdrc_cmd <= 3'b011;  // activate bank and row of cache line
               I_sdrc_addr <= burst_line_address;  // activate bank 0 row 0
+              burst_is_reading <= 1;
               state <= Read1;
             end
           end
@@ -314,7 +328,6 @@ module cache #(
           // O_sdrc_cmd_ack == 1
           I_sdrc_cmd_en <= 0;
           state <= Write2;
-          $finish;
         end
 
         Write2: begin
@@ -366,7 +379,6 @@ module cache #(
 
         Read1: begin
           I_sdrc_cmd_en <= 0;
-          counter <= 1;
           state <= Read2;
         end
 
@@ -375,10 +387,12 @@ module cache #(
           I_sdrc_cmd <= 3'b101;  // read
           I_sdrc_addr <= burst_line_address;
           I_sdrc_data_len <= COLUMN_COUNT - 1;
+          counter <= 1;
           state <= Read3;
         end
 
         Read3: begin
+          I_sdrc_cmd_en <= 0;
           counter <= counter + 1;
           if (counter == WaitsPriorToDataAtRead) begin
             burst_write_enable[0] <= 4'b1111;
