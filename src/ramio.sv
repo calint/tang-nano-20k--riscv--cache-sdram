@@ -341,9 +341,9 @@ module ramio #(
   end
 
   cache #(
-      .LineIndexBitWidth (CacheLineIndexBitWidth),
-      .ColumnIxBitwidth  (CacheColumnIndexBitWidth),
-      .RamAddressBitWidth(RamAddressBitWidth)
+      .LineIndexBitWidth  (CacheLineIndexBitWidth),
+      .ColumnIndexBitwidth(CacheColumnIndexBitWidth),
+      .RamAddressBitWidth (RamAddressBitWidth)
   ) cache (
       .rst_n,
       .clk,
