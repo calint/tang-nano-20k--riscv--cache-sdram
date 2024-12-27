@@ -295,7 +295,6 @@ module testbench;
     assert (O_sdrc_data == 'habcd_fefe)
     else $fatal;
 
-
     // tRAS specifies the minimum time this row must remain open (active) to ensure reliable data access and internal refresh operations
 
     // activate bank 0 row 0 then read
@@ -307,6 +306,8 @@ module testbench;
     #clk_tk;
 
     // tRCD (Row to Column Delay): The minimum time between an ACTIVE command and a READ or WRITE command.
+
+    // note: tRAS violation without the delay
     #clk_tk;
     #clk_tk;
 
@@ -335,6 +336,8 @@ module testbench;
     #clk_tk;
 
     // tRCD (Row to Column Delay): The minimum time between an ACTIVE command and a READ or WRITE command.
+
+    // note: tRAS violation without the delay
     #clk_tk;
     #clk_tk;
 

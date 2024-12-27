@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.120 (w)1999-2024 BSI
-[*] Fri Dec 27 07:11:51 2024
+[*] Fri Dec 27 08:32:19 2024
 [*]
 [dumpfile] "/home/c/w/tang-nano-20k--riscv--cache-sdram/qa/3/log.vcd"
-[dumpfile_mtime] "Fri Dec 27 07:10:46 2024"
-[dumpfile_size] 29049272
+[dumpfile_mtime] "Fri Dec 27 08:32:12 2024"
+[dumpfile_size] 27650566
 [savefile] "/home/c/w/tang-nano-20k--riscv--cache-sdram/qa/3/log.gtkw"
-[timestart] 1182165000
+[timestart] 328131000
 [size] 2230 1344
 [pos] -1 -1
-*-16.195307 1182726000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-16.195307 328560000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] testbench.
 [sst_width] 273
 [signals_width] 390
