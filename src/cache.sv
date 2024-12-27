@@ -302,10 +302,10 @@ module cache #(
               $display("%m: %t: line %0d dirty, evict to RAM address 0x%h", $time, line_ix,
                        cached_line_address);
 `endif
-              $display("%m: %t: activating bank/row: 0x%h", $time, burst_line_address);
+              $display("%m: %t: activating bank/row: 0x%h", $time, cached_line_address);
               I_sdrc_cmd_en <= 1;
               I_sdrc_cmd <= 3'b011;  // activate bank and row of cache line
-              I_sdrc_addr <= burst_line_address;  // activate bank and row
+              I_sdrc_addr <= cached_line_address;
               state <= Write1;
             end else begin  // not (write_enable && line_dirty)
 `ifdef DBG
@@ -333,7 +333,7 @@ module cache #(
         Write2: begin
           I_sdrc_cmd_en <= 1;
           I_sdrc_cmd <= 3'b100;  // write
-          I_sdrc_addr <= burst_line_address;
+          I_sdrc_addr <= cached_line_address;
           I_sdrc_data_len <= COLUMN_COUNT - 1;
           I_sdrc_data <= column_data_out[0];
 `ifdef DBG
