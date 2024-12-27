@@ -51,7 +51,7 @@ module core #(
     output logic flash_clk,
     input  wire  flash_miso,
     output logic flash_mosi,
-    output logic flash_cs
+    output logic flash_cs_n
 );
 
   // used while reading flash
@@ -115,7 +115,7 @@ module core #(
       flash_counter <= 0;
       flash_clk <= 0;
       flash_mosi <= 0;
-      flash_cs <= 1;
+      flash_cs_n <= 1;
 
       pc <= 0;
 
@@ -141,7 +141,7 @@ module core #(
         end
 
         BootLoadCommandToSend: begin
-          flash_cs <= 0;  // enable flash
+          flash_cs_n <= 0;  // enable flash
           flash_data_to_send[23-:8] <= 3;  // command 3: read
           flash_num_bits_to_send <= 8;
           state <= BootSend;
@@ -216,7 +216,7 @@ module core #(
             if (ramio_address_next < FlashTransferBytes) begin
               state <= BootReadData;
             end else begin
-              flash_cs <= 1;  // disable flash
+              flash_cs_n <= 1;  // disable flash
 
               // boot CPU at address 0x0
               ramio_enable <= 1;

@@ -157,11 +157,6 @@ module top (
       .O_sdrc_cmd_ack
   );
 
-  // note: tang nano 20k has negative active chip select
-  //       invert it to not modify the 'core'
-  wire flash_cs;
-  assign flash_cs_n = !flash_cs;
-
   // ----------------------------------------------------------
   // -- core
   // ----------------------------------------------------------
@@ -187,7 +182,7 @@ module top (
       .flash_clk,
       .flash_miso,
       .flash_mosi,
-      .flash_cs
+      .flash_cs_n
   );
 
   assign led[5] = ~ramio_busy;

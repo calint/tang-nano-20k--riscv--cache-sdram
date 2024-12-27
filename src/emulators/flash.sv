@@ -21,7 +21,7 @@ module flash #(
 
     output logic miso,
     input  wire  mosi,
-    input  wire  cs
+    input  wire  cs_n
 );
 
   localparam int unsigned DEPTH = 2 ** AddressBitWidth;
@@ -70,7 +70,7 @@ module flash #(
       unique case (state)
 
         ReceiveCommand: begin
-          if (!cs) begin
+          if (!cs_n) begin
             // note: assume 'read', the only command implemented
             counter <= counter - 1'b1;
             if (counter[8]) begin
@@ -81,7 +81,7 @@ module flash #(
         end
 
         ReceiveAddress: begin
-          if (!cs) begin
+          if (!cs_n) begin
             counter <= counter - 1'b1;
             if (counter[8]) begin
               counter <= 7 - 2;
@@ -97,7 +97,7 @@ module flash #(
         end
 
         SendData: begin
-          if (!cs) begin
+          if (!cs_n) begin
             miso <= current_byte[7];
             current_byte <= {current_byte[6:0], 1'b0};
             counter <= counter - 1'b1;

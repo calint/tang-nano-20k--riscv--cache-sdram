@@ -25,10 +25,10 @@ module testbench;
       .AddressBitWidth(12)  // in bytes 2^12 = 4096 B
   ) flash (
       .rst_n(!rst),
-      .clk(flash_clk),
-      .miso(flash_miso),
-      .mosi(flash_mosi),
-      .cs(!flash_cs_n)
+      .clk  (flash_clk),
+      .miso (flash_miso),
+      .mosi (flash_mosi),
+      .cs_n (flash_cs_n)
   );
 
   // SDRAM wires
