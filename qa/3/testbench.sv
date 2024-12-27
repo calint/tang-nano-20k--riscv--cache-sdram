@@ -140,6 +140,12 @@ module testbench;
     I_sdrc_cmd <= 3'b011;  // active
     I_sdrc_addr <= 0;  // activate bank 0 row 0
     #clk_tk;
+    I_sdrc_cmd_en <= 0;
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
+
 
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b100;  // write
@@ -173,6 +179,7 @@ module testbench;
     #clk_tk;
 
 
+    // wait tRP (3)
     #clk_tk;
     #clk_tk;
     #clk_tk;
@@ -206,6 +213,11 @@ module testbench;
     I_sdrc_data <= 32'habcd_ef03;
     #clk_tk;
     I_sdrc_data <= 32'habcd_ef04;
+    #clk_tk;
+
+    // wait tRP (3)
+    #clk_tk;
+    #clk_tk;
     #clk_tk;
 
     // read the data
