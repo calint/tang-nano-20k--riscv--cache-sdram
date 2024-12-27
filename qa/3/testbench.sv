@@ -138,7 +138,7 @@ module testbench;
     I_sdram_selfrefresh = 0;
 
     // -----------------------------------------------------------------------
-    // activate bank 0 row 0 then write
+    // activate and write 8 data to bank 0 row 0
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b011;  // active
     I_sdrc_addr <= 0;  // activate bank 0 row 0
@@ -149,8 +149,6 @@ module testbench;
     assert (O_sdrc_cmd_ack)
     else $fatal;
 
-    // -----------------------------------------------------------------------
-    // activate and write 8 data to bank 0 row 0
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b100;  // write
     I_sdrc_addr <= 0;  // bank 0, row 0
@@ -420,7 +418,149 @@ module testbench;
     else $fatal;
 
     // ----------------------------------------
+
+    // test cache like operation
+    // write dirty line and read new data from same row
+
+    // evict
+    // -----------------------------------------------------------------------
+    // activate and write 8 data to bank 0 row 0
+    I_sdrc_cmd_en <= 1;
+    I_sdrc_cmd <= 3'b011;  // active
+    I_sdrc_addr <= 0;  // activate bank 0 row 0
     #clk_tk;
+
+    I_sdrc_cmd_en <= 0;
+    #clk_tk;
+    assert (O_sdrc_cmd_ack)
+    else $fatal;
+
+    I_sdrc_cmd_en <= 1;
+    I_sdrc_cmd <= 3'b100;  // write
+    I_sdrc_addr <= 0;  // bank 0, row 0
+    I_sdrc_data_len <= 7;
+    I_sdrc_dqm <= 4'b0000;
+    I_sdrc_data <= 32'h1234_5678;
+    #clk_tk;
+
+    I_sdrc_cmd_en <= 0;
+    I_sdrc_data   <= 32'habcd_ef01;
+    #clk_tk;
+
+    I_sdrc_data <= 32'h5678_1010;
+    #clk_tk;
+
+    I_sdrc_data <= 32'habcd_fefe;
+    #clk_tk;
+
+    I_sdrc_data <= 32'habce_ef01;
+    #clk_tk;
+
+    I_sdrc_data <= 32'habcd_ef02;
+    #clk_tk;
+
+    I_sdrc_data <= 32'habcd_ef03;
+    #clk_tk;
+
+    I_sdrc_data <= 32'habcd_ef04;
+    #clk_tk;
+
+    // wait for ack
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
+    assert (O_sdrc_cmd_ack)
+    else $fatal;
+
+    // fetch
+    // -----------------------------------------------------------------------
+    // activate and read 8 data from bank 0 row 1
+    I_sdrc_cmd_en <= 1;
+    I_sdrc_cmd <= 3'b011;  // active
+    I_sdrc_addr <= 32'h100;
+    #clk_tk;
+
+    I_sdrc_cmd_en <= 0;
+    #clk_tk;
+
+    // read 4 data starting from column 0
+    I_sdrc_cmd_en <= 1;
+    I_sdrc_cmd <= 3'b101;  // read
+    I_sdrc_addr <= 'h1_00;  // bank 0, row 1, column 0
+    I_sdrc_data_len <= 7;
+    #clk_tk;
+
+    I_sdrc_cmd_en <= 0;
+    #clk_tk;
+
+    #clk_tk;
+    #clk_tk;
+
+    // data arrives
+    #clk_tk;
+    assert (O_sdrc_data == 'h10102020)
+    else $fatal;
+
+    #clk_tk;
+
+    #clk_tk;
+
+    #clk_tk;
+    assert (O_sdrc_data == 'habcd_fefe)
+    else $fatal;
+
+    #clk_tk;
+
+    #clk_tk;
+
+    #clk_tk;
+
+    #clk_tk;
+    assert (O_sdrc_data == 'habcd_ef04)
+    else $fatal;
+
+    // fetch from same row (note: result expected to be xxxxxxxx testing for timing violations)
+    // -----------------------------------------------------------------------
+    // activate and read 8 data from bank 0 row 1
+    I_sdrc_cmd_en <= 1;
+    I_sdrc_cmd <= 3'b011;  // active
+    I_sdrc_addr <= 32'h100;
+    #clk_tk;
+
+    I_sdrc_cmd_en <= 0;
+    #clk_tk;
+
+    // read 4 data starting from column 0
+    I_sdrc_cmd_en <= 1;
+    I_sdrc_cmd <= 3'b101;  // read
+    I_sdrc_addr <= 'h1_08;  // bank 0, row 1, column 0
+    I_sdrc_data_len <= 7;
+    #clk_tk;
+
+    I_sdrc_cmd_en <= 0;
+    #clk_tk;
+
+    #clk_tk;
+    #clk_tk;
+
+    // data arrives
+    #clk_tk;
+
+    #clk_tk;
+
+    #clk_tk;
+
+    #clk_tk;
+
+    #clk_tk;
+
+    #clk_tk;
+
+    #clk_tk;
+
+    #clk_tk;
+    // -----------------------------------------------------------------------
 
     $finish;
   end
