@@ -10,11 +10,11 @@
 * explore the FPGA board
 
 ## Gowin EDA 1.9.10.03 Education Build (77527) Project Configuration
-![1](blob/main/notes/gowin-project-configuration/1.png)
+![1](notes/gowin-project-configuration/1.png)
 
-![3](https://github.com/calint/tang-nano-20k--riscv--cache-sdram/blob/main/notes/gowin-project-configuration/3.png)
+![3](notes/gowin-project-configuration/3.png)
 
-![5](https://github.com/calint/tang-nano-20k--riscv--cache-sdram/blob/main/notes/gowin-project-configuration/5.png)
+![5](notes/gowin-project-configuration/5.png)
 
 ## Howto
 * build bitstream file in Gowin EDA
