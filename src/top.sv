@@ -120,7 +120,7 @@ module top (
       .ClockFrequencyHz(CLOCK_FREQUENCY_HZ),
       .BaudRate(configuration::UART_BAUD_RATE)
   ) ramio (
-      .rst_n(!(rst || !rpll_lock || !O_sdrc_init_done)),
+      .rst_n(!rst && rpll_lock && O_sdrc_init_done),
       .clk  (I_sdrc_clk),
 
       // interface
@@ -139,7 +139,7 @@ module top (
       .uart_rx,
 
       // sdram controller wires
-      // note: to preserve names for consistency, invert I_ and O_ to output and input
+      // note: to preserve names for consistency, the I_* and O_* have inverted meaning
       //   .I_sdrc_rst_n,
       //   .I_sdrc_clk,
       //   .I_sdram_clk,
