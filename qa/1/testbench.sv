@@ -577,7 +577,7 @@ module testbench;
     // while (top.core.state != top.core.CpuExecute) #clk_tk;
 
     $display("");
-    $display(" *** all tests passed ***");
+    $display("PASSED");
     $display("");
     $finish;
 

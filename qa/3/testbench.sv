@@ -601,7 +601,7 @@ module testbench;
     // -----------------------------------------------------------------------
 
     $display("");
-    $display(" *** all tests passed ***");
+    $display("PASSED");
     $display("");
     $finish;
 

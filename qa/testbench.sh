@@ -7,13 +7,14 @@
 set -e
 cd $(dirname "$0")
 
+PRIMLIBPTH=~/apps/gowin/IDE/simlib/gw2a
 SRCPTH=../../src
 
 cd $1
 pwd
 
 iverilog -g2005-sv -Winfloop -pfileline=1 -o iverilog.vvp -s testbench testbench.sv \
-    ~/apps/gowin/IDE/simlib/gw2a/prim_sim.v \
+    $PRIMLIBPTH/prim_sim.v \
     $SRCPTH/configuration.sv \
     $SRCPTH/emulators/flash.sv \
     $SRCPTH/emulators/MT48LC2M32B2.v \
