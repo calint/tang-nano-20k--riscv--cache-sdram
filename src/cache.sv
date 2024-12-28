@@ -18,9 +18,9 @@ module cache #(
     // 2 ^ 3 = 8 entries (32 B) per cache line
 
     parameter int unsigned LineIndexBitWidth = 6,
-    // 2 ^ 6 * 32 B = 4 KB unified instruction and data cache
+    // 2 ^ 6 * 32 B = 2 KB unified instruction and data cache
 
-    parameter int unsigned RamAddressBitWidth = 21,
+    parameter int unsigned RamAddressBitWidth = 10,
     // bits in the address of underlying burst RAM
 
     parameter int unsigned RamAddressingMode = 0,

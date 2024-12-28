@@ -18,8 +18,8 @@ UART_BAUD_RATE = 115200
 CACHE_COLUMN_INDEX_BITWIDTH = 3
 # 2 ^ 3 = 8 entries (32 B) per cache line
 
-CACHE_LINE_INDEX_BITWIDTH = 1  # 6
-# 2 ^ 6 * 32 B = 4 KB unified instruction and data cache
+CACHE_LINE_INDEX_BITWIDTH = 1  # 7
+# 2 ^ 7 * 32 B = 4 KB unified instruction and data cache
 
 FLASH_TRANSFER_FROM_ADDRESS = 0
 # flash read start address
