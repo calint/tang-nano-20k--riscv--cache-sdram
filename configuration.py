@@ -21,10 +21,10 @@ CACHE_COLUMN_INDEX_BITWIDTH = 3
 CACHE_LINE_INDEX_BITWIDTH = 1  # 6
 # 2 ^ 6 * 32 B = 4 KB unified instruction and data cache
 
-FLASH_FROM_ADDRESS = 0
+FLASH_TRANSFER_FROM_ADDRESS = 0
 # flash read start address
 
-FLASH_TRANSFER_BYTES = 2048  # 0x0020_0000
+FLASH_TRANSFER_BYTE_COUNT = 2048  # 0x0020_0000
 # number of bytes to transfer from flash at startup (2 MB)
 
 STARTUP_WAIT_CYCLES = 0  # 1_000_000

@@ -7,8 +7,8 @@ package configuration;
   parameter int unsigned CACHE_COLUMN_INDEX_BITWIDTH = 3;
   parameter int unsigned CACHE_LINE_INDEX_BITWIDTH = 1;
   parameter int unsigned UART_BAUD_RATE = 115200;
-  parameter int unsigned FLASH_FROM_ADDRESS = 32'h00000000;
-  parameter int unsigned FLASH_TRANSFER_BYTES = 32'h00000800;
+  parameter int unsigned FLASH_TRANSFER_FROM_ADDRESS = 32'h00000000;
+  parameter int unsigned FLASH_TRANSFER_BYTE_COUNT = 32'h00000800;
   parameter int unsigned STARTUP_WAIT_CYCLES = 0;
 
 endpackage

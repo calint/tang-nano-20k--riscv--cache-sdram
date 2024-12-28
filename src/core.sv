@@ -13,10 +13,10 @@ module core #(
     parameter int unsigned StartupWaitCycles = 10,
     // arbitrary number of cycles to wait for flash circuit to be initiated
 
-    parameter int unsigned FlashFromAddress = 0,
+    parameter int unsigned FlashTransferFromAddress = 0,
     // flash read start address
 
-    parameter int unsigned FlashTransferBytes = 32'h0010_0000
+    parameter int unsigned FlashTransferByteCount = 32'h0010_0000
     // number of bytes to transfer from flash to 'ramio'
 
 ) (
@@ -149,7 +149,7 @@ module core #(
         end
 
         BootLoadAddressToSend: begin
-          flash_data_to_send <= FlashFromAddress;
+          flash_data_to_send <= FlashTransferFromAddress;
           flash_num_bits_to_send <= 24;
           flash_current_byte_num <= 0;
           state <= BootSend;
@@ -213,7 +213,7 @@ module core #(
           if (!ramio_busy) begin
             ramio_enable <= 0;
             flash_current_byte_num <= 0;
-            if (ramio_address_next < FlashTransferBytes) begin
+            if (ramio_address_next < FlashTransferByteCount) begin
               state <= BootReadData;
             end else begin
               flash_cs_n <= 1;  // disable flash
