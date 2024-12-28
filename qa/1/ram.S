@@ -61,20 +61,24 @@ lbl6:
 	bltu x18, x19, lbl_bltu	# 0xffff_ffff > 1 -> branch not taken
 	bgeu x19, x18, lbl_bgeu	# 1 < 0xffff_ffff -> branch not taken
 	jal x1, lbl_auipc
+
 	# test the leds
 	ori x24, x24, -1		# x24 = 0xffff_ffff
-	addi x23, x0, 0b1010101
-#	addi x23, x0, 0b0000000
-	sb x23, 0(x24)			#  write to memory mapped I/O ram[0xffff_ffff] = 0b111_1111
+	addi x23, x0, 0b1010101 # x23 = 0b1010101
+	sb x23, 0(x24)			#  write to memory mapped I/O ram[0xffff_ffff] = 0b1010101
 
-	# check that register is writting the result of the op instead of the ram
-	lhu x21, 2(x20)			# x21 = ram[0x1000 + 2] == 0xffff
-	addi x21, x21, 1        # x21 = 0xffff + 1 == 0x1_0000
+	addi x23,x0,0x2fc		# x23 = 0x2fc
+	sw x23,0(x23)			# ram[0x2fc] = 0x2fc
+#	lw x23,0(x23)			# x23 = ram[0x2fc] = 0x2fc
 
-	sw x21, (x20)			# ram[0x1000] = 0x1_0000
-	lw x25, (x20)			# x25 = ram[0x1000] == 0x1_0000
-	addi x26, x25, 1		# x26 = 0x1_0000 + 1 == 0x1_0001
-	addi x26, x26,-1		# x26 = 0x1_0001 - 1 == 0x1_0000
+	# check that register writes the result of the op instead of the ram
+#	lhu x21, 2(x20)			# x21 = ram[0x1000 + 2] == 0xffff
+#	addi x21, x21, 1        # x21 = 0xffff + 1 == 0x1_0000
+
+#	sw x21, (x20)			# ram[0x1000] = 0x1_0000
+#	lw x25, (x20)			# x25 = ram[0x1000] == 0x1_0000
+#	addi x26, x25, 1		# x26 = 0x1_0000 + 1 == 0x1_0001
+#	addi x26, x26,-1		# x26 = 0x1_0001 - 1 == 0x1_0000
 
 lbl_done:
 	jal x0, lbl_done

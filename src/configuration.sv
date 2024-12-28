@@ -2,7 +2,8 @@
 
 package configuration;
 
-  parameter int unsigned RAM_ADDRESS_BITWIDTH = 23;
+  parameter int unsigned RAM_ADDRESS_BITWIDTH = 21;
+  parameter int unsigned RAM_ADDRESSING_MODE = 2;
   parameter int unsigned CACHE_COLUMN_INDEX_BITWIDTH = 3;
   parameter int unsigned CACHE_LINE_INDEX_BITWIDTH = 1;
   parameter int unsigned UART_BAUD_RATE = 115200;

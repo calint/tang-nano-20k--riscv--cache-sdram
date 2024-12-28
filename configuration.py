@@ -2,8 +2,15 @@
 # if file changed run `configuration-apply.py` and rebuild
 #
 
-RAM_ADDRESS_BITWIDTH = 23
-# 2 ^ 23 = 8 MB SDRAM (according to hardware)
+RAM_ADDRESS_BITWIDTH = 21
+# 2 ^ 21 x 32 b = 8 MB SDRAM (according to hardware)
+
+RAM_ADDRESSING_MODE = 2
+# amount of data stored per address
+#       0: 1 B (byte addressed)
+#       1: 2 B
+#       2: 4 B
+#       3: 8 B
 
 UART_BAUD_RATE = 115200
 # 115200 baud, 8 bits, 1 stop bit, no parity

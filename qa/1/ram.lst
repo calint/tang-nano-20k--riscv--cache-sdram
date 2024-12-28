@@ -74,15 +74,11 @@ Disassembly of section .text:
   d8:	fffc6c13          	ori	x24,x24,-1
   dc:	05500b93          	addi	x23,x0,85
   e0:	017c0023          	sb	x23,0(x24)
-  e4:	002a5a83          	lhu	x21,2(x20)
-  e8:	001a8a93          	addi	x21,x21,1
-  ec:	015a2023          	sw	x21,0(x20)
-  f0:	000a2c83          	lw	x25,0(x20)
-  f4:	001c8d13          	addi	x26,x25,1
-  f8:	fffd0d13          	addi	x26,x26,-1
+  e4:	2fc00b93          	addi	x23,x0,764
+  e8:	017ba023          	sw	x23,0(x23)
 
-000000fc <lbl_done>:
-  fc:	0000006f          	jal	x0,fc <lbl_done>
+000000ec <lbl_done>:
+  ec:	0000006f          	jal	x0,ec <lbl_done>
 	...
 
 00000400 <lbl_jal>:

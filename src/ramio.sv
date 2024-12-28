@@ -343,7 +343,8 @@ module ramio #(
   cache #(
       .LineIndexBitWidth  (CacheLineIndexBitWidth),
       .ColumnIndexBitwidth(CacheColumnIndexBitWidth),
-      .RamAddressBitWidth (RamAddressBitWidth)
+      .RamAddressBitWidth (RamAddressBitWidth),
+      .RamAddressingMode  (RamAddressingMode)
   ) cache (
       .rst_n,
       .clk,

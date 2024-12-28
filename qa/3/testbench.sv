@@ -427,6 +427,35 @@ module testbench;
     else $fatal;
 
     // -----------------------------------------------------------------------
+    // activate and write 1 data to bank 0 row 1
+    I_sdrc_cmd_en <= 1;
+    I_sdrc_cmd <= 3'b011;  // active
+    I_sdrc_addr <= 32'h1fc;
+    #clk_tk;
+    I_sdrc_cmd_en <= 0;
+    #clk_tk;
+
+    // tRCD (Row to Column Delay): The minimum time between an ACTIVE command and a READ or WRITE command.
+    // note: tRAS violation without the delay
+    #clk_tk;
+    #clk_tk;
+
+    I_sdrc_cmd_en <= 1;
+    I_sdrc_cmd <= 3'b100;  // write
+    I_sdrc_addr <= 32'h1fc;
+    I_sdrc_data_len <= 0;
+    I_sdrc_dqm <= 4'b0000;
+    I_sdrc_data <= 32'h1a1e_2121;
+    #clk_tk;
+
+    I_sdrc_cmd_en <= 0;
+    #clk_tk;
+
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
+
+    // -----------------------------------------------------------------------
     // test cache like operation
     // write dirty line and read new data from new row
     //

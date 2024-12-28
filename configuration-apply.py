@@ -45,6 +45,8 @@ with open('src/configuration.sv', 'w') as file:
     file.write('\n')
     file.write('  parameter int unsigned RAM_ADDRESS_BITWIDTH = {};\n'.format(
         cfg.RAM_ADDRESS_BITWIDTH))
+    file.write('  parameter int unsigned RAM_ADDRESSING_MODE = {};\n'.format(
+        cfg.RAM_ADDRESSING_MODE))
     file.write('  parameter int unsigned CACHE_COLUMN_INDEX_BITWIDTH = {};\n'.format(
         cfg.CACHE_COLUMN_INDEX_BITWIDTH))
     file.write('  parameter int unsigned CACHE_LINE_INDEX_BITWIDTH = {};\n'.format(

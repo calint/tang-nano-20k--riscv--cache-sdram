@@ -114,7 +114,7 @@ module top (
 
   ramio #(
       .RamAddressBitWidth(configuration::RAM_ADDRESS_BITWIDTH),
-      .RamAddressingMode(0),  // addressing 8 bit words
+      .RamAddressingMode(configuration::RAM_ADDRESSING_MODE),
       .CacheLineIndexBitWidth(configuration::CACHE_LINE_INDEX_BITWIDTH),
       .CacheColumnIndexBitWidth(configuration::CACHE_COLUMN_INDEX_BITWIDTH),
       .ClockFrequencyHz(CLOCK_FREQUENCY_HZ),
