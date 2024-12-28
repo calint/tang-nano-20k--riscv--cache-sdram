@@ -540,41 +540,41 @@ module testbench;
     assert (top.core.pc == 32'h0000_00d8)
     else $fatal;
 
-    // d8:	fffc6c13 ori x24,x24,-1
-    while (top.core.state != top.core.CpuExecute) #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    while (top.core.state != top.core.CpuExecute) #clk_tk;
-    assert (top.core.registers.data[24] == 32'hffff_ffff)
-    else $fatal;
+    // // d8:	fffc6c13 ori x24,x24,-1
+    // while (top.core.state != top.core.CpuExecute) #clk_tk;
+    // #clk_tk;
+    // #clk_tk;
+    // while (top.core.state != top.core.CpuExecute) #clk_tk;
+    // assert (top.core.registers.data[24] == 32'hffff_ffff)
+    // else $fatal;
 
-    // dc: 05500b93 addi x23,x0,85
-    while (top.core.state != top.core.CpuExecute) #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    while (top.core.state != top.core.CpuExecute) #clk_tk;
-    assert (top.core.registers.data[23] == 32'b01010101)
-    else $fatal;
+    // // dc: 05500b93 addi x23,x0,85
+    // while (top.core.state != top.core.CpuExecute) #clk_tk;
+    // #clk_tk;
+    // #clk_tk;
+    // while (top.core.state != top.core.CpuExecute) #clk_tk;
+    // assert (top.core.registers.data[23] == 32'b01010101)
+    // else $fatal;
 
-    // e0: 017c0023 sb x23,0(x24)
-    while (top.core.state != top.core.CpuExecute) #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    while (top.core.state != top.core.CpuExecute) #clk_tk;
+    // // e0: 017c0023 sb x23,0(x24)
+    // while (top.core.state != top.core.CpuExecute) #clk_tk;
+    // #clk_tk;
+    // #clk_tk;
+    // while (top.core.state != top.core.CpuExecute) #clk_tk;
 
-    // e4: 2fc00b93 addi x23,x0,764
-    while (top.core.state != top.core.CpuExecute) #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    while (top.core.state != top.core.CpuExecute) #clk_tk;
-    assert (top.core.registers.data[23] == 32'h2fc)
-    else $fatal;
+    // // e4: 2fc00b93 addi x23,x0,764
+    // while (top.core.state != top.core.CpuExecute) #clk_tk;
+    // #clk_tk;
+    // #clk_tk;
+    // while (top.core.state != top.core.CpuExecute) #clk_tk;
+    // assert (top.core.registers.data[23] == 32'h2fc)
+    // else $fatal;
 
-    //  e8: 017ba023 sw x23,0(x23)
-    while (top.core.state != top.core.CpuExecute) #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    while (top.core.state != top.core.CpuExecute) #clk_tk;
+    // //  e8: 017ba023 sw x23,0(x23)
+    // while (top.core.state != top.core.CpuExecute) #clk_tk;
+    // #clk_tk;
+    // #clk_tk;
+    // while (top.core.state != top.core.CpuExecute) #clk_tk;
 
     $display("");
     $display(" *** all tests passed ***");

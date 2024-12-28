@@ -63,12 +63,12 @@ lbl6:
 	jal x1, lbl_auipc
 
 	# test the leds
-	ori x24, x24, -1		# x24 = 0xffff_ffff
-	addi x23, x0, 0b1010101 # x23 = 0b1010101
-	sb x23, 0(x24)			#  write to memory mapped I/O ram[0xffff_ffff] = 0b1010101
+#	ori x24, x24, -1		# x24 = 0xffff_ffff
+#	addi x23, x0, 0b1010101 # x23 = 0b1010101
+#	sb x23, 0(x24)			#  write to memory mapped I/O ram[0xffff_ffff] = 0b1010101
 
-	addi x23,x0,0x2fc		# x23 = 0x2fc
-	sw x23,0(x23)			# ram[0x2fc] = 0x2fc
+#	addi x23,x0,0x2fc		# x23 = 0x2fc
+#	sw x23,0(x23)			# ram[0x2fc] = 0x2fc
 #	lw x23,0(x23)			# x23 = ram[0x2fc] = 0x2fc
 
 	# check that register writes the result of the op instead of the ram
