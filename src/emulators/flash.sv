@@ -7,8 +7,8 @@
 `timescale 1ns / 1ps
 //
 `default_nettype none
-// `define DBG
-// `define INFO
+//`define DBG
+//`define INFO
 
 module flash #(
     parameter string DataFilePath = "",
@@ -51,8 +51,9 @@ module flash #(
     $display("----------------------------------------");
     $display("  flash");
     $display("----------------------------------------");
-    $display("  data file: %s", DataFilePath);
-    $display("       size: %0d B", DEPTH);
+    $display("      data file: %s", DataFilePath);
+    $display("           size: %0d B", DEPTH);
+    $display(" address offset: %0h", AddressOffset);
     $display("----------------------------------------");
 `endif
     if (DataFilePath != "") begin
