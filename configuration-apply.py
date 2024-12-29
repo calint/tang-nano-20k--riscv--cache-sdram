@@ -68,4 +68,43 @@ with open('src/configuration.sv', 'w') as file:
     file.write('\n')
     file.write('endpackage\n')
 
-print("generated: src/configuration.sv, os/src/os_start.S, os/src/os_config.hpp. emulator/src/main_config.hpp")
+with open('src/configuration.sv', 'w') as file:
+    file.write('// generated - do not edit (see `configuration.py`)\n')
+    # file.write(
+    #     '//  note: "localparam" not "parameter" to avoid warnings in Gowin EDA\n')
+    file.write('\n')
+    file.write('package configuration;\n')
+    file.write('\n')
+    file.write('  parameter int unsigned CLOCK_FREQUENCY_HZ = {};\n'.format(
+        cfg.CLOCK_FREQUENCY_HZ))
+    file.write('  parameter int unsigned RAM_ADDRESS_BITWIDTH = {};\n'.format(
+        cfg.RAM_ADDRESS_BITWIDTH))
+    file.write('  parameter int unsigned RAM_ADDRESSING_MODE = {};\n'.format(
+        cfg.RAM_ADDRESSING_MODE))
+    file.write('  parameter int unsigned CACHE_COLUMN_INDEX_BITWIDTH = {};\n'.format(
+        cfg.CACHE_COLUMN_INDEX_BITWIDTH))
+    file.write('  parameter int unsigned CACHE_LINE_INDEX_BITWIDTH = {};\n'.format(
+        cfg.CACHE_LINE_INDEX_BITWIDTH))
+    file.write('  parameter int unsigned UART_BAUD_RATE = {};\n'.format(
+        cfg.UART_BAUD_RATE))
+    file.write('  parameter int unsigned FLASH_TRANSFER_FROM_ADDRESS = 32\'h{};\n'.format(
+        f'{cfg.FLASH_TRANSFER_FROM_ADDRESS:08x}'))
+    file.write('  parameter int unsigned FLASH_TRANSFER_BYTE_COUNT = 32\'h{};\n'.format(
+        f'{cfg.FLASH_TRANSFER_BYTE_COUNT:08x}'))
+    file.write('  parameter int unsigned STARTUP_WAIT_CYCLES = {};\n'.format(
+        cfg.STARTUP_WAIT_CYCLES))
+
+    file.write('\n')
+    file.write('endpackage\n')
+
+with open('tang_nano_20k.sdc', 'w') as file:
+    file.write('// generated - do not edit (see `configuration.py`)\n')
+    file.write('\n')
+    ClockMHz = cfg.CLOCK_FREQUENCY_HZ/1000000
+    ClockPeriod = 1/ClockMHz*1000
+    ClockWaveform = ClockPeriod/2
+    file.write('// {} MHz\n'.format(ClockMHz))
+    file.write('create_clock -name clk -period {:.4f} -waveform {{0 {:.4f}}} [get_ports {{clk}}]\n'.format(
+        ClockPeriod, ClockWaveform))
+
+print("generated:\n * /tang_nano_20k.sdc\n * /src/configuration.sv\n * /os/src/os_start.S\n * /os/src/os_config.hpp\n * /emulator/src/main_config.hpp")

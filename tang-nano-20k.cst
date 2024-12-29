@@ -4,9 +4,9 @@
 //IO_LOC  "clk" 4; // PIN04_SYS_CLK: 27 MHz (generates warning PR1014)
 
 // see https://wiki.sipeed.com/hardware/en/tang/tang-nano-20k/example/unbox.html#pll_clk
-IO_LOC  "clk" 10; // PIN10_5351CKP: pll_clock: 27 MHz (does not generate warning PR1014)
+//IO_LOC  "clk" 10; // PIN10_5351CKP: pll_clock: 27 MHz (does not generate warning PR1014)
 //IO_LOC  "clk" 11; // PIN10_5351CKN: pll_clock: 27 MHz (generates warning PR1014)
-//IO_LOC  "clk" 13; // PIN13_HSPI_SCLK: pll_clock: 27 MHz (generates warning PR1014)
+IO_LOC  "clk" 13; // PIN13_HSPI_SCLK: pll_clock: 27 MHz (generates warning PR1014)
 
 //
 // buttons

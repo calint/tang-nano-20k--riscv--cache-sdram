@@ -61,7 +61,7 @@ module flash #(
     end
   end
 
-  always_ff @(posedge clk or negedge rst_n) begin
+  always_ff @(posedge clk) begin
     if (!rst_n) begin
       counter <= 8;  // -1 because decrementing into negative
       address <= 0;

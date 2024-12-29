@@ -270,7 +270,7 @@ module cache #(
 
   logic [4:0] counter;  // used in read / write FSM
 
-  always_ff @(posedge clk or negedge rst_n) begin
+  always_ff @(posedge clk) begin
     if (!rst_n) begin
       burst_tag_write_enable <= 0;
       for (int i = 0; i < COLUMN_COUNT; i++) begin
