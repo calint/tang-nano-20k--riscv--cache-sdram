@@ -294,7 +294,7 @@ module ramio #(
   //  disable to acknowledge that received data has been read from 'uartrx'
 
   logic       prev_cycle_uarttx_go;
-  // enabled when previous cycle asserted 'go'
+  // true when previous cycle enabled 'uarttx_go'
   //  need to wait one cycle for 'uarttx' to signal 'busy'
 
   always_ff @(posedge clk) begin
