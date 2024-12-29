@@ -294,7 +294,7 @@ module ramio #(
   //  disable to acknowledge that received data has been read from 'uartrx'
 
   logic       prev_cycle_uarttx_go;
-  // true when previous cycle asserted 'go'
+  // enabled when previous cycle asserted 'go'
   //  need to wait one cycle for 'uarttx' to signal 'busy'
 
   always_ff @(posedge clk) begin
@@ -306,9 +306,7 @@ module ramio #(
       uartrx_go <= 1;
       prev_cycle_uarttx_go <= 0;
     end else begin
-      // reset flag that previous cycle was a 'uarttx_go'
       prev_cycle_uarttx_go <= 0;
-
 
       // if read from UART then reset the read data
       if (address == AddressUartIn && read_type[1:0] == 2'b01) begin
