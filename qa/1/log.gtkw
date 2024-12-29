@@ -1,27 +1,25 @@
 [*]
 [*] GTKWave Analyzer v3.3.120 (w)1999-2024 BSI
-[*] Fri Dec 27 17:21:46 2024
+[*] Sun Dec 29 07:53:55 2024
 [*]
 [dumpfile] "/home/c/w/tang-nano-20k--riscv--cache-sdram/qa/1/log.vcd"
-[dumpfile_mtime] "Fri Dec 27 17:19:03 2024"
-[dumpfile_size] 103646722
+[dumpfile_mtime] "Sun Dec 29 07:50:01 2024"
+[dumpfile_size] 59158423
 [savefile] "/home/c/w/tang-nano-20k--riscv--cache-sdram/qa/1/log.gtkw"
-[timestart] 4128176400
+[timestart] 328032400
 [size] 2230 1344
 [pos] -1 -1
-*-16.081718 4128588000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-16.081718 328190000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] testbench.
 [treeopen] testbench.top.
-[treeopen] testbench.top.ramio.
 [sst_width] 273
 [signals_width] 390
 [sst_expanded] 1
 [sst_vpaned_height] 415
 @200
 -testbench
-@29
-testbench.top.I_sdrc_clk
 @28
+testbench.top.I_sdrc_clk
 testbench.top.I_sdrc_cmd_en
 testbench.top.O_sdrc_cmd_ack
 testbench.top.I_sdrc_cmd[2:0]
@@ -47,5 +45,37 @@ testbench.top.ramio.cache.state
 testbench.top.ramio.cache.busy
 @22
 testbench.top.ramio.cache.counter[4:0]
+@200
+-
+-flash
+@28
+testbench.flash.clk
+testbench.flash.cs_n
+testbench.flash.miso
+testbench.flash.mosi
+@c00022
+testbench.flash.address[11:0]
+@28
+(0)testbench.flash.address[11:0]
+(1)testbench.flash.address[11:0]
+(2)testbench.flash.address[11:0]
+(3)testbench.flash.address[11:0]
+(4)testbench.flash.address[11:0]
+(5)testbench.flash.address[11:0]
+(6)testbench.flash.address[11:0]
+(7)testbench.flash.address[11:0]
+(8)testbench.flash.address[11:0]
+(9)testbench.flash.address[11:0]
+(10)testbench.flash.address[11:0]
+(11)testbench.flash.address[11:0]
+@1401200
+-group_end
+@25
+testbench.flash.counter[8:0]
+@22
+testbench.flash.current_byte[7:0]
+@420
+testbench.flash.next_state
+testbench.flash.state
 [pattern_trace] 1
 [pattern_trace] 0

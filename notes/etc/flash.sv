@@ -44,7 +44,7 @@ module flash #(
     SendData
   } state_e;
 
-  state_e state;
+  state_e state, next_state;
 
   initial begin
 `ifdef INFO
@@ -61,64 +61,69 @@ module flash #(
     end
   end
 
-  always_ff @(negedge clk or negedge rst_n) begin
-    // note: on negedge so that data is available during the whole cycle
+  always_ff @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
-      counter <= 8 - 2;  // -2 because decrementing into negative
+      counter <= 8;  // -1 because decrementing into negative
       address <= 0;
       current_byte <= 0;
       miso <= 0;
       state <= ReceiveCommand;
     end else begin
-`ifdef DBG
-      $display("state: %0d  counter: %0d  address: %h", state, counter, address);
-`endif
-      unique case (state)
-
-        ReceiveCommand: begin
-          if (!cs_n) begin
-            // note: assumes 'read', the only command implemented
-            counter <= counter - 1'b1;
-            if (counter[8]) begin
-              counter <= 24 - 2;
-              // 24 is size of address and -2 because decrementing into negative
-              state   <= ReceiveAddress;
-            end
-          end
-        end
-
-        ReceiveAddress: begin
-          if (!cs_n) begin
-            address <= {address[22:0], mosi};
-            counter <= counter - 1'b1;
-            current_byte <= data[address];
-            if (counter[8]) begin
-              counter <= 7 - 2;
-              // 7 because first bit is sent in this cycle
-              // -2 because decrementing into negative
-              miso <= current_byte[7];
-              current_byte <= {current_byte[6:0], 1'b0};
-              address <= address + AddressOffset + 1'b1;
-              state <= SendData;
-            end
-          end
-        end
-
-        SendData: begin
-          if (!cs_n) begin
-            miso <= current_byte[7];
-            current_byte <= {current_byte[6:0], 1'b0};
-            counter <= counter - 1'b1;
-            if (counter[8]) begin
-              counter <= 8 - 2;  // -2 because decrementing into negative
-              current_byte <= data[address];
-              address <= address + 1'b1;
-            end
-          end
-        end
-
-      endcase
+      state <= next_state;
     end
+  end
+
+  always_comb begin
+`ifdef DBG
+    $display("state: %0d  counter: %0d  address: %h", state, counter, address);
+`endif
+
+    next_state = state;
+
+    unique case (state)
+
+      ReceiveCommand: begin
+        if (!cs_n && !clk) begin
+          // note: assumes 'read', the only command implemented
+          counter = counter - 1'b1;
+          if (counter[8]) begin
+            counter = 24 - 1;
+            // 24 is size of address and -1 because decrementing into negative
+            next_state = ReceiveAddress;
+          end
+        end
+      end
+
+      ReceiveAddress: begin
+        if (!cs_n && !clk) begin
+          address = {address[22:0], mosi};
+          counter = counter - 1'b1;
+          if (counter[8]) begin
+            current_byte = data[address];
+            miso = current_byte[7];
+            current_byte = {current_byte[6:0], 1'b0};
+            counter = 7 - 1;
+            // 7 because first bit is sent in this cycle
+            // -1 because decrementing into negative
+            next_state = SendData;
+          end
+        end
+      end
+
+      SendData: begin
+        if (!cs_n && !clk) begin
+          miso = current_byte[7];
+          current_byte = {current_byte[6:0], 1'b0};
+          counter = counter - 1'b1;
+          if (counter[8]) begin
+            address = address + 1'b1;
+            current_byte = data[address];
+            counter = 8 - 1;  // -1 because decrementing into negative
+          end
+        end
+      end
+
+    endcase
   end
 endmodule
 
