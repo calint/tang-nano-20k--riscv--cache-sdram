@@ -9,6 +9,7 @@ RAM_ADDRESS_BITWIDTH = 21
 
 RAM_ADDRESSING_MODE = 2
 # amount of data stored per address
+#    mode:
 #       0: 1 B (byte addressed)
 #       1: 2 B
 #       2: 4 B
