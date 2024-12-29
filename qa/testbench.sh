@@ -1,5 +1,7 @@
 #!/bin/sh
 #
+# runs the testbench in folder specified by first parameter
+#
 # tools used:
 #   iverilog: Icarus Verilog version 12.0 (stable)
 #        vvp: Icarus Verilog runtime version 12.0 (stable)
@@ -13,8 +15,8 @@ SRCPTH=../../src
 cd $1
 pwd
 
-iverilog -g2005-sv -Winfloop -pfileline=1 -o iverilog.vvp -s testbench testbench.sv \
-    $PRIMLIBPTH/prim_sim.v \
+iverilog -g2012 -Winfloop -pfileline=1 -o iverilog.vvp -s testbench \
+    ~/apps/gowin/IDE/simlib/gw2a/prim_sim.v \
     $SRCPTH/configuration.sv \
     $SRCPTH/emulators/flash.sv \
     $SRCPTH/emulators/MT48LC2M32B2.v \
@@ -25,9 +27,10 @@ iverilog -g2005-sv -Winfloop -pfileline=1 -o iverilog.vvp -s testbench testbench
     $SRCPTH/ramio.sv \
     $SRCPTH/uarttx.sv \
     $SRCPTH/uartrx.sv \
-    $SRCPTH/core.sv \
     $SRCPTH/registers.sv \
-    $SRCPTH/top.sv
+    $SRCPTH/core.sv \
+    $SRCPTH/top.sv \
+    testbench.sv
 
 vvp iverilog.vvp
 rm iverilog.vvp

@@ -14,7 +14,12 @@ module flash #(
     parameter string DataFilePath = "",
     // initial RAM content; one byte per line in hex text
 
-    parameter int unsigned AddressBitWidth = 8
+    parameter int unsigned AddressBitWidth = 8,
+    // size of stored data in bit width; 2 ^ 8 = 256 B
+
+    parameter int unsigned AddressOffset = 0
+    // adjust requested address to the address space of data
+    // example: -10 translates requested address 10 to 0
 ) (
     input wire rst_n,
     input wire clk,
@@ -92,7 +97,7 @@ module flash #(
               // -2 because decrementing into negative
               miso <= current_byte[7];
               current_byte <= {current_byte[6:0], 1'b0};
-              address <= address + 1'b1;
+              address <= address + AddressOffset + 1'b1;
               state <= SendData;
             end
           end

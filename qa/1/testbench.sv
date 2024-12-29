@@ -22,7 +22,9 @@ module testbench;
 
   flash #(
       .DataFilePath("ram.mem"),
-      .AddressBitWidth(12)  // in bytes 2^12 = 4096 B
+      .AddressBitWidth(12),  // 2 ^ 12 = 4096 B
+      .AddressOffset(-configuration::FLASH_TRANSFER_FROM_ADDRESS)
+      // adjust address so that 'ram.mem' can start at address 0
   ) flash (
       .rst_n(!rst),
       .clk  (flash_clk),
