@@ -34,18 +34,6 @@ module top (
     output wire [ 3:0] O_sdram_dqm     // 32/4
 );
 
-  // ----------------------------------------------------------
-  // -- Gowin_rPLL
-  // ----------------------------------------------------------
-  logic rpll_lock;
-  logic rpll_clkout;
-
-  Gowin_rPLL rpll (
-      .clkin(clk),  // 27 MHz
-      .clkout(rpll_clkout),  //  66 MHz
-      .lock(rpll_lock)
-  );
-
   localparam int unsigned CLOCK_FREQUENCY_HZ = 27_000_000;
 
   // ----------------------------------------------------------
@@ -54,7 +42,7 @@ module top (
 
   // wires between 'sdram_controller' interface and 'cache'
   wire I_sdrc_rst_n = !rst;
-  wire I_sdrc_clk = clk;  // 27 MHz
+  wire I_sdrc_clk = clk;
   wire I_sdram_clk = clk;
   wire I_sdrc_cmd_en;
   wire [2:0] I_sdrc_cmd;
@@ -120,7 +108,7 @@ module top (
       .ClockFrequencyHz(CLOCK_FREQUENCY_HZ),
       .BaudRate(configuration::UART_BAUD_RATE)
   ) ramio (
-      .rst_n(!rst && rpll_lock && O_sdrc_init_done),
+      .rst_n(!rst && O_sdrc_init_done),
       .clk  (I_sdrc_clk),
 
       // interface
@@ -166,7 +154,7 @@ module top (
       .FlashTransferFromAddress(configuration::FLASH_TRANSFER_FROM_ADDRESS),
       .FlashTransferByteCount(configuration::FLASH_TRANSFER_BYTE_COUNT)
   ) core (
-      .rst_n(!rst && rpll_lock && O_sdrc_init_done),
+      .rst_n(!rst && O_sdrc_init_done),
       .clk  (I_sdrc_clk),
       .led  (led[0]),
 

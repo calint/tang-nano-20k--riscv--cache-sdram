@@ -9,7 +9,6 @@
         <File path="src/cache.sv" type="file.verilog" enable="1"/>
         <File path="src/configuration.sv" type="file.verilog" enable="1"/>
         <File path="src/core.sv" type="file.verilog" enable="1"/>
-        <File path="src/gowin_rpll/gowin_rpll.v" type="file.verilog" enable="1"/>
         <File path="src/ramio.sv" type="file.verilog" enable="1"/>
         <File path="src/registers.sv" type="file.verilog" enable="1"/>
         <File path="src/sdram_controller_hs/sdram_controller_hs.v" type="file.verilog" enable="1"/>

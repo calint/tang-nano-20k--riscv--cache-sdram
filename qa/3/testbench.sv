@@ -16,18 +16,6 @@ module testbench;
   localparam int unsigned clk_tk = 10;
   always #(clk_tk / 2) clk = ~clk;
 
-  // ----------------------------------------------------------
-  // -- Gowin_rPLL
-  // ----------------------------------------------------------
-  wire rpll_lock;
-  wire rpll_clkout;
-
-  Gowin_rPLL rpll (
-      .clkin(clk),  // 27 MHz
-      .lock(rpll_lock),
-      .clkout(rpll_clkout)  // 66 MHz phased 180 deg
-  );
-
   // SDRAM wires
   wire O_sdram_clk;
   wire O_sdram_cke;
@@ -135,7 +123,7 @@ module testbench;
     I_sdram_selfrefresh <= 0;
 
     // wait for SDRAM to initiate
-    while (!O_sdrc_init_done || !rpll_lock) #clk_tk;
+    while (!O_sdrc_init_done) #clk_tk;
 
     // I_sdram_selfrefresh <= 1;
     I_sdrc_cmd_en <= 1;
