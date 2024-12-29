@@ -1,7 +1,10 @@
 //
 // clock
 //
-IO_LOC  "clk" 4;
+IO_LOC  "clk" 4; // 27 MHz
+//IO_LOC  "clk" 10; // pll_clock: 27 MHz (does not generate warning PR1014)
+//IO_LOC  "clk" 11; // pll_clock: 27 MHz
+//IO_LOC  "clk" 13; // pll_clock: 27 MHz
 
 //
 // buttons
