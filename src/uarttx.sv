@@ -49,7 +49,7 @@ module uarttx #(
 
   logic [(BIT_TIME == 1 ? 1 : $clog2(BIT_TIME))-1:0] bit_time_counter;
 
-  always_ff @(negedge clk) begin
+  always_ff @(posedge clk) begin
     if (!rst_n) begin
       state <= Idle;
       bit_count <= 0;

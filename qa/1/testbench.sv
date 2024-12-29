@@ -110,6 +110,7 @@ module testbench;
 
     rst <= 1;
     #clk_tk;
+    #clk_tk;
     rst <= 0;
     #clk_tk;
 
