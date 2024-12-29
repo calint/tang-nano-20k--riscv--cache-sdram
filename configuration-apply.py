@@ -46,6 +46,8 @@ with open('src/configuration.sv', 'w') as file:
     file.write('\n')
     file.write('package configuration;\n')
     file.write('\n')
+    file.write('  parameter int unsigned CLOCK_FREQUENCY_HZ = {};\n'.format(
+        cfg.CLOCK_FREQUENCY_HZ))
     file.write('  parameter int unsigned RAM_ADDRESS_BITWIDTH = {};\n'.format(
         cfg.RAM_ADDRESS_BITWIDTH))
     file.write('  parameter int unsigned RAM_ADDRESSING_MODE = {};\n'.format(

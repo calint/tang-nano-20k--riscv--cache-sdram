@@ -2,6 +2,8 @@
 # if file changed run `configuration-apply.py` and rebuild
 #
 
+CLOCK_FREQUENCY_HZ = 27_000_000
+
 RAM_ADDRESS_BITWIDTH = 21
 # 2 ^ 21 x 32 b = 8 MB SDRAM (according to hardware)
 
