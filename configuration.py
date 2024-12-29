@@ -22,6 +22,8 @@ CACHE_COLUMN_INDEX_BITWIDTH = 3
 
 CACHE_LINE_INDEX_BITWIDTH = 11
 # 2 ^ 11 * 32 B = 64 KB unified instruction and data cache
+# from 1 to 6  : cache implemented with SSRAM
+# from 7 to 11 : cache implemented with BSRAM
 
 FLASH_TRANSFER_FROM_ADDRESS = 0
 # flash read start address
