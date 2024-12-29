@@ -295,7 +295,7 @@ module ramio #(
 
   logic       prev_cycle_uarttx_go;
   // true when previous cycle enabled 'uarttx_go'
-  //  need to wait one cycle for 'uarttx' to signal 'busy'
+  //  need to wait one cycle for 'uarttx' to assert 'uarttx_bsy'
 
   always_ff @(posedge clk) begin
     if (!rst_n) begin
