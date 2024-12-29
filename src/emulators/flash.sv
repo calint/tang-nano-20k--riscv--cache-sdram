@@ -60,7 +60,7 @@ module flash #(
     if (!rst_n) begin
       counter <= 8 - 2;  // -2 because decrementing into negative
       address <= 0;
-      current_byte <= data[0];
+      current_byte <= 0;
       miso <= 0;
       state <= ReceiveCommand;
     end else begin
@@ -71,10 +71,11 @@ module flash #(
 
         ReceiveCommand: begin
           if (!cs_n) begin
-            // note: assume 'read', the only command implemented
+            // note: assumes 'read', the only command implemented
             counter <= counter - 1'b1;
             if (counter[8]) begin
-              counter <= 24 - 2;  // -2 because decrementing into negative
+              counter <= 24 - 2;
+              // 24 is size of address and -2 because decrementing into negative
               state   <= ReceiveAddress;
             end
           end
@@ -82,12 +83,13 @@ module flash #(
 
         ReceiveAddress: begin
           if (!cs_n) begin
+            address <= {address[22:0], mosi};
             counter <= counter - 1'b1;
+            current_byte <= data[address];
             if (counter[8]) begin
               counter <= 7 - 2;
               // 7 because first bit sent in this cycle
               // -2 because decrementing into negative
-
               miso <= current_byte[7];
               current_byte <= {current_byte[6:0], 1'b0};
               address <= address + 1'b1;
