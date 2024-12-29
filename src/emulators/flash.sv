@@ -61,7 +61,7 @@ module flash #(
     end
   end
 
-  always_ff @(negedge clk) begin
+  always_ff @(negedge clk or negedge rst_n) begin
     // note: on negedge so that data is available during the whole cycle
     if (!rst_n) begin
       counter <= 8 - 2;  // -2 because decrementing into negative
