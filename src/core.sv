@@ -177,7 +177,7 @@ module core #(
           if (!flash_counter[0]) begin
             flash_clk <= 0;
             if (flash_counter[3:0] == 0 && flash_counter > 0) begin
-              // every 16'th clock cycle (8 bit * 2) read the current byte to data out
+              // every 16'th clock cycle (8 to flash) read the current byte to data out
               flash_data_out[flash_current_byte_num] <= flash_current_byte_out;
               flash_current_byte_num <= flash_current_byte_num + 1'b1;
               if (flash_current_byte_num == 3) begin
