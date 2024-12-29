@@ -368,7 +368,7 @@ module cache #(
             counter <= 1;
             state   <= Write5;
           end
-          write_column <= write_column + 1;
+          write_column <= write_column + 1'b1;
         end
 
         Write5: begin
@@ -380,7 +380,7 @@ module cache #(
             I_sdrc_addr <= burst_line_address;
             state <= Read1;
           end
-          counter <= counter + 1;
+          counter <= counter + 1'b1;
         end
 
         Read1: begin
@@ -399,7 +399,7 @@ module cache #(
 
         Read3: begin
           I_sdrc_cmd_en <= 0;
-          counter <= counter + 1;
+          counter <= counter + 1'b1;
           if (counter == WaitsPriorToDataAtRead) begin
             burst_write_enable[0] <= 4'b1111;
             burst_data_in[0] <= O_sdrc_data;
@@ -412,7 +412,7 @@ module cache #(
           burst_write_enable[counter-1] <= 0;
           burst_write_enable[counter] <= 4'b1111;
           burst_data_in[counter] <= O_sdrc_data;
-          counter <= counter + 1;
+          counter <= counter + 1'b1;
           if (counter == COLUMN_COUNT - 1) begin
             state <= Read5;
           end
