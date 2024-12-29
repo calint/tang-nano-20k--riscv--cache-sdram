@@ -6,11 +6,14 @@ import os
 script_dir = os.path.dirname(os.path.realpath(__file__))
 os.chdir(script_dir)
 
+memory_end_address = 2**(cfg.RAM_ADDRESS_BITWIDTH+cfg.RAM_ADDRESSING_MODE)
+
 with open('os/src/os_start.S', 'w') as file:
     file.write('# generated - do not edit (see `configuration.py`)\n')
     file.write('.global _start\n')
     file.write('_start:\n')
-    file.write('    li sp, {}\n'.format(hex(2**cfg.RAM_ADDRESS_BITWIDTH)))
+    file.write('    li sp, {}\n'.format(
+        hex(memory_end_address)))
     file.write('    j run\n')
 
 with open('os/src/os_config.hpp', 'w') as file:
@@ -19,8 +22,8 @@ with open('os/src/os_config.hpp', 'w') as file:
     file.write('#define LED ((char volatile *)0xffff\'ffff)\n')
     file.write('#define UART_OUT ((char volatile *)0xffff\'fffe)\n')
     file.write('#define UART_IN ((char volatile *)0xffff\'fffd)\n')
-    file.write('#define MEMORY_END {}\n'.format(
-        hex(2**cfg.RAM_ADDRESS_BITWIDTH)))
+    file.write('#define MEMORY_END {}\n'.format(hex(
+        memory_end_address)))
 
 with open('emulator/src/main_config.hpp', 'w') as file:
     file.write('// generated - do not edit (see `configuration.py`)\n')
@@ -31,8 +34,8 @@ with open('emulator/src/main_config.hpp', 'w') as file:
     file.write('std::uint32_t constexpr led = 0xffff\'ffff;\n')
     file.write('std::uint32_t constexpr uart_out = 0xffff\'fffe;\n')
     file.write('std::uint32_t constexpr uart_in = 0xffff\'fffd;\n')
-    file.write('std::uint32_t constexpr memory_end = {};\n'.format(
-        hex(2**cfg.RAM_ADDRESS_BITWIDTH)))
+    file.write('std::uint32_t constexpr memory_end = {};\n'.format(hex(
+        memory_end_address)))
     file.write('\n} // namespace osqa\n')
 
 
