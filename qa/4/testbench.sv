@@ -8,6 +8,7 @@
 module testbench;
 
   localparam int unsigned RAM_ADDRESS_BIT_WIDTH = 12;  // 2 ^ 12 * 4 B
+  localparam int unsigned FLASH_TRANSFER_BYTE_COUNT = 32'h0000_0100;
 
   logic rst_n;
   logic clk = 1;
@@ -161,6 +162,27 @@ module testbench;
       .cs_n(flash_cs_n)
   );
 
+  // Internal variables
+  logic [2:0] state;
+  logic [2:0] return_state;
+  logic [23:0] flash_data_to_send;
+  logic [4:0] flash_num_bits_to_send;
+  logic [31:0] flash_counter;
+  logic [7:0] flash_current_byte_out;
+  logic [7:0] flash_current_byte_num;
+  logic [7:0] flash_data_out[4];
+  logic [31:0] address_next;
+
+  localparam BootInit = 0;
+  localparam BootLoadCommandToSend = 1;
+  localparam BootSend = 2;
+  localparam BootLoadAddressToSend = 3;
+  localparam BootReadData = 4;
+  localparam BootStartWrite = 5;
+  localparam BootWrite = 6;
+  localparam Done = 7;
+
+
   initial begin
     $dumpfile("log.vcd");
     $dumpvars(0, testbench);
@@ -173,6 +195,115 @@ module testbench;
 
     // wait for burst RAM to initiate
     while (!O_sdrc_init_done) #clk_tk;
+
+    enable = 0;
+    read_type = 0;
+    write_type = 0;
+    address = 0;
+    address_next = 0;
+    data_in = 0;
+
+    flash_counter = 0;
+    flash_clk = 0;
+    flash_mosi = 0;
+    flash_cs_n = 1;
+
+    state = BootInit;
+
+    while (state != Done) begin
+      #clk_tk;
+
+      case (state)
+        BootInit: begin
+          flash_counter = flash_counter + 1;
+          if (flash_counter >= 10) begin
+            flash_counter = 0;
+            state = BootLoadCommandToSend;
+          end
+        end
+
+        BootLoadCommandToSend: begin
+          flash_cs_n = 0;  // enable flash
+          flash_data_to_send[23-:8] = 3;  // command 3: read
+          flash_num_bits_to_send = 8;
+          state = BootSend;
+          return_state = BootLoadAddressToSend;
+        end
+
+        BootLoadAddressToSend: begin
+          flash_data_to_send = 0;
+          flash_num_bits_to_send = 24;
+          flash_current_byte_num = 0;
+          state = BootSend;
+          return_state = BootReadData;
+        end
+
+        BootSend: begin
+          if (flash_counter == 0) begin
+            flash_counter = 1;
+            flash_clk = 0;
+            flash_mosi = flash_data_to_send[23];
+            flash_data_to_send = {flash_data_to_send[22:0], 1'b0};
+            flash_num_bits_to_send = flash_num_bits_to_send - 1'b1;
+          end else begin
+            flash_counter = 0;
+            flash_clk = 1;
+            if (flash_num_bits_to_send == 0) begin
+              state = return_state;
+            end
+          end
+        end
+
+        BootReadData: begin
+          if (!flash_counter[0]) begin
+            flash_clk = 0;
+            if (flash_counter[3:0] == 0 && flash_counter > 0) begin
+              // every 16'th clock cycle (8 to flash) read the current byte to data out
+              flash_data_out[flash_current_byte_num] = flash_current_byte_out;
+              if (flash_current_byte_num == 3) begin
+                // every 4'th byte write to 'ramio'
+                state = BootStartWrite;
+              end
+              flash_current_byte_num = flash_current_byte_num + 1'b1;
+            end
+          end else begin
+            flash_clk = 1;
+            flash_current_byte_out = {flash_current_byte_out[6:0], flash_miso};
+          end
+          flash_counter = flash_counter + 1;
+        end
+
+        BootStartWrite: begin
+          if (!busy) begin
+            enable = 1;
+            read_type = 0;
+            write_type = 2'b11;
+            address = address_next;
+            address_next = address_next + 4;
+            data_in = {flash_data_out[3], flash_data_out[2], flash_data_out[1], flash_data_out[0]};
+            state = BootWrite;
+          end
+        end
+
+        BootWrite: begin
+          if (!busy) begin
+            enable = 0;
+            flash_current_byte_num = 0;
+            if (address_next < FLASH_TRANSFER_BYTE_COUNT) begin
+              state = BootReadData;
+            end else begin
+              flash_cs_n = 1;  // disable flash
+              state = Done;  // Reset state machine
+            end
+          end
+        end
+
+        Done: begin
+        end
+      endcase
+    end
+
+    while (state != Done) #clk_tk;
 
     data_in <= 0;
 
@@ -344,10 +475,10 @@ module testbench;
     else $fatal;
 
     #clk_tk;
-    assert (ramio.uarttx_data_sending == 0)
+    assert (ramio.uarttx_data_sending == -1)
     else $fatal;
 
-    assert (data_out == 0)
+    assert (data_out == -1)
     else $fatal;
 
     // start bit
@@ -381,7 +512,7 @@ module testbench;
     uart_rx <= 1;
     #clk_tk;
 
-    assert (data_out == 0)
+    assert (data_out == -1)
     else $fatal;
 
     #clk_tk;  // 'ramio' transfers data from 'uartrx'
@@ -408,7 +539,7 @@ module testbench;
     write_type <= 0;
     #clk_tk;
 
-    assert (data_out == 0)
+    assert (data_out == -1)
     else $fatal;
 
     // write unsigned byte; cache miss, eviction
@@ -478,11 +609,10 @@ module testbench;
     #clk_tk;
     #clk_tk;
     #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
-    #clk_tk;
+
+    $display("");
+    $display("PASSED");
+    $display("");
     $finish;
 
   end
