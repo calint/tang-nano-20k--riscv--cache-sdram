@@ -48,6 +48,8 @@ with open('src/configuration.sv', 'w') as file:
     file.write('\n')
     file.write('  parameter int unsigned CLOCK_FREQUENCY_HZ = {};\n'.format(
         cfg.CLOCK_FREQUENCY_HZ))
+    file.write('  parameter int unsigned CPU_FREQUENCY_HZ = {};\n'.format(
+        cfg.CPU_FREQUENCY_HZ))
     file.write('  parameter int unsigned RAM_ADDRESS_BITWIDTH = {};\n'.format(
         cfg.RAM_ADDRESS_BITWIDTH))
     file.write('  parameter int unsigned RAM_ADDRESSING_MODE = {};\n'.format(
@@ -77,6 +79,8 @@ with open('src/configuration.sv', 'w') as file:
     file.write('\n')
     file.write('  parameter int unsigned CLOCK_FREQUENCY_HZ = {};\n'.format(
         cfg.CLOCK_FREQUENCY_HZ))
+    file.write('  parameter int unsigned CPU_FREQUENCY_HZ = {};\n'.format(
+        cfg.CPU_FREQUENCY_HZ))
     file.write('  parameter int unsigned RAM_ADDRESS_BITWIDTH = {};\n'.format(
         cfg.RAM_ADDRESS_BITWIDTH))
     file.write('  parameter int unsigned RAM_ADDRESSING_MODE = {};\n'.format(
@@ -97,7 +101,7 @@ with open('src/configuration.sv', 'w') as file:
     file.write('\n')
     file.write('endpackage\n')
 
-with open('tang_nano_20k.sdc', 'w') as file:
+with open(cfg.BOARD_NAME+'.sdc', 'w') as file:
     file.write('// generated - do not edit (see `configuration.py`)\n')
     file.write('\n')
     ClockMHz = cfg.CLOCK_FREQUENCY_HZ/1000000
@@ -107,4 +111,5 @@ with open('tang_nano_20k.sdc', 'w') as file:
     file.write('create_clock -name clk -period {:.4f} -waveform {{0 {:.4f}}} [get_ports {{clk}}]\n'.format(
         ClockPeriod, ClockWaveform))
 
-print("generated:\n * /tang_nano_20k.sdc\n * /src/configuration.sv\n * /os/src/os_start.S\n * /os/src/os_config.hpp\n * /emulator/src/main_config.hpp")
+print("generated:\n * /"+cfg.BOARD_NAME +
+      ".sdc\n * /src/configuration.sv\n * /os/src/os_start.S\n * /os/src/os_config.hpp\n * /emulator/src/main_config.hpp")

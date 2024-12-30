@@ -105,7 +105,7 @@ module top (
       .RamAddressingMode(configuration::RAM_ADDRESSING_MODE),
       .CacheLineIndexBitWidth(configuration::CACHE_LINE_INDEX_BITWIDTH),
       .CacheColumnIndexBitWidth(configuration::CACHE_COLUMN_INDEX_BITWIDTH),
-      .ClockFrequencyHz(configuration::CLOCK_FREQUENCY_HZ),
+      .ClockFrequencyHz(configuration::CPU_FREQUENCY_HZ),
       .BaudRate(configuration::UART_BAUD_RATE)
   ) ramio (
       .rst_n(!rst && O_sdrc_init_done),
