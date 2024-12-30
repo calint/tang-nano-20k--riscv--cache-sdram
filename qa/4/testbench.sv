@@ -199,6 +199,9 @@ module testbench;
     // wait for burst RAM to initiate
     while (!O_sdrc_init_done) #clk_tk;
 
+    //-------------------------------------------
+    // transfer data from flash to ram
+    //-------------------------------------------
     enable <= 0;
     read_type <= 0;
     write_type <= 0;
