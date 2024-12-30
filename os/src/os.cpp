@@ -38,27 +38,27 @@ static constexpr char CHAR_CARRIAGE_RETURN = 0x0d;
 
 // FPGA I/O
 
-static auto led_set(uint8_t bits) -> void { *LED = bits; }
+static auto led_set(int32_t const bits) -> void { *LED = bits; }
 
 static auto uart_send_str(char const *str) -> void {
   while (*str) {
-    while (*UART_OUT)
+    while (*UART_OUT != -1)
       ;
     *UART_OUT = *str++;
   }
 }
 
 static auto uart_send_char(char const ch) -> void {
-  while (*UART_OUT)
+  while (*UART_OUT != -1)
     ;
   *UART_OUT = ch;
 }
 
 static auto uart_read_char() -> char {
-  char ch;
-  while ((ch = *UART_IN) == 0)
+  int ch;
+  while ((ch = *UART_IN) == -1)
     ;
-  return ch;
+  return char(ch);
 }
 
 // simple test of FPGA memory

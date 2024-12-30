@@ -1,0 +1,69 @@
+
+firmware:     file format elf32-littleriscv
+
+
+Disassembly of section .text:
+
+00000000 <_start>:
+# # generated - do not edit (see `configuration.py`)
+# .global _start
+# _start:
+#     li sp, 0x200000
+   0:	00200137          	lui	sp,0x200
+#     jal ra, run
+   4:	004000ef          	jal	8 <run>
+
+00000008 <run>:
+# #define MEMORY_TOP 0x200000
+# 
+# void uart_send_char(char ch);
+# char uart_read_char();
+# 
+# extern "C" void run() {
+   8:	ff010113          	addi	sp,sp,-16 # 1ffff0 <__bss_end+0x1fff9c>
+   c:	00112623          	sw	ra,12(sp)
+  10:	00812423          	sw	s0,8(sp)
+#   *LED = 0; // all leds on
+  14:	fe002e23          	sw	zero,-4(zero) # fffffffc <__bss_end+0xffffffa8>
+# 
+#   while (1) {
+#     const char ch = uart_read_char();
+  18:	028000ef          	jal	40 <_Z14uart_read_charv>
+  1c:	00050413          	mv	s0,a0
+#     uart_send_char(ch);
+  20:	00c000ef          	jal	2c <_Z14uart_send_charc>
+#     *LED = ch;
+  24:	fe802e23          	sw	s0,-4(zero) # fffffffc <__bss_end+0xffffffa8>
+#   while (1) {
+  28:	ff1ff06f          	j	18 <run+0x10>
+
+0000002c <_Z14uart_send_charc>:
+#   }
+# }
+# 
+# void uart_send_char(const char ch) {
+#   // wait for UART to be idle
+#   while (*UART_OUT != -1)
+  2c:	fff00793          	li	a5,-1
+  30:	ff802703          	lw	a4,-8(zero) # fffffff8 <__bss_end+0xffffffa4>
+  34:	fef71ee3          	bne	a4,a5,30 <_Z14uart_send_charc+0x4>
+#     ;
+#   *UART_OUT = ch;
+  38:	fea02c23          	sw	a0,-8(zero) # fffffff8 <__bss_end+0xffffffa4>
+# }
+  3c:	00008067          	ret
+
+00000040 <_Z14uart_read_charv>:
+# 
+# char uart_read_char() {
+#   int ch = 0;
+#   // wait for UART to receive data
+#   while ((ch = *UART_IN) == -1)
+  40:	fff00793          	li	a5,-1
+  44:	ff402503          	lw	a0,-12(zero) # fffffff4 <__bss_end+0xffffffa0>
+  48:	fef50ee3          	beq	a0,a5,44 <_Z14uart_read_charv+0x4>
+#     ;
+#   return char(ch);
+# }
+  4c:	0ff57513          	zext.b	a0,a0
+  50:	00008067          	ret

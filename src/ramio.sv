@@ -193,11 +193,13 @@ module ramio #(
     end
   end
 
-  logic [7:0] uarttx_data_sending;
+  logic [31:0] uarttx_data_sending;
   // data being sent by 'uarttx'
+  //  -1 if idle
 
-  logic [7:0] uartrx_data_received;
+  logic [31:0] uartrx_data_received;
   // data copied from 'uartrx_data' when 'uartrx_data_ready' asserted
+  //  -1 if none available
 
   // 
   // cache read
@@ -210,17 +212,13 @@ module ramio #(
     // create the 'data_out' based on the 'address'
     data_out = 0;
     if (enable) begin
-      if (address == AddressUartOut && read_type[1:0] == 2'b01) begin
-        // if read byte from 'uarttx' (read_type[2] flags signed)
-        data_out = read_type[2] ? 
-                    {{24{uarttx_data_sending[7]}}, uarttx_data_sending} : 
-                    {{24{1'b0}}, uarttx_data_sending};
+      if (address == AddressUartOut && read_type != '0) begin
+        // any read from 'uarttx' returns signed word
+        data_out = uarttx_data_sending;
 
-      end else if (address == AddressUartIn && read_type[1:0] == 2'b01) begin
-        // if read byte from 'uartrx' (read_type[2] flags signed)
-        data_out = read_type[2] ? 
-                    {{24{uartrx_data_received[7]}}, uartrx_data_received} :
-                    {{24{1'b0}}, uartrx_data_received};
+      end else if (address == AddressUartIn && read_type != '0) begin
+        // any read from 'uartrx' returns signed word
+        data_out = uartrx_data_received;
 
       end else begin
         // read from ram
@@ -300,17 +298,16 @@ module ramio #(
   always_ff @(posedge clk) begin
     if (!rst_n) begin
       led <= 4'b1111;  // turn off all LEDs
-      uarttx_data_sending <= 0;
+      uarttx_data_sending <= -1;
       uarttx_go <= 0;
-      uartrx_data_received <= 0;
+      uartrx_data_received <= -1;
       uartrx_go <= 1;
-      prev_cycle_uarttx_go <= 0;
     end else begin
       prev_cycle_uarttx_go <= 0;
 
-      // if read from UART then reset the read data
-      if (address == AddressUartIn && read_type[1:0] == 2'b01) begin
-        uartrx_data_received <= 0;
+      // if read from UART then reset the read data to -1
+      if (address == AddressUartIn && read_type != '0) begin
+        uartrx_data_received <= -1;
 
       end else if (uartrx_go && uartrx_data_ready) begin
         // ?? unclear why necessary in an 'else if' instead of stand-alone 'if'
@@ -318,7 +315,7 @@ module ramio #(
 
         // if UART has data ready then copy the data and acknowledge (uartrx_go = 0)
         //  note: read data can be overrun
-        uartrx_data_received <= uartrx_data;
+        uartrx_data_received <= {{24'h00}, uartrx_data};
         uartrx_go <= 0;
       end
 
@@ -329,20 +326,21 @@ module ramio #(
       end
 
       // if UART is done sending data then acknowledge (uarttx_go = 0)
+      //  and set idle (0xffff)
       if (uarttx_go && !uarttx_bsy && !prev_cycle_uarttx_go) begin
         uarttx_go <= 0;
-        uarttx_data_sending <= 0;
+        uarttx_data_sending <= -1;
       end
 
       // if writing to UART out
-      if (address == AddressUartOut && write_type == 2'b01) begin
-        uarttx_data_sending <= data_in[7:0];
+      if (address == AddressUartOut && write_type != '0) begin
+        uarttx_data_sending <= {24'h00, data_in[7:0]};
         uarttx_go <= 1;
         prev_cycle_uarttx_go <= 1;
       end
 
       // if writing to LEDs
-      if (address == AddressLed && write_type == 2'b01) begin
+      if (address == AddressLed && write_type != '0) begin
         led <= data_in[3:0];
       end
     end
@@ -394,7 +392,7 @@ module ramio #(
       .tx(uart_tx),
       // UART tx wire
 
-      .data(uarttx_data_sending),
+      .data(uarttx_data_sending[7:0]),
       // data to send
 
       .go(uarttx_go),
