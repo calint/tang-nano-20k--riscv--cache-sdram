@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.120 (w)1999-2024 BSI
-[*] Thu Dec 26 12:08:03 2024
+[*] Mon Dec 30 17:08:40 2024
 [*]
 [dumpfile] "/home/c/w/tang-nano-20k--riscv--cache-sdram/qa/2/log.vcd"
-[dumpfile_mtime] "Thu Dec 26 11:53:58 2024"
-[dumpfile_size] 19222849
+[dumpfile_mtime] "Mon Dec 30 17:05:09 2024"
+[dumpfile_size] 35094132
 [savefile] "/home/c/w/tang-nano-20k--riscv--cache-sdram/qa/2/log.gtkw"
-[timestart] 118109550
+[timestart] 1180703600
 [size] 2230 1344
-[pos] -162 -162
-*-13.703370 118082230 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] -2 -2
+*-15.306623 1180872000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] testbench.
 [sst_width] 273
 [signals_width] 271
@@ -32,5 +32,59 @@ testbench.O_sdrc_data[31:0]
 testbench.O_sdrc_init_done
 testbench.O_sdrc_cmd_ack
 testbench.I_sdrc_precharge_ctrl
+@200
+-
+@29
+testbench.rst_n
+@28
+testbench.clk
+testbench.enable
+@22
+testbench.write_enable[3:0]
+testbench.address[31:0]
+testbench.data_in[31:0]
+@28
+testbench.busy
+@c00022
+testbench.data_out[31:0]
+@28
+(0)testbench.data_out[31:0]
+(1)testbench.data_out[31:0]
+(2)testbench.data_out[31:0]
+(3)testbench.data_out[31:0]
+(4)testbench.data_out[31:0]
+(5)testbench.data_out[31:0]
+(6)testbench.data_out[31:0]
+(7)testbench.data_out[31:0]
+(8)testbench.data_out[31:0]
+(9)testbench.data_out[31:0]
+(10)testbench.data_out[31:0]
+(11)testbench.data_out[31:0]
+(12)testbench.data_out[31:0]
+(13)testbench.data_out[31:0]
+(14)testbench.data_out[31:0]
+(15)testbench.data_out[31:0]
+(16)testbench.data_out[31:0]
+(17)testbench.data_out[31:0]
+(18)testbench.data_out[31:0]
+(19)testbench.data_out[31:0]
+(20)testbench.data_out[31:0]
+(21)testbench.data_out[31:0]
+(22)testbench.data_out[31:0]
+(23)testbench.data_out[31:0]
+(24)testbench.data_out[31:0]
+(25)testbench.data_out[31:0]
+(26)testbench.data_out[31:0]
+(27)testbench.data_out[31:0]
+(28)testbench.data_out[31:0]
+(29)testbench.data_out[31:0]
+(30)testbench.data_out[31:0]
+(31)testbench.data_out[31:0]
+@1401200
+-group_end
+@28
+testbench.data_out_ready
+@22
+testbench.address_next[31:0]
 [pattern_trace] 1
 [pattern_trace] 0

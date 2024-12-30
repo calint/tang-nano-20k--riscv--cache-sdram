@@ -4,7 +4,7 @@ cd $(dirname "$0")
 
 NUM_TESTS=8
 
-for i in 1 3 4 5 6 7; do
+for i in 1 2 3 4 5 6 7; do
     echo -n "test $i: "
     ./testbench.sh $i 2>&1 | grep -E \
         "PASSED|FATAL"
