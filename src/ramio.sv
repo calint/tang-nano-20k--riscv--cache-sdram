@@ -38,16 +38,14 @@ module ramio #(
     parameter int unsigned TopAddress = {AddressBitWidth{1'b1}},
     // last addressable byte
 
-    parameter int unsigned AddressLed = TopAddress,
-    // 4 LEDs in the lower nibble of the byte
-    //  write only with 'sb'
+    parameter int unsigned AddressLed = 32'hffff_fffc,
+    // 4 LEDs in the lower nibble of the int
 
-    parameter int unsigned AddressUartOut = TopAddress - 1,
-    // note: byte must be read / written with 'lb' or 'lbu'
+    parameter int unsigned AddressUartOut = 32'hffff_fff8,
+    // note: returns -1 if idle
 
-    parameter int unsigned AddressUartIn = TopAddress - 2
-    // note: received byte must be read with 'lb' or 'lbu'
-    //       received byte is set to 0 after read
+    parameter int unsigned AddressUartIn = 32'hffff_fff4
+    // note: is set to -1 after read
 ) (
     input wire rst_n,
     input wire clk,
@@ -309,9 +307,12 @@ module ramio #(
       if (address == AddressUartIn && read_type != '0) begin
         uartrx_data_received <= -1;
 
-      end else if (uartrx_go && uartrx_data_ready) begin
-        // ?? unclear why necessary in an 'else if' instead of stand-alone 'if'
-        // ??  to avoid characters being dropped from 'uartrx'
+      end
+
+      if (uartrx_go && uartrx_data_ready) begin
+        // !!! unclear why necessary for this to be in an 'else if' instead 
+        // !!!  of stand-alone 'if' to avoid characters being dropped from 'uartrx'
+        // !!! note: issue does not happen in Gowin 19.10.03
 
         // if UART has data ready then copy the data and acknowledge (uartrx_go = 0)
         //  note: read data can be overrun
@@ -326,7 +327,7 @@ module ramio #(
       end
 
       // if UART is done sending data then acknowledge (uarttx_go = 0)
-      //  and set idle (0xffff)
+      //  and set idle (0xffff'ffff)
       if (uarttx_go && !uarttx_bsy && !prev_cycle_uarttx_go) begin
         uarttx_go <= 0;
         uarttx_data_sending <= -1;

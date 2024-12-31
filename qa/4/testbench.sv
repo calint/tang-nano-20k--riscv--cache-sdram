@@ -9,6 +9,8 @@ module testbench;
 
   localparam int unsigned RAM_ADDRESS_BIT_WIDTH = 12;  // 2 ^ 12 * 4 B
   localparam int unsigned FLASH_TRANSFER_BYTE_COUNT = 256;
+  localparam int unsigned UART_OUT_ADDRESS = 32'hffff_fff8;
+  localparam int unsigned UART_IN_ADDRESS = 32'hffff_fff4;
 
   logic rst_n;
   logic clk = 1;
@@ -413,18 +415,20 @@ module testbench;
 
     // write to UART
     enable <= 1;
-    address <= 32'hffff_fffe;
+    address <= UART_OUT_ADDRESS;
     read_type <= 0;
-    write_type <= 2'b01;
+    write_type <= 3'b111;
     data_in <= 8'b1010_1010;
     #clk_tk;
 
     // poll UART tx for done
     enable <= 1;
-    address <= 32'hffff_fffe;
-    read_type <= 3'b001;
+    address <= UART_OUT_ADDRESS;
+    read_type <= 3'b111;
     write_type <= 0;
     #clk_tk;
+    assert (data_out == 8'b1010_1010)
+    else $fatal;
 
     // start bit
     #clk_tk;
@@ -467,7 +471,7 @@ module testbench;
     assert (uart_tx == 1)
     else $fatal;
 
-    assert (data_out != 0)
+    assert (data_out == 8'b1010_1010)
     else $fatal;
 
     #clk_tk;
@@ -527,8 +531,8 @@ module testbench;
 
     // read from UART
     enable <= 1;
-    address <= 32'hffff_fffd;
-    read_type <= 3'b001;
+    address <= UART_IN_ADDRESS;
+    read_type <= 3'b111;
     write_type <= 0;
     #clk_tk;
 
@@ -539,8 +543,8 @@ module testbench;
 
     // read from UART again, should be 0
     enable <= 1;
-    address <= 32'hffff_fffd;
-    read_type <= 3'b001;
+    address <= UART_IN_ADDRESS;
+    read_type <= 3'b111;
     write_type <= 0;
     #clk_tk;
 
