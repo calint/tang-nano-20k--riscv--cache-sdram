@@ -80,16 +80,11 @@ welcome to adventure #4
 ## Todo
 ```
 -------------------------------------------------------------------------------------------------------------
-[x] qa: task that copies data from flash to ramio
 [ ] study better FSM in /src/emulators/flash.sv
 [ ] os: backspace to ctrl+h (0x08) and update putty terminal configuration screenshot
     => move the 0x08 definition to console_application.cpp and 0x7f to os.cpp
 [ ] cat > /dev/ttyUSB1 should echo without dropping input
-[ ] study why BAUD rate less than 2400 does not work
-[ ] UART read 'short' and return 0xffff for no data available or 0xXX for byte read including 0
 [ ] read LEDs
-[ ] investigate and try to recreate the "// ??" issue in 'ramio'
-    => the simulation works as expected
 [ ] counter[highest_bit] == 1 in decreasing counters into negative instead of counter == 0
 [ ] fix red hold and recovery paths (not involved in running CPU, ignored)
 [ ]   psram: CALIB
@@ -113,6 +108,14 @@ step 13
 [ ] fully pipe-lined core
 [ ] consider FIFO in UART
 -------------------------------------------------------------------------------------------------------------
+[x] qa: task that copies data from flash to ramio
+[x] study why BAUD rate less than 2400 does not work
+    => possibly limitation of board or Arch Linux or putty or cutecom
+[x] UART read 'short' and return 0xffff for no data available or 0xXX for byte read including 0
+    => int instead to avoid the sign extension assembler op
+[x] investigate and try to recreate the "// !!!" issue in 'ramio'
+    => the simulation works as expected
+    => the board fails occasionally
 [x] emulator/flash: fix so start address is honored
 [x] study why terminal drops characters
     => receive is being overrun but how can baud 9600 outpace 20 MHz?
