@@ -21,33 +21,33 @@ module testbench;
   // SDRAM and controller
   //------------------------------------------------------------------------
   // SDRAM wires
-  wire                              O_sdram_clk;
-  wire                              O_sdram_cke;
-  wire                              O_sdram_cs_n;  // chip select
-  wire                              O_sdram_cas_n;  // columns address select
-  wire                              O_sdram_ras_n;  // row address select
-  wire                              O_sdram_wen_n;  // write enable
-  wire                       [31:0] IO_sdram_dq;  // 32 bit bidirectional data bus
-  wire                       [10:0] O_sdram_addr;  // 11 bit multiplexed address bus
-  wire                       [ 1:0] O_sdram_ba;  // two banks
-  wire                       [ 3:0] O_sdram_dqm;  // 32/4
+  wire        O_sdram_clk;
+  wire        O_sdram_cke;
+  wire        O_sdram_cs_n;  // chip select
+  wire        O_sdram_cas_n;  // columns address select
+  wire        O_sdram_ras_n;  // row address select
+  wire        O_sdram_wen_n;  // write enable
+  wire [31:0] IO_sdram_dq;  // 32 bit bidirectional data bus
+  wire [10:0] O_sdram_addr;  // 11 bit multiplexed address bus
+  wire [ 1:0] O_sdram_ba;  // two banks
+  wire [ 3:0] O_sdram_dqm;  // 32/4
 
   // wires between 'sdram_controller' interface and 'ramio'
-  wire I_sdrc_rst_n = rst_n;
-  wire I_sdrc_clk = clk;
-  wire I_sdram_clk = clk;
-  logic                             I_sdrc_cmd_en;
-  logic                      [ 2:0] I_sdrc_cmd;
-  logic                             I_sdrc_precharge_ctrl;
-  logic                             I_sdram_power_down;
-  logic                             I_sdram_selfrefresh;
-  logic                      [20:0] I_sdrc_addr;
-  logic                      [ 3:0] I_sdrc_dqm;
-  logic                      [31:0] I_sdrc_data;
-  logic                      [ 7:0] I_sdrc_data_len;
-  wire                       [31:0] O_sdrc_data;
-  wire                              O_sdrc_init_done;
-  wire                              O_sdrc_cmd_ack;
+  wire        I_sdrc_rst_n = rst_n;
+  wire        I_sdrc_clk = clk;
+  wire        I_sdram_clk = clk;
+  wire        I_sdrc_cmd_en;
+  wire [ 2:0] I_sdrc_cmd;
+  wire        I_sdrc_precharge_ctrl;
+  wire        I_sdram_power_down;
+  wire        I_sdram_selfrefresh;
+  wire [20:0] I_sdrc_addr;
+  wire [ 3:0] I_sdrc_dqm;
+  wire [31:0] I_sdrc_data;
+  wire [ 7:0] I_sdrc_data_len;
+  wire [31:0] O_sdrc_data;
+  wire        O_sdrc_init_done;
+  wire        O_sdrc_cmd_ack;
 
   SDRAM_Controller_HS_Top sdram_controller (
       // inferred ports connecting to SDRAM
@@ -100,11 +100,11 @@ module testbench;
   logic [1:0] write_type;
   logic [2:0] read_type;
   logic [31:0] address;
-  logic [31:0] data_out;
-  logic data_out_ready;
+  wire [31:0] data_out;
+  wire data_out_ready;
+  wire busy;
   logic [31:0] data_in;
-  logic busy;
-  logic uart_tx;
+  wire uart_tx;
   logic uart_rx;
   logic [3:0] led;
 
@@ -149,7 +149,7 @@ module testbench;
 
   //------------------------------------------------------------------------
   logic flash_clk;
-  logic flash_miso;
+  wire  flash_miso;
   logic flash_mosi;
   logic flash_cs_n;
 
@@ -165,45 +165,31 @@ module testbench;
   );
 
   //------------------------------------------------------------------------
-  // variables used at transfer from flash to ram
-  logic [23:0] flash_data_to_send;
-  logic [4:0] flash_num_bits_to_send;
-  logic [31:0] flash_counter;
-  logic [7:0] flash_current_byte_out;
-  logic [7:0] flash_current_byte_num;
-  logic [7:0] flash_data_out[4];
-  logic [31:0] address_next;
-
+  // copy from flash to ramio task
+  //------------------------------------------------------------------------
   typedef enum {
-    BootInit,
-    BootLoadCommandToSend,
-    BootSend,
-    BootLoadAddressToSend,
-    BootReadData,
-    BootStartWrite,
-    BootWrite,
+    LoadCommandToSend,
+    Send,
+    LoadAddressToSend,
+    ReadData,
+    StartWrite,
+    Write,
     Done
   } state_e;
 
-  state_e state;
-  state_e return_state;
+  task copy_flash_to_ram();
+    logic [23:0] flash_data_to_send;
+    logic [4:0] flash_num_bits_to_send;
+    logic [31:0] flash_counter;
+    logic [7:0] flash_current_byte_out;
+    logic [7:0] flash_current_byte_num;
+    logic [7:0] flash_data_out[4];
+    logic [31:0] address_next;
 
-  initial begin
-    $dumpfile("log.vcd");
-    $dumpvars(0, testbench);
+    state_e state;
+    state_e return_state;
 
-    rst_n <= 0;
-    #clk_tk;
-    #clk_tk;
-    rst_n <= 1;
-    #clk_tk;
-
-    // wait for burst RAM to initiate
-    while (!O_sdrc_init_done) #clk_tk;
-
-    //-------------------------------------------
-    // transfer data from flash to ram
-    //-------------------------------------------
+    // init
     enable <= 0;
     read_type <= 0;
     write_type <= 0;
@@ -214,36 +200,31 @@ module testbench;
     flash_clk <= 0;
     flash_mosi <= 0;
     flash_cs_n <= 1;
-    state <= BootInit;
+
+    state <= LoadCommandToSend;
     #clk_tk;
 
+    // start state machine
     while (state != Done) begin
-      case (state)
-        BootInit: begin
-          flash_counter <= flash_counter + 1;
-          if (flash_counter >= 10) begin
-            flash_counter <= 0;
-            state = BootLoadCommandToSend;
-          end
-        end
+      unique case (state)
 
-        BootLoadCommandToSend: begin
+        LoadCommandToSend: begin
           flash_cs_n <= 0;  // enable flash
           flash_data_to_send[23-:8] <= 3;  // command 3: read
           flash_num_bits_to_send <= 8;
-          state = BootSend;
-          return_state = BootLoadAddressToSend;
+          state = Send;
+          return_state = LoadAddressToSend;
         end
 
-        BootLoadAddressToSend: begin
+        LoadAddressToSend: begin
           flash_data_to_send <= 0;
           flash_num_bits_to_send <= 24;
           flash_current_byte_num <= 0;
-          state = BootSend;
-          return_state = BootReadData;
+          state = Send;
+          return_state = ReadData;
         end
 
-        BootSend: begin
+        Send: begin
           if (flash_counter == 0) begin
             flash_counter <= 1;
             flash_clk <= 0;
@@ -259,7 +240,7 @@ module testbench;
           end
         end
 
-        BootReadData: begin
+        ReadData: begin
           if (!flash_counter[0]) begin
             flash_clk <= 0;
             if (flash_counter[3:0] == 0 && flash_counter > 0) begin
@@ -267,7 +248,7 @@ module testbench;
               flash_data_out[flash_current_byte_num] = flash_current_byte_out;
               if (flash_current_byte_num == 3) begin
                 // every 4'th byte write to 'ramio'
-                state <= BootStartWrite;
+                state <= StartWrite;
               end
               flash_current_byte_num <= flash_current_byte_num + 1'b1;
             end
@@ -278,7 +259,7 @@ module testbench;
           flash_counter <= flash_counter + 1;
         end
 
-        BootStartWrite: begin
+        StartWrite: begin
           if (!busy) begin
             enable <= 1;
             read_type <= 0;
@@ -286,16 +267,16 @@ module testbench;
             address <= address_next;
             address_next <= address_next + 4;
             data_in <= {flash_data_out[3], flash_data_out[2], flash_data_out[1], flash_data_out[0]};
-            state <= BootWrite;
+            state <= Write;
           end
         end
 
-        BootWrite: begin
+        Write: begin
           if (!busy) begin
             enable <= 0;
             flash_current_byte_num <= 0;
             if (address_next < FLASH_TRANSFER_BYTE_COUNT) begin
-              state <= BootReadData;
+              state <= ReadData;
             end else begin
               flash_cs_n <= 1;  // disable flash
               state <= Done;  // Reset state machine
@@ -309,8 +290,32 @@ module testbench;
 
       #clk_tk;
     end
+  endtask
+  //------------------------------------------------------------------------
 
-    while (state != Done) #clk_tk;
+  initial begin
+    $dumpfile("log.vcd");
+    $dumpvars(0, testbench);
+
+    rst_n <= 0;
+    #clk_tk;
+    #clk_tk;
+    rst_n <= 1;
+    #clk_tk;
+
+    // wait for burst RAM to initiate
+    while (!O_sdrc_init_done) #clk_tk;
+
+    // copy_flash_to_ram(  // ramio
+    //     .enable(enable), .read_type(read_type), .write_type(write_type), .address(address),
+    //     .data_in(data_in),
+    //     .busy(busy),
+
+    //     // flash
+    //     .flash_clk(flash_clk), .flash_miso(flash_miso), .flash_mosi(flash_mosi),
+    //     .flash_cs_n(flash_cs_n));
+
+    copy_flash_to_ram();
 
     data_in <= 0;
 

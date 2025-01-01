@@ -1,31 +1,45 @@
 [*]
-[*] GTKWave Analyzer v3.3.116 (w)1999-2023 BSI
-[*] Tue Jun 25 11:28:18 2024
+[*] GTKWave Analyzer v3.3.120 (w)1999-2024 BSI
+[*] Wed Jan  1 08:00:14 2025
 [*]
-[dumpfile] "/home/c/w/tang-nano-9k--riscv--cache-psram/qa/4/log.vcd"
-[dumpfile_mtime] "Tue Jun 25 11:25:25 2024"
-[dumpfile_size] 34849
-[savefile] "/home/c/w/tang-nano-9k--riscv--cache-psram/qa/4/log.gtkw"
-[timestart] 154200
-[size] 1910 1024
-[pos] -1 -1
-*-13.814335 212400 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[dumpfile] "/home/c/w/tang-nano-20k--riscv--cache-sdram/qa/4/log.vcd"
+[dumpfile_mtime] "Wed Jan  1 07:59:15 2025"
+[dumpfile_size] 20830584
+[savefile] "/home/c/w/tang-nano-20k--riscv--cache-sdram/qa/4/log.gtkw"
+[timestart] 370493100
+[size] 2230 1344
+[pos] -162 -162
+*-16.444445 371220000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] testbench.
-[treeopen] testbench.ramio.
-[sst_width] 269
+[sst_width] 273
 [signals_width] 303
 [sst_expanded] 1
-[sst_vpaned_height] 304
+[sst_vpaned_height] 415
 @28
 testbench.rst_n
 testbench.clk
 @200
 -ramio
-@23
-testbench.ramio.address[31:0]
+@28
+testbench.ramio.enable
 @22
-testbench.ramio.uartrx_data_received[7:0]
+testbench.ramio.address[31:0]
+@28
+testbench.ramio.write_type[1:0]
+testbench.ramio.read_type[2:0]
+@22
+testbench.ramio.data_in[31:0]
 @28
 testbench.ramio.uart_rx
+testbench.ramio.busy
+@200
+-flash
+@29
+testbench.flash.rst_n
+@28
+testbench.flash.cs_n
+testbench.flash.clk
+testbench.flash.mosi
+testbench.flash.miso
 [pattern_trace] 1
 [pattern_trace] 0
