@@ -44,18 +44,18 @@ module top (
   wire I_sdrc_rst_n = !rst;
   wire I_sdrc_clk = clk;
   wire I_sdram_clk = clk;
-  logic I_sdrc_cmd_en;
-  logic [2:0] I_sdrc_cmd;
-  logic I_sdrc_precharge_ctrl;
-  logic I_sdram_power_down;
-  logic I_sdram_selfrefresh;
-  logic [20:0] I_sdrc_addr;
-  logic [3:0] I_sdrc_dqm;
-  logic [31:0] I_sdrc_data;
-  logic [7:0] I_sdrc_data_len;
-  logic [31:0] O_sdrc_data;
-  logic O_sdrc_init_done;
-  logic O_sdrc_cmd_ack;
+  wire I_sdrc_cmd_en;
+  wire [2:0] I_sdrc_cmd;
+  wire I_sdrc_precharge_ctrl;
+  wire I_sdram_power_down;
+  wire I_sdram_selfrefresh;
+  wire [20:0] I_sdrc_addr;
+  wire [3:0] I_sdrc_dqm;
+  wire [31:0] I_sdrc_data;
+  wire [7:0] I_sdrc_data_len;
+  wire [31:0] O_sdrc_data;
+  wire O_sdrc_init_done;
+  wire O_sdrc_cmd_ack;
 
   SDRAM_Controller_HS_Top sdram_controller (
       // inferred ports connecting to SDRAM
@@ -91,14 +91,16 @@ module top (
   // ----------------------------------------------------------
   // -- ramio
   // ----------------------------------------------------------
-  logic ramio_enable;
-  logic [2:0] ramio_read_type;
-  logic [1:0] ramio_write_type;
-  logic [31:0] ramio_address;
-  logic [31:0] ramio_data_in;
-  logic [31:0] ramio_data_out;
-  logic ramio_data_out_ready;
-  logic ramio_busy;
+
+  // wires between 'ramio' and 'core'
+  wire ramio_enable;
+  wire [2:0] ramio_read_type;
+  wire [1:0] ramio_write_type;
+  wire [31:0] ramio_address;
+  wire [31:0] ramio_data_in;
+  wire [31:0] ramio_data_out;
+  wire ramio_data_out_ready;
+  wire ramio_busy;
 
   ramio #(
       .RamAddressBitWidth(configuration::RAM_ADDRESS_BITWIDTH),
