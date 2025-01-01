@@ -6,12 +6,13 @@
 `default_nettype none
 
 module testbench;
-  logic rst_n;
-  logic clk = 1;
-  localparam int unsigned clk_tk = 36;
-  always #(clk_tk / 2) clk = ~clk;
 
   localparam int unsigned RAM_ADDRESS_BIT_WIDTH = 10;  // 2 ^ 10 * 4 B = 4 KB
+
+  logic rst_n;
+  logic clk = 1;
+  localparam int unsigned clk_tk = 10;
+  always #(clk_tk / 2) clk = ~clk;
 
   wire  [ 5:0] led;
   wire         uart_tx;

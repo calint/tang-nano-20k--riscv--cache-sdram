@@ -9,8 +9,6 @@
 
 module testbench;
 
-  localparam int unsigned RAM_ADDRESS_BIT_WIDTH = 4;
-
   logic rst;
   logic clk = 1;
   localparam int unsigned clk_tk = 10;
