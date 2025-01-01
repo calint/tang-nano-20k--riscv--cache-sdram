@@ -37,7 +37,7 @@ module top (
   localparam int unsigned CLOCK_FREQUENCY_HZ = 27_000_000;
 
   // ----------------------------------------------------------
-  // -- SDRAM controller
+  // -- sdram_controller
   // ----------------------------------------------------------
 
   // wires between 'sdram_controller' interface and 'cache'
