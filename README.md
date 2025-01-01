@@ -80,8 +80,8 @@ welcome to adventure #4
 ## Todo
 ```
 -------------------------------------------------------------------------------------------------------------
+[ ] qa: task that copies data from flash to ramio
 [ ] study better FSM in /src/emulators/flash.sv
-[x] emulator/flash: fix so start address is honored
 [ ] os: backspace to ctrl+h (0x08) and update putty terminal configuration screenshot
     => move the 0x08 definition to console_application.cpp and 0x7f to os.cpp
 [ ] cat > /dev/ttyUSB1 should echo without dropping input
@@ -113,6 +113,7 @@ step 13
 [ ] fully pipe-lined core
 [ ] consider FIFO in UART
 -------------------------------------------------------------------------------------------------------------
+[x] emulator/flash: fix so start address is honored
 [x] study why terminal drops characters
     => receive is being overrun but how can baud 9600 outpace 20 MHz?
        => due to 'uart_send_char()'?
