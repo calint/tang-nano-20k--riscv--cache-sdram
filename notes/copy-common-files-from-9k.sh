@@ -7,15 +7,17 @@ T9KPTH=../../tang-nano-9k--riscv--cache-psram
 T20KPTH=..
 
 cp -a $T9KPTH/configuration-apply.py $T20KPTH/
-cp -a $T9KPTH/scripts/build-using-gowin.sh $T20KPTH/scripts
-cp -a $T9KPTH/scripts/program-fpga.sh $T20KPTH/scripts
-cp -a $T9KPTH/scripts/make-and-flash-os.sh $T20KPTH/scripts
-cp -a $T9KPTH/scripts/flash-fpga.sh $T20KPTH/scripts
+cp -a $T9KPTH/scripts/build-using-gowin.sh $T20KPTH/scripts/
+cp -a $T9KPTH/scripts/program-fpga.sh $T20KPTH/scripts/
+cp -a $T9KPTH/scripts/make-and-flash-os.sh $T20KPTH/scripts/
+cp -a $T9KPTH/scripts/flash-fpga.sh $T20KPTH/scripts/
 cp -a $T9KPTH/src/core.sv $T20KPTH/src/
 cp -a $T9KPTH/src/registers.sv $T20KPTH/src/
 cp -a $T9KPTH/src/bram.sv $T20KPTH/src/
 cp -a $T9KPTH/src/uarttx.sv $T20KPTH/src/
 cp -a $T9KPTH/src/uartrx.sv $T20KPTH/src/
+cp -a $T9KPTH/src/emulators/flash.sv $T20KPTH/src/emulators/
+
 
 rm -rf $T20KPTH/emulator
 cp -ra $T9KPTH/emulator $T20KPTH/
