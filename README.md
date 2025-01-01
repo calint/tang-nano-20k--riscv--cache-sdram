@@ -80,7 +80,7 @@ welcome to adventure #4
 ## Todo
 ```
 -------------------------------------------------------------------------------------------------------------
-[ ] qa: task that copies data from flash to ramio
+[x] qa: task that copies data from flash to ramio
 [ ] study better FSM in /src/emulators/flash.sv
 [ ] os: backspace to ctrl+h (0x08) and update putty terminal configuration screenshot
     => move the 0x08 definition to console_application.cpp and 0x7f to os.cpp
