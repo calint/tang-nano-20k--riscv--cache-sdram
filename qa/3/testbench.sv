@@ -90,19 +90,6 @@ module testbench;
       .Dqm(O_sdram_dqm)
   );
 
-  // sdram sdram (
-  //     .SDRAM_DQ(IO_sdram_dq),    // Bidirectional data bus
-  //     .SDRAM_A(O_sdram_addr),     // Address bus
-  //     .SDRAM_DQM(O_sdram_dqm),   // High/low byte mask
-  //     .SDRAM_BA(O_sdram_ba),    // Bank select (single bits)
-  //     .SDRAM_nCS(O_sdram_cs_n),   // Chip select, neg triggered
-  //     //output wire                  SDRAM_nWE,   // Write enable, neg triggered
-  //     .SDRAM_nRAS(O_sdram_ras_n),  // Select row address, neg triggered
-  //     .SDRAM_nCAS(O_sdram_cas_n),  // Select column address, neg triggered
-  //     .SDRAM_CKE(O_sdram_cke),   // Clock enable
-  //     .SDRAM_CLK(O_sdram_clk)    // Chip clock
-  // );
-
   localparam SDRAM_BANKS_WIDTH = 2;
   localparam SDRAM_ROWS_WIDTH = 11;
   localparam SDRAM_COLS_WIDTH = 8;

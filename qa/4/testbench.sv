@@ -7,7 +7,7 @@
 
 module testbench;
 
-  localparam int unsigned RAM_ADDRESS_BIT_WIDTH = 12;  // 2 ^ 12 * 4 B
+  localparam int unsigned RAM_ADDRESS_BIT_WIDTH = 12;  // 2 ^ 12 * 4 KB
   localparam int unsigned FLASH_TRANSFER_BYTE_COUNT = 256;
   localparam int unsigned UART_OUT_ADDRESS = 32'hffff_fff8;
   localparam int unsigned UART_IN_ADDRESS = 32'hffff_fff4;
@@ -96,17 +96,17 @@ module testbench;
   //------------------------------------------------------------------------
   // ramio
   //------------------------------------------------------------------------
-  logic enable;
-  logic [1:0] write_type;
-  logic [2:0] read_type;
-  logic [31:0] address;
-  wire [31:0] data_out;
-  wire data_out_ready;
-  wire busy;
-  logic [31:0] data_in;
-  wire uart_tx;
-  logic uart_rx;
-  logic [3:0] led;
+  logic ramio_enable;
+  logic [1:0] ramio_write_type;
+  logic [2:0] ramio_read_type;
+  logic [31:0] ramio_address;
+  wire [31:0] ramio_data_out;
+  wire ramio_data_out_ready;
+  wire ramio_busy;
+  logic [31:0] ramio_data_in;
+  wire ramio_uart_tx;
+  logic ramio_uart_rx;
+  logic [3:0] ramio_led;
 
   ramio #(
       .RamAddressBitWidth(RAM_ADDRESS_BIT_WIDTH),
@@ -117,17 +117,17 @@ module testbench;
   ) ramio (
       .rst_n(rst_n && O_sdrc_init_done),
       .clk,
-      .enable(enable),
-      .write_type(write_type),
-      .read_type(read_type),
-      .address(address),
-      .data_in(data_in),
-      .data_out(data_out),
-      .data_out_ready(data_out_ready),
-      .busy(busy),
-      .led(led[3:0]),
-      .uart_tx,
-      .uart_rx,
+      .enable(ramio_enable),
+      .write_type(ramio_write_type),
+      .read_type(ramio_read_type),
+      .address(ramio_address),
+      .data_in(ramio_data_in),
+      .data_out(ramio_data_out),
+      .data_out_ready(ramio_data_out_ready),
+      .busy(ramio_busy),
+      .led(ramio_led),
+      .uart_tx(ramio_uart_tx),
+      .uart_rx(ramio_uart_rx),
 
       // wires from sdram controller
       //   .I_sdrc_rst_n,
@@ -190,12 +190,11 @@ module testbench;
     state_e return_state;
 
     // init
-    enable <= 0;
-    read_type <= 0;
-    write_type <= 0;
-    address <= 0;
+    ramio_enable <= 0;
+    ramio_read_type <= 0;
+    ramio_write_type <= 0;
     address_next <= 0;
-    data_in <= 0;
+    ramio_data_in <= 0;
     flash_counter <= 0;
     flash_clk <= 0;
     flash_mosi <= 0;
@@ -260,20 +259,22 @@ module testbench;
         end
 
         StartWrite: begin
-          if (!busy) begin
-            enable <= 1;
-            read_type <= 0;
-            write_type <= 2'b11;
-            address <= address_next;
+          if (!ramio_busy) begin
+            ramio_enable <= 1;
+            ramio_read_type <= 0;
+            ramio_write_type <= 2'b11;
+            ramio_address <= address_next;
             address_next <= address_next + 4;
-            data_in <= {flash_data_out[3], flash_data_out[2], flash_data_out[1], flash_data_out[0]};
+            ramio_data_in <= {
+              flash_data_out[3], flash_data_out[2], flash_data_out[1], flash_data_out[0]
+            };
             state <= Write;
           end
         end
 
         Write: begin
-          if (!busy) begin
-            enable <= 0;
+          if (!ramio_busy) begin
+            ramio_enable <= 0;
             flash_current_byte_num <= 0;
             if (address_next < FLASH_TRANSFER_BYTE_COUNT) begin
               state <= ReadData;
@@ -306,181 +307,172 @@ module testbench;
     // wait for burst RAM to initiate
     while (!O_sdrc_init_done) #clk_tk;
 
-    // copy_flash_to_ram(  // ramio
-    //     .enable(enable), .read_type(read_type), .write_type(write_type), .address(address),
-    //     .data_in(data_in),
-    //     .busy(busy),
-
-    //     // flash
-    //     .flash_clk(flash_clk), .flash_miso(flash_miso), .flash_mosi(flash_mosi),
-    //     .flash_cs_n(flash_cs_n));
-
     copy_flash_to_ram();
 
-    data_in <= 0;
+    ramio_data_in <= 0;
 
     // read; cache miss
-    address <= 16;
-    read_type <= 3'b111;  // read full word
-    write_type <= 2'b00;  // disable write
-    enable <= 1;
+    ramio_address <= 16;
+    ramio_read_type <= 3'b111;  // read full word
+    ramio_write_type <= 2'b00;  // disable write
+    ramio_enable <= 1;
     #clk_tk;
 
-    while (!data_out_ready) #clk_tk;
+    while (!ramio_data_out_ready) #clk_tk;
 
-    assert (data_out == 32'hD5B8A9C4)
+    assert (ramio_data_out == 32'hD5B8A9C4)
     else $fatal;
 
     // read unsigned byte; cache hit
-    address <= 17;
-    read_type <= 3'b001;
-    write_type <= 2'b00;
-    enable <= 1;
+    ramio_address <= 17;
+    ramio_read_type <= 3'b001;
+    ramio_write_type <= 2'b00;
+    ramio_enable <= 1;
     #clk_tk;
 
-    while (!data_out_ready) #clk_tk;
+    while (!ramio_data_out_ready) #clk_tk;
 
-    assert (data_out == 32'h0000_00A9)
+    assert (ramio_data_out == 32'h0000_00A9)
     else $fatal;
 
     // read unsigned short; cache hit
-    address <= 18;
-    read_type <= 3'b010;
-    write_type <= 2'b00;
-    enable <= 1;
+    ramio_address <= 18;
+    ramio_read_type <= 3'b010;
+    ramio_write_type <= 2'b00;
+    ramio_enable <= 1;
     #clk_tk;
 
-    while (!data_out_ready) #clk_tk;
+    while (!ramio_data_out_ready) #clk_tk;
 
-    assert (data_out == 32'h0000_D5B8)
+    assert (ramio_data_out == 32'h0000_D5B8)
     else $fatal;
 
     // write unsigned byte; cache hit
-    enable <= 1;
-    read_type <= 0;
-    write_type <= 2'b01;
-    address <= 17;
-    data_in <= 32'hab;
+    ramio_enable <= 1;
+    ramio_read_type <= 0;
+    ramio_write_type <= 2'b01;
+    ramio_address <= 17;
+    ramio_data_in <= 32'hab;
     #clk_tk;
-    while (busy) #clk_tk;
+    while (ramio_busy) #clk_tk;
 
     // read unsigned byte; cache hit
-    enable <= 1;
-    address <= 17;
-    read_type <= 3'b001;
-    write_type <= 0;
+    ramio_enable <= 1;
+    ramio_address <= 17;
+    ramio_read_type <= 3'b001;
+    ramio_write_type <= 0;
     #clk_tk;
 
-    while (!data_out_ready) #clk_tk;
+    while (!ramio_data_out_ready) #clk_tk;
 
-    assert (data_out == 32'h0000_00ab)
+    assert (ramio_data_out == 32'h0000_00ab)
     else $fatal;
 
     // write half-word; cache hit
-    enable <= 1;
-    read_type <= 0;
-    write_type <= 2'b10;
-    address <= 18;
-    data_in <= 32'h1234;
+    ramio_enable <= 1;
+    ramio_read_type <= 0;
+    ramio_write_type <= 2'b10;
+    ramio_address <= 18;
+    ramio_data_in <= 32'h1234;
     #clk_tk;
-    while (busy) #clk_tk;
+    while (ramio_busy) #clk_tk;
 
     // read unsigned half-word; cache hit
-    enable <= 1;
-    address <= 18;
-    read_type <= 3'b010;
-    write_type <= 0;
+    ramio_enable <= 1;
+    ramio_address <= 18;
+    ramio_read_type <= 3'b010;
+    ramio_write_type <= 0;
     #clk_tk;
 
-    while (!data_out_ready) #clk_tk;
+    while (!ramio_data_out_ready) #clk_tk;
 
-    assert (data_out == 32'h0000_1234)
+    assert (ramio_data_out == 32'h0000_1234)
     else $fatal;
 
     // write word; cache hit
-    enable <= 1;
-    read_type <= 0;
-    write_type <= 2'b11;
-    address <= 20;
-    data_in <= 32'habcd_1234;
+    ramio_enable <= 1;
+    ramio_read_type <= 0;
+    ramio_write_type <= 2'b11;
+    ramio_address <= 20;
+    ramio_data_in <= 32'habcd_1234;
     #clk_tk;
-    while (busy) #clk_tk;
+    while (ramio_busy) #clk_tk;
 
     // read word; cache hit
-    enable <= 1;
-    address <= 20;
-    read_type <= 3'b111;
-    write_type <= 0;
+    ramio_enable <= 1;
+    ramio_address <= 20;
+    ramio_read_type <= 3'b111;
+    ramio_write_type <= 0;
     #clk_tk;
 
-    while (!data_out_ready) #clk_tk;
+    while (!ramio_data_out_ready) #clk_tk;
 
-    assert (data_out == 32'habcd_1234)
+    assert (ramio_data_out == 32'habcd_1234)
     else $fatal;
 
     // write to UART
-    enable <= 1;
-    address <= UART_OUT_ADDRESS;
-    read_type <= 0;
-    write_type <= 3'b111;
-    data_in <= 8'b1010_1010;
+    ramio_enable <= 1;
+    ramio_address <= UART_OUT_ADDRESS;
+    ramio_read_type <= 0;
+    ramio_write_type <= 3'b111;
+    ramio_data_in <= 8'b1010_1010;
     #clk_tk;
 
     // poll UART tx for done
-    enable <= 1;
-    address <= UART_OUT_ADDRESS;
-    read_type <= 3'b111;
-    write_type <= 0;
+    ramio_enable <= 1;
+    ramio_address <= UART_OUT_ADDRESS;
+    ramio_read_type <= 3'b111;
+    ramio_write_type <= 0;
     #clk_tk;
-    assert (data_out == 8'b1010_1010)
+    assert (ramio_data_out == 8'b1010_1010)
     else $fatal;
 
     // start bit
     #clk_tk;
-    assert (uart_tx == 0)
+    assert (ramio_uart_tx == 0)
     else $fatal;
     // bit 1
     #clk_tk;
-    assert (uart_tx == 0)
+    assert (ramio_uart_tx == 0)
     else $fatal;
     // bit 2
     #clk_tk;
-    assert (uart_tx == 1)
+    assert (ramio_uart_tx == 1)
     else $fatal;
     // bit 3
     #clk_tk;
-    assert (uart_tx == 0)
+    assert (ramio_uart_tx == 0)
     else $fatal;
     // bit 4
     #clk_tk;
-    assert (uart_tx == 1)
+    assert (ramio_uart_tx == 1)
     else $fatal;
     // bit 5
     #clk_tk;
-    assert (uart_tx == 0)
+    assert (ramio_uart_tx == 0)
     else $fatal;
     // bit 6
     #clk_tk;
-    assert (uart_tx == 1)
+    assert (ramio_uart_tx == 1)
     else $fatal;
     // bit 7
     #clk_tk;
-    assert (uart_tx == 0)
+    assert (ramio_uart_tx == 0)
     else $fatal;
 
-    assert (data_out != 0)
+    assert (ramio_data_out != 0)
     else $fatal;
 
     // stop bit
     #clk_tk;
-    assert (uart_tx == 1)
+    assert (ramio_uart_tx == 1)
     else $fatal;
 
-    assert (data_out == 8'b1010_1010)
+    assert (ramio_data_out == 8'b1010_1010)
     else $fatal;
 
     #clk_tk;
-    assert (uart_tx == 1)
+    assert (ramio_uart_tx == 1)
     else $fatal;
 
     #clk_tk;
@@ -492,41 +484,41 @@ module testbench;
     assert (ramio.uarttx_data_sending == -1)
     else $fatal;
 
-    assert (data_out == -1)
+    assert (ramio_data_out == -1)
     else $fatal;
 
     // start bit
-    uart_rx <= 0;
+    ramio_uart_rx <= 0;
     #clk_tk;
     // bit 0
-    uart_rx <= 0;
+    ramio_uart_rx <= 0;
     #clk_tk;
     // bit 1
-    uart_rx <= 1;
+    ramio_uart_rx <= 1;
     #clk_tk;
     // bit 2
-    uart_rx <= 0;
+    ramio_uart_rx <= 0;
     #clk_tk;
     // bit 3
-    uart_rx <= 1;
+    ramio_uart_rx <= 1;
     #clk_tk;
     // bit 4
-    uart_rx <= 0;
+    ramio_uart_rx <= 0;
     #clk_tk;
     // bit 5
-    uart_rx <= 1;
+    ramio_uart_rx <= 1;
     #clk_tk;
     // bit 6
-    uart_rx <= 0;
+    ramio_uart_rx <= 0;
     #clk_tk;
     // bit 7
-    uart_rx <= 1;
+    ramio_uart_rx <= 1;
     #clk_tk;
     // stop bit
-    uart_rx <= 1;
+    ramio_uart_rx <= 1;
     #clk_tk;
 
-    assert (data_out == -1)
+    assert (ramio_data_out == -1)
     else $fatal;
 
     #clk_tk;  // 'ramio' transfers data from 'uartrx'
@@ -535,88 +527,88 @@ module testbench;
     else $fatal;
 
     // read from UART
-    enable <= 1;
-    address <= UART_IN_ADDRESS;
-    read_type <= 3'b111;
-    write_type <= 0;
+    ramio_enable <= 1;
+    ramio_address <= UART_IN_ADDRESS;
+    ramio_read_type <= 3'b111;
+    ramio_write_type <= 0;
     #clk_tk;
 
-    assert (data_out == 8'haa)
+    assert (ramio_data_out == 8'haa)
     else $fatal;
 
     #clk_tk;  // 'ramio' clears data from 'uartrx'
 
     // read from UART again, should be 0
-    enable <= 1;
-    address <= UART_IN_ADDRESS;
-    read_type <= 3'b111;
-    write_type <= 0;
+    ramio_enable <= 1;
+    ramio_address <= UART_IN_ADDRESS;
+    ramio_read_type <= 3'b111;
+    ramio_write_type <= 0;
     #clk_tk;
 
-    assert (data_out == -1)
+    assert (ramio_data_out == -1)
     else $fatal;
 
     // write unsigned byte; cache miss, eviction
-    enable <= 1;
-    read_type <= 0;
-    write_type <= 2'b01;
-    address <= 81;
-    data_in <= 32'hab;
+    ramio_enable <= 1;
+    ramio_read_type <= 0;
+    ramio_write_type <= 2'b01;
+    ramio_address <= 81;
+    ramio_data_in <= 32'hab;
     #clk_tk;
-    while (busy) #clk_tk;
+    while (ramio_busy) #clk_tk;
 
     // read unsigned byte; cache hit
-    enable <= 1;
-    address <= 81;
-    read_type <= 3'b001;
-    write_type <= 0;
+    ramio_enable <= 1;
+    ramio_address <= 81;
+    ramio_read_type <= 3'b001;
+    ramio_write_type <= 0;
     #clk_tk;
 
-    while (!data_out_ready) #clk_tk;
+    while (!ramio_data_out_ready) #clk_tk;
 
-    assert (data_out == 32'h0000_00ab)
+    assert (ramio_data_out == 32'h0000_00ab)
     else $fatal;
 
     // write half-word; cache hit
-    enable <= 1;
-    read_type <= 0;
-    write_type <= 2'b10;
-    address <= 82;
-    data_in <= 32'h1234;
+    ramio_enable <= 1;
+    ramio_read_type <= 0;
+    ramio_write_type <= 2'b10;
+    ramio_address <= 82;
+    ramio_data_in <= 32'h1234;
     #clk_tk;
-    while (busy) #clk_tk;
+    while (ramio_busy) #clk_tk;
 
     // read unsigned half-word; cache hit
-    enable <= 1;
-    address <= 82;
-    read_type <= 3'b010;
-    write_type <= 0;
+    ramio_enable <= 1;
+    ramio_address <= 82;
+    ramio_read_type <= 3'b010;
+    ramio_write_type <= 0;
     #clk_tk;
 
-    while (!data_out_ready) #clk_tk;
+    while (!ramio_data_out_ready) #clk_tk;
 
-    assert (data_out == 32'h0000_1234)
+    assert (ramio_data_out == 32'h0000_1234)
     else $fatal;
 
     // write word; cache hit
-    enable <= 1;
-    read_type <= 0;
-    write_type <= 2'b11;
-    address <= 84;
-    data_in <= 32'habcd_1234;
+    ramio_enable <= 1;
+    ramio_read_type <= 0;
+    ramio_write_type <= 2'b11;
+    ramio_address <= 84;
+    ramio_data_in <= 32'habcd_1234;
     #clk_tk;
-    while (busy) #clk_tk;
+    while (ramio_busy) #clk_tk;
 
     // read word; cache hit
-    enable <= 1;
-    address <= 84;
-    read_type <= 3'b111;
-    write_type <= 0;
+    ramio_enable <= 1;
+    ramio_address <= 84;
+    ramio_read_type <= 3'b111;
+    ramio_write_type <= 0;
     #clk_tk;
 
-    while (!data_out_ready) #clk_tk;
+    while (!ramio_data_out_ready) #clk_tk;
 
-    assert (data_out == 32'habcd_1234)
+    assert (ramio_data_out == 32'habcd_1234)
     else $fatal;
 
     #clk_tk;

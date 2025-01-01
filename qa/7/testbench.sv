@@ -13,39 +13,39 @@ module testbench;
 
   localparam int unsigned RAM_ADDRESS_BIT_WIDTH = 10;  // 2 ^ 10 * 4 B = 4 KB
 
-  logic                      [ 5:0] led;
-  logic                             uart_tx;
-  logic                             uart_rx;
+  wire  [ 5:0] led;
+  wire         uart_tx;
+  logic        uart_rx;
 
   // SDRAM wires
-  wire O_sdram_clk = clk;
-  wire                              O_sdram_cke;
-  wire                              O_sdram_cs_n;  // chip select
-  wire                              O_sdram_cas_n;  // columns address select
-  wire                              O_sdram_ras_n;  // row address select
-  wire                              O_sdram_wen_n;  // write enable
-  wire                       [31:0] IO_sdram_dq;  // 32 bit bidirectional data bus
-  wire                       [10:0] O_sdram_addr;  // 11 bit multiplexed address bus
-  wire                       [ 1:0] O_sdram_ba;  // two banks
-  wire                       [ 3:0] O_sdram_dqm;  // 32/4
+  wire         O_sdram_clk = clk;
+  wire         O_sdram_cke;
+  wire         O_sdram_cs_n;  // chip select
+  wire         O_sdram_cas_n;  // columns address select
+  wire         O_sdram_ras_n;  // row address select
+  wire         O_sdram_wen_n;  // write enable
+  wire  [31:0] IO_sdram_dq;  // 32 bit bidirectional data bus
+  wire  [10:0] O_sdram_addr;  // 11 bit multiplexed address bus
+  wire  [ 1:0] O_sdram_ba;  // two banks
+  wire  [ 3:0] O_sdram_dqm;  // 32/4
 
   //------------------------------------------------------------------------
   // wires between 'sdram_controller' interface and 'ramio'
-  wire I_sdrc_rst_n = rst_n;
-  wire I_sdrc_clk = clk;
-  wire I_sdram_clk = clk;
-  logic                             I_sdrc_cmd_en;
-  logic                      [ 2:0] I_sdrc_cmd;
-  logic                             I_sdrc_precharge_ctrl;
-  logic                             I_sdram_power_down;
-  logic                             I_sdram_selfrefresh;
-  logic                      [20:0] I_sdrc_addr;
-  logic                      [ 3:0] I_sdrc_dqm;
-  logic                      [31:0] I_sdrc_data;
-  logic                      [ 7:0] I_sdrc_data_len;
-  wire                       [31:0] O_sdrc_data;
-  wire                              O_sdrc_init_done;
-  wire                              O_sdrc_cmd_ack;
+  wire         I_sdrc_rst_n = rst_n;
+  wire         I_sdrc_clk = clk;
+  wire         I_sdram_clk = clk;
+  wire         I_sdrc_cmd_en;
+  wire  [ 2:0] I_sdrc_cmd;
+  wire         I_sdrc_precharge_ctrl;
+  wire         I_sdram_power_down;
+  wire         I_sdram_selfrefresh;
+  wire  [20:0] I_sdrc_addr;
+  wire  [ 3:0] I_sdrc_dqm;
+  wire  [31:0] I_sdrc_data;
+  wire  [ 7:0] I_sdrc_data_len;
+  wire  [31:0] O_sdrc_data;
+  wire         O_sdrc_init_done;
+  wire         O_sdrc_cmd_ack;
 
   SDRAM_Controller_HS_Top sdram_controller (
       // inferred ports connecting to SDRAM
@@ -92,14 +92,15 @@ module testbench;
   );
 
   //------------------------------------------------------------------------
-  logic ramio_enable;
-  logic [1:0] ramio_write_type;
-  logic [2:0] ramio_read_type;
-  logic [31:0] ramio_address;
-  logic [31:0] ramio_data_out;
-  logic ramio_data_out_ready;
-  logic [31:0] ramio_data_in;
-  logic ramio_busy;
+  // wires between ramio and core
+  wire ramio_enable;
+  wire [1:0] ramio_write_type;
+  wire [2:0] ramio_read_type;
+  wire [31:0] ramio_address;
+  wire [31:0] ramio_data_out;
+  wire ramio_data_out_ready;
+  wire [31:0] ramio_data_in;
+  wire ramio_busy;
 
   ramio #(
       .RamAddressBitWidth(RAM_ADDRESS_BIT_WIDTH),
@@ -141,10 +142,11 @@ module testbench;
   );
 
   //------------------------------------------------------------------------
-  logic flash_clk;
-  logic flash_miso;
-  logic flash_mosi;
-  logic flash_cs_n;
+  // wires between flash and core
+  wire flash_clk;
+  wire flash_miso;
+  wire flash_mosi;
+  wire flash_cs_n;
 
   flash #(
       .DataFilePath("ram.mem"),
