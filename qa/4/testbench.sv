@@ -148,6 +148,7 @@ module testbench;
   );
 
   //------------------------------------------------------------------------
+  // wires and logic to 'flash'
   logic flash_clk;
   wire  flash_miso;
   logic flash_mosi;
@@ -165,7 +166,7 @@ module testbench;
   );
 
   //------------------------------------------------------------------------
-  // copy from flash to ramio task
+  // copy from 'flash' to 'ramio' task
   //------------------------------------------------------------------------
   typedef enum {
     LoadCommandToSend,
@@ -292,6 +293,7 @@ module testbench;
       #clk_tk;
     end
   endtask
+
   //------------------------------------------------------------------------
 
   initial begin

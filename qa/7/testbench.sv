@@ -17,6 +17,7 @@ module testbench;
   wire         uart_tx;
   logic        uart_rx;
 
+  //------------------------------------------------------------------------
   // SDRAM wires
   wire         O_sdram_clk = clk;
   wire         O_sdram_cke;
@@ -92,7 +93,7 @@ module testbench;
   );
 
   //------------------------------------------------------------------------
-  // wires between ramio and core
+  // wires between 'ramio' and 'core'
   wire ramio_enable;
   wire [1:0] ramio_write_type;
   wire [2:0] ramio_read_type;
@@ -142,7 +143,7 @@ module testbench;
   );
 
   //------------------------------------------------------------------------
-  // wires between flash and core
+  // wires between 'flash' and 'core'
   wire flash_clk;
   wire flash_miso;
   wire flash_mosi;
@@ -160,6 +161,7 @@ module testbench;
   );
 
   //------------------------------------------------------------------------
+
   core #(
       .StartupWaitCycles(0),
       .FlashTransferByteCount(2048)
@@ -182,9 +184,13 @@ module testbench;
       .flash_mosi,
       .flash_cs_n
   );
+
   //------------------------------------------------------------------------
+
   assign led[5] = ~ramio_busy;
+
   //------------------------------------------------------------------------
+
   initial begin
     $dumpfile("log.vcd");
     $dumpvars(0, testbench);

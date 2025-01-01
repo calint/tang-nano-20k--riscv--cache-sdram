@@ -16,6 +16,7 @@ module testbench;
   localparam int unsigned clk_tk = 10;
   always #(clk_tk / 2) clk = ~clk;
 
+  //------------------------------------------------------------------------
   // SDRAM wires
   wire O_sdram_clk;
   wire O_sdram_cke;
@@ -28,7 +29,8 @@ module testbench;
   wire [1:0] O_sdram_ba;  // two banks
   wire [3:0] O_sdram_dqm;  // 32/4
 
-  // wires between 'sdram_controller' interface and 'cache'
+  //------------------------------------------------------------------------
+  // register and wires to 'sdram_controller'
   wire I_sdrc_rst_n = !rst;
   wire I_sdrc_clk = clk;  // 27 MHz
   wire I_sdram_clk = clk;  // 66 MHz
@@ -76,7 +78,6 @@ module testbench;
       .O_sdrc_cmd_ack
   );
 
-
   mt48lc2m32b2 sdram (
       .Clk(O_sdram_clk),
       .Cke(O_sdram_cke),
@@ -90,6 +91,8 @@ module testbench;
       .Dqm(O_sdram_dqm)
   );
 
+  //------------------------------------------------------------------------
+
   localparam SDRAM_BANKS_WIDTH = 2;
   localparam SDRAM_ROWS_WIDTH = 11;
   localparam SDRAM_COLS_WIDTH = 8;
@@ -97,6 +100,7 @@ module testbench;
   reg [32-1:0] address = -1;
   reg [32-8-1:0] previous_active_bank_row = -1;
   reg [7:0] data;
+
   initial begin
     $dumpfile("log.vcd");
     $dumpvars(0, testbench);

@@ -1,5 +1,5 @@
 //
-// cpu with verification program
+// top
 //
 `timescale 1ns / 1ps
 //
@@ -15,6 +15,7 @@ module testbench;
   always #(clk_tk / 2) clk = ~clk;
 
   //------------------------------------------------------------------------
+  // wires between 'flash' and 'core'
   wire flash_clk;
   wire flash_miso;
   wire flash_mosi;
@@ -33,6 +34,7 @@ module testbench;
       .cs_n (flash_cs_n)
   );
 
+  //------------------------------------------------------------------------
   // SDRAM wires
   wire        O_sdram_clk;
   wire        O_sdram_cke;
@@ -58,11 +60,11 @@ module testbench;
       .Dqm(O_sdram_dqm)
   );
 
-  //
+  //------------------------------------------------------------------------
   wire [5:0] led;
-  logic uart_rx;
+  logic uart_rx = 1;
   wire uart_tx;
-  logic btn1;
+  logic btn1 = 1;
 
   top top (
       .rst,
@@ -91,18 +93,6 @@ module testbench;
       .O_sdram_dqm  // 32/4
   );
 
-  // core state
-  // BootInit = 0
-  // BootLoadCommandToSend = 1
-  // BootSend = 2
-  // BootLoadAddressToSend = 3
-  // BootReadData = 4
-  // BootStartWrite = 5
-  // BootWrite = 6
-  // CpuFetch = 7
-  // CpuExecute = 8
-  // CpuStore = 9
-  // CpuLoad = 10
   //------------------------------------------------------------------------
   initial begin
     $dumpfile("log.vcd");

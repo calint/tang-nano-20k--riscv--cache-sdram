@@ -1,5 +1,5 @@
 //
-// cache
+// sdram + cache
 //
 `timescale 1ns / 1ps
 //

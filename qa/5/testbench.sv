@@ -14,6 +14,7 @@ module testbench;
   always #(clk_tk_half) clk = ~clk;
 
   //-------------------------------------------------
+  // wires and register to 'flash'
   logic flash_clk;
   wire  flash_miso;
   logic flash_mosi;
@@ -29,6 +30,7 @@ module testbench;
       .mosi(flash_mosi),
       .cs_n(flash_cs_n)
   );
+
   //-------------------------------------------------
 
   logic [7:0] received_byte = 0;
