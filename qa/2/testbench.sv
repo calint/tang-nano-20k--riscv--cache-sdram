@@ -14,7 +14,10 @@ module testbench;
   localparam int unsigned clk_tk = 36;
   always #(clk_tk / 2) clk = ~clk;
 
-  // ----------------------------------------------------------
+  //------------------------------------------------------------------------
+  // sdram_controller
+  //------------------------------------------------------------------------
+
   // wires between SDRAM and 'sdram_controller'
   wire O_sdram_clk;
   wire O_sdram_cke;
@@ -88,8 +91,11 @@ module testbench;
       .Dqm(O_sdram_dqm)
   );
 
-  // ----------------------------------------------------------
-  // logics to cache
+  //------------------------------------------------------------------------
+  // cache
+  //------------------------------------------------------------------------
+
+  // wires and logics to cache
   logic enable;
   logic [31:0] address;
   wire [31:0] data_out;

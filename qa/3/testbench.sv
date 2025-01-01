@@ -30,6 +30,9 @@ module testbench;
   wire [3:0] O_sdram_dqm;  // 32/4
 
   //------------------------------------------------------------------------
+  // sdram_controller
+  //------------------------------------------------------------------------
+
   // register and wires to 'sdram_controller'
   wire I_sdrc_rst_n = !rst;
   wire I_sdrc_clk = clk;  // 27 MHz

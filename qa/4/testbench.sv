@@ -18,8 +18,9 @@ module testbench;
   always #(clk_tk / 2) clk = ~clk;
 
   //------------------------------------------------------------------------
-  // SDRAM and controller
+  // sdram_controller
   //------------------------------------------------------------------------
+
   // SDRAM wires
   wire        O_sdram_clk;
   wire        O_sdram_cke;
@@ -96,6 +97,7 @@ module testbench;
   //------------------------------------------------------------------------
   // ramio
   //------------------------------------------------------------------------
+
   logic ramio_enable;
   logic [1:0] ramio_write_type;
   logic [2:0] ramio_read_type;
@@ -148,6 +150,9 @@ module testbench;
   );
 
   //------------------------------------------------------------------------
+  // flash
+  //------------------------------------------------------------------------
+
   // wires and logic to 'flash'
   logic flash_clk;
   wire  flash_miso;
@@ -156,7 +161,7 @@ module testbench;
 
   flash #(
       .DataFilePath("ram.mem"),
-      .AddressBitWidth(RAM_ADDRESS_BIT_WIDTH)
+      .AddressBitWidth(22)  // 4 MB (note: needs to fit file 'ram.mem')
   ) flash (
       .rst_n,
       .clk (flash_clk),
@@ -168,6 +173,7 @@ module testbench;
   //------------------------------------------------------------------------
   // copy from 'flash' to 'ramio' task
   //------------------------------------------------------------------------
+
   typedef enum {
     LoadCommandToSend,
     Send,

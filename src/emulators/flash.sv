@@ -56,6 +56,11 @@ module flash #(
     $display(" address offset: %0h", AddressOffset);
     $display("----------------------------------------");
 `endif
+
+    for (int i = 0; i < DEPTH; i++) begin
+      data[i] = -1;
+    end
+
     if (DataFilePath != "") begin
       $readmemh(DataFilePath, data);
     end

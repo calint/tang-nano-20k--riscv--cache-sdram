@@ -7,14 +7,15 @@
 
 module testbench;
 
-  localparam int unsigned RAM_ADDRESS_BIT_WIDTH = 4;
-
   logic rst;
   logic clk = 1;
   localparam int unsigned clk_tk = 10;
   always #(clk_tk / 2) clk = ~clk;
 
   //------------------------------------------------------------------------
+  // flash
+  //------------------------------------------------------------------------
+
   // wires between 'flash' and 'core'
   wire flash_clk;
   wire flash_miso;
@@ -23,7 +24,7 @@ module testbench;
 
   flash #(
       .DataFilePath("ram.mem"),
-      .AddressBitWidth(12),  // 2 ^ 12 = 4096 B
+      .AddressBitWidth(22),  // 4 MB (note: needs to fit file 'ram.mem')
       .AddressOffset(-configuration::FLASH_TRANSFER_FROM_ADDRESS)
       // adjust address so that 'ram.mem' can start at address 0
   ) flash (
@@ -35,6 +36,9 @@ module testbench;
   );
 
   //------------------------------------------------------------------------
+  // sdram
+  //------------------------------------------------------------------------
+
   // SDRAM wires
   wire        O_sdram_clk;
   wire        O_sdram_cke;
@@ -61,6 +65,7 @@ module testbench;
   );
 
   //------------------------------------------------------------------------
+
   wire [5:0] led;
   logic uart_rx = 1;
   wire uart_tx;
