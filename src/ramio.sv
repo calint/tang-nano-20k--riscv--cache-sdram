@@ -307,10 +307,13 @@ module ramio #(
       // if read from UART then reset the read data to -1
       if (address == AddressUartIn && read_type != '0) begin
         uartrx_data_received <= -1;
-      end else if (uartrx_go && uartrx_data_ready) begin
+      end
+
+      if (uartrx_go && uartrx_data_ready) begin
         // !!! unclear why necessary for this to be in an 'else if' instead 
         // !!!  of stand-alone 'if' to avoid characters being dropped from 'uartrx'
         // !!! note: issue does not happen in Gowin 19.10.03 as often
+        // !!! note: continuous read of UART will block updating received data
 
         // if UART has data ready then copy the data and acknowledge (uartrx_go = 0)
         //  note: read data can be overrun
