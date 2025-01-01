@@ -21,7 +21,7 @@
 ## Howto
 * build bitstream file in Gowin EDA
 * run `/scripts/flash-fpga.sh` to flash bitstream file 
-* then /scripts/make-and-flash-os.sh` to flash program
+* then `/scripts/make-and-flash-os.sh` to flash program
 * connect with serial terminal to the tty (e.g. `/dev/ttyUSB1`) at 115200 baud, 8 bit data, 1 stop bit, no parity, no flow control
 
 ![1](notes/serial-terminal-settings/1.png)
