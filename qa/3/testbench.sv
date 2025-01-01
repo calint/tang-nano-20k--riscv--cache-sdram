@@ -597,31 +597,4 @@ module testbench;
 
 endmodule
 
-// from https://www.anandtech.com/show/3851/everything-you-always-wanted-to-know-about-sdram-memory-but-were-afraid-to-ask/3
-// ... The time to activate a bank is called the Row-Column (or Command) Delay and is denoted by the symbol tRCD.
-// ... The time to read a byte of data from the open page is called the Column Address Strobe (CAS) Latency and is denoted by the symbol CL or tCAS. 
-// ... Only one page per bank may be open at a time. 
-// ... This is done by either issuing a Precharge (PR) command to close the specified bank only or a Precharge All (PRA) command to close all open banks in the rank.
-// ... Alternatively, the Precharge command can be effectively combined with the last read or write operation to the open bank by sending a Read with Auto-Precharge (RDA) or Write with Auto-Precharge (WRA) command in place of the final READ or WRI command. 
-// ... The time to Precharge an open bank is called the Row Access Strobe (RAS) Precharge Delay and is denoted by the symbol tRP. 
-// ... The minimum time interval between successive ACT commands to the same bank is determined by the Row Cycle Time of the device, tRC, found by simply summing tRAS and tRP (to be defined).
-// ... The minimum time interval between ACT commands to different banks is the Read-to-Read Delay (tRRD).
-
-// from gemini:
-// Writes vs. Reads: The Key Difference
-
-// The core reason for this difference lies in how SDRAM handles write and read operations internally:
-// Writes are Buffered: When you perform a write operation to SDRAM, the data is typically written into
-// a write buffer within the SDRAM chip. The actual writing to the memory array happens later,
-// asynchronously to the system clock. This buffering allows the controller to proceed with other 
-// operations without waiting for the actual memory write to complete. This is why you often don't
-// need explicit delays after the ACTIVE and WRITE commands in your testbench as long as you respect tRCD.
-// The SDRAM controller and the SDRAM itself handle the internal timing.
-
-// Reads are Direct (with Latency): When you perform a read operation, the data is read directly from the
-// memory array (after being loaded into the sense amplifiers by the ACTIVE command). This process takes 
-// time, and this is where the CAS Latency (CL) comes into play. The SDRAM needs time to access the data,
-// transfer it to the output buffers, and drive it onto the data bus. This is why you must wait for CL 
-// clock cycles after the READ command before sampling the data.
-
 `default_nettype wire
