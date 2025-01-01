@@ -101,17 +101,15 @@ module testbench;
   localparam SDRAM_ROWS_WIDTH = 11;
   localparam SDRAM_COLS_WIDTH = 8;
 
-  reg [32-1:0] address = -1;
-  reg [32-8-1:0] previous_active_bank_row = -1;
-  reg [7:0] data;
-
   initial begin
     $dumpfile("log.vcd");
     $dumpvars(0, testbench);
 
     rst <= 1;
     #clk_tk;
+    #clk_tk;
     rst <= 0;
+    #clk_tk;
 
     I_sdrc_precharge_ctrl = 1;
     I_sdram_power_down = 0;
