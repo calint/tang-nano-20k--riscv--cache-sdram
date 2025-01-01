@@ -22,4 +22,7 @@ rm -rf $T20KPTH/os
 cp -ra $T9KPTH/emulator $T20KPTH/
 cp -ra $T9KPTH/os $T20KPTH/
 
+rm -rf $T20KPTH/notes/samples
+cp -ra $T9KPTH/notes/samples $T20KPTH/notes/
+
 ../configuration-apply.py
