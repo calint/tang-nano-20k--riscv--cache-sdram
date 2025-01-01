@@ -18,11 +18,10 @@ cp -a $T9KPTH/src/uarttx.sv $T20KPTH/src/
 cp -a $T9KPTH/src/uartrx.sv $T20KPTH/src/
 
 rm -rf $T20KPTH/emulator
-rm -rf $T20KPTH/os
-
 cp -ra $T9KPTH/emulator $T20KPTH/
 rm $T20KPTH/emulator/osqa
 
+rm -rf $T20KPTH/os
 cp -ra $T9KPTH/os $T20KPTH/
 rm -f $T20KPTH/os/console_application
 rm -f $T20KPTH/os/os
