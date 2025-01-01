@@ -18,7 +18,10 @@ module testbench;
   logic        uart_rx;
 
   //------------------------------------------------------------------------
-  // SDRAM wires
+  // sdram_controller
+  //------------------------------------------------------------------------
+
+  // wires between 'sdram' and 'sdram_controller'
   wire         O_sdram_clk;
   wire         O_sdram_cke;
   wire         O_sdram_cs_n;  // chip select
@@ -30,26 +33,39 @@ module testbench;
   wire  [ 1:0] O_sdram_ba;  // two banks
   wire  [ 3:0] O_sdram_dqm;  // 32/4
 
+  mt48lc2m32b2 sdram (
+      .Clk(O_sdram_clk),
+      .Cke(O_sdram_cke),
+      .Cs_n(O_sdram_cs_n),
+      .Cas_n(O_sdram_cas_n),
+      .Ras_n(O_sdram_ras_n),
+      .We_n(O_sdram_wen_n),
+      .Dq(IO_sdram_dq),
+      .Addr(O_sdram_addr),
+      .Ba(O_sdram_ba),
+      .Dqm(O_sdram_dqm)
+  );
+
   //------------------------------------------------------------------------
   // sdram_controller
   //------------------------------------------------------------------------
 
   // wires between 'sdram_controller' interface and 'ramio'
-  wire         I_sdrc_rst_n = rst_n;
-  wire         I_sdrc_clk = clk;
-  wire         I_sdram_clk = clk;
-  wire         I_sdrc_cmd_en;
-  wire  [ 2:0] I_sdrc_cmd;
-  wire         I_sdrc_precharge_ctrl;
-  wire         I_sdram_power_down;
-  wire         I_sdram_selfrefresh;
-  wire  [20:0] I_sdrc_addr;
-  wire  [ 3:0] I_sdrc_dqm;
-  wire  [31:0] I_sdrc_data;
-  wire  [ 7:0] I_sdrc_data_len;
-  wire  [31:0] O_sdrc_data;
-  wire         O_sdrc_init_done;
-  wire         O_sdrc_cmd_ack;
+  wire        I_sdrc_rst_n = rst_n;
+  wire        I_sdrc_clk = clk;
+  wire        I_sdram_clk = clk;
+  wire        I_sdrc_cmd_en;
+  wire [ 2:0] I_sdrc_cmd;
+  wire        I_sdrc_precharge_ctrl;
+  wire        I_sdram_power_down;
+  wire        I_sdram_selfrefresh;
+  wire [20:0] I_sdrc_addr;
+  wire [ 3:0] I_sdrc_dqm;
+  wire [31:0] I_sdrc_data;
+  wire [ 7:0] I_sdrc_data_len;
+  wire [31:0] O_sdrc_data;
+  wire        O_sdrc_init_done;
+  wire        O_sdrc_cmd_ack;
 
   SDRAM_Controller_HS_Top sdram_controller (
       // inferred ports connecting to SDRAM
@@ -80,19 +96,6 @@ module testbench;
       .O_sdrc_data,
       .O_sdrc_init_done,
       .O_sdrc_cmd_ack
-  );
-
-  mt48lc2m32b2 sdram (
-      .Clk(O_sdram_clk),
-      .Cke(O_sdram_cke),
-      .Cs_n(O_sdram_cs_n),
-      .Cas_n(O_sdram_cas_n),
-      .Ras_n(O_sdram_ras_n),
-      .We_n(O_sdram_wen_n),
-      .Dq(IO_sdram_dq),
-      .Addr(O_sdram_addr),
-      .Ba(O_sdram_ba),
-      .Dqm(O_sdram_dqm)
   );
 
   //------------------------------------------------------------------------
@@ -152,7 +155,7 @@ module testbench;
   // flash
   //------------------------------------------------------------------------
 
-  //  wires  between 'flash' and 'core'
+  //  wires between 'flash' and 'core'
   wire flash_clk;
   wire flash_miso;
   wire flash_mosi;

@@ -17,7 +17,10 @@ module testbench;
   always #(clk_tk / 2) clk = ~clk;
 
   //------------------------------------------------------------------------
-  // SDRAM wires
+  // sdram
+  //------------------------------------------------------------------------
+
+  // 'sdram' wires between 'sdram' and 'sdram_controller'
   wire O_sdram_clk;
   wire O_sdram_cke;
   wire O_sdram_cs_n;  // chip select
@@ -28,6 +31,19 @@ module testbench;
   wire [10:0] O_sdram_addr;  // 11 bit multiplexed address bus
   wire [1:0] O_sdram_ba;  // two banks
   wire [3:0] O_sdram_dqm;  // 32/4
+
+  mt48lc2m32b2 sdram (
+      .Clk(O_sdram_clk),
+      .Cke(O_sdram_cke),
+      .Cs_n(O_sdram_cs_n),
+      .Cas_n(O_sdram_cas_n),
+      .Ras_n(O_sdram_ras_n),
+      .We_n(O_sdram_wen_n),
+      .Dq(IO_sdram_dq),
+      .Addr(O_sdram_addr),
+      .Ba(O_sdram_ba),
+      .Dqm(O_sdram_dqm)
+  );
 
   //------------------------------------------------------------------------
   // sdram_controller
@@ -79,19 +95,6 @@ module testbench;
       .O_sdrc_data,
       .O_sdrc_init_done,
       .O_sdrc_cmd_ack
-  );
-
-  mt48lc2m32b2 sdram (
-      .Clk(O_sdram_clk),
-      .Cke(O_sdram_cke),
-      .Cs_n(O_sdram_cs_n),
-      .Cas_n(O_sdram_cas_n),
-      .Ras_n(O_sdram_ras_n),
-      .We_n(O_sdram_wen_n),
-      .Dq(IO_sdram_dq),
-      .Addr(O_sdram_addr),
-      .Ba(O_sdram_ba),
-      .Dqm(O_sdram_dqm)
   );
 
   //------------------------------------------------------------------------

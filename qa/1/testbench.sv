@@ -39,7 +39,7 @@ module testbench;
   // sdram
   //------------------------------------------------------------------------
 
-  // SDRAM wires
+  // wire between 'sdram' and 'top'
   wire        O_sdram_clk;
   wire        O_sdram_cke;
   wire        O_sdram_cs_n;  // chip select
