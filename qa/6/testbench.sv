@@ -1,5 +1,5 @@
 //
-// core + ramio + burst_ram + flash
+// core + ramio + sdram + flash
 //
 `timescale 1ns / 1ps
 //
@@ -7,32 +7,47 @@
 
 module testbench;
 
-  localparam int unsigned RAM_ADDRESS_BIT_WIDTH = 10;  // 2 ^ 10 * 4 B = 4 KB
-
   logic rst_n;
   logic clk = 1;
   localparam int unsigned clk_tk = 10;
   always #(clk_tk / 2) clk = ~clk;
 
-  logic [ 5:0] led;
-  logic        uart_tx;
-  logic        uart_rx;
+  //------------------------------------------------------------------------
+  // flash
+  //------------------------------------------------------------------------
+
+  //  wires between 'flash' and 'core'
+  wire flash_clk;
+  wire flash_miso;
+  wire flash_mosi;
+  wire flash_cs_n;
+
+  flash #(
+      .DataFilePath("ram.mem"),
+      .AddressBitWidth(12)  // in bytes 2 ^ 12 = 4 KB (fits file 'ram.mem')
+  ) flash (
+      .rst_n,
+      .clk (flash_clk),
+      .miso(flash_miso),
+      .mosi(flash_mosi),
+      .cs_n(flash_cs_n)
+  );
 
   //------------------------------------------------------------------------
   // sdram_controller
   //------------------------------------------------------------------------
 
   // wires between 'sdram' and 'sdram_controller'
-  wire         O_sdram_clk;
-  wire         O_sdram_cke;
-  wire         O_sdram_cs_n;  // chip select
-  wire         O_sdram_cas_n;  // columns address select
-  wire         O_sdram_ras_n;  // row address select
-  wire         O_sdram_wen_n;  // write enable
-  wire  [31:0] IO_sdram_dq;  // 32 bit bidirectional data bus
-  wire  [10:0] O_sdram_addr;  // 11 bit multiplexed address bus
-  wire  [ 1:0] O_sdram_ba;  // two banks
-  wire  [ 3:0] O_sdram_dqm;  // 32/4
+  wire        O_sdram_clk;
+  wire        O_sdram_cke;
+  wire        O_sdram_cs_n;  // chip select
+  wire        O_sdram_cas_n;  // columns address select
+  wire        O_sdram_ras_n;  // row address select
+  wire        O_sdram_wen_n;  // write enable
+  wire [31:0] IO_sdram_dq;  // 32 bit bidirectional data bus
+  wire [10:0] O_sdram_addr;  // 11 bit multiplexed address bus
+  wire [ 1:0] O_sdram_ba;  // two banks
+  wire [ 3:0] O_sdram_dqm;  // 32/4
 
   mt48lc2m32b2 sdram (
       .Clk(O_sdram_clk),
@@ -104,17 +119,22 @@ module testbench;
   //------------------------------------------------------------------------
 
   // wires between 'ramio' and 'core'
-  wire ramio_enable;
-  wire [1:0] ramio_write_type;
-  wire [2:0] ramio_read_type;
+  wire        ramio_enable;
+  wire [ 1:0] ramio_write_type;
+  wire [ 2:0] ramio_read_type;
   wire [31:0] ramio_address;
   wire [31:0] ramio_data_out;
-  wire ramio_data_out_ready;
+  wire        ramio_data_out_ready;
   wire [31:0] ramio_data_in;
-  wire ramio_busy;
+  wire        ramio_busy;
+
+  // unused wires connected to 'ramio'
+  wire        uart_tx;
+  wire        uart_rx;
+  wire [ 5:0] led;
 
   ramio #(
-      .RamAddressBitWidth(RAM_ADDRESS_BIT_WIDTH),
+      .RamAddressBitWidth(10),  // 2 ^ 10 * 4 B = 4 KB
       .RamAddressingMode(2),  // 32 bits word per address in RAM 
       .CacheLineIndexBitWidth(1),
       .ClockFrequencyHz(20_250_000),
@@ -130,7 +150,7 @@ module testbench;
       .data_out(ramio_data_out),
       .data_out_ready(ramio_data_out_ready),
       .busy(ramio_busy),
-      .led(led[3:0]),
+      .led(led[4:1]),
       .uart_tx,
       .uart_rx,
 
@@ -153,27 +173,6 @@ module testbench;
   );
 
   //------------------------------------------------------------------------
-  // flash
-  //------------------------------------------------------------------------
-
-  //  wires between 'flash' and 'core'
-  wire flash_clk;
-  wire flash_miso;
-  wire flash_mosi;
-  wire flash_cs_n;
-
-  flash #(
-      .DataFilePath("ram.mem"),
-      .AddressBitWidth(12)  // in bytes 2 ^ 12 = 4096 B
-  ) flash (
-      .rst_n,
-      .clk (flash_clk),
-      .miso(flash_miso),
-      .mosi(flash_mosi),
-      .cs_n(flash_cs_n)
-  );
-
-  //------------------------------------------------------------------------
   // core
   //------------------------------------------------------------------------
 
@@ -183,7 +182,7 @@ module testbench;
   ) core (
       .rst_n(rst_n && O_sdrc_init_done),
       .clk,
-      .led  (led[4]),
+      .led  (led[0]),
 
       .ramio_enable,
       .ramio_write_type,

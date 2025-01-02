@@ -1,5 +1,7 @@
 //
 // top
+// note: the configuration STARTUP_WAIT_CYCLES of 1000000 cycles wait before
+// starting the CPU is excessive for the simulation
 //
 `timescale 1ns / 1ps
 //
@@ -24,7 +26,7 @@ module testbench;
 
   flash #(
       .DataFilePath("ram.mem"),
-      .AddressBitWidth(22),  // 4 MB (note: needs to fit file 'ram.mem')
+      .AddressBitWidth(23),  // 8 MB (note: needs to fit file 'ram.mem')
       .AddressOffset(-configuration::FLASH_TRANSFER_FROM_ADDRESS)
       // adjust address so that 'ram.mem' can start at address 0
   ) flash (

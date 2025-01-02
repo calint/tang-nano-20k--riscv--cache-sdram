@@ -28,16 +28,16 @@ UART_BAUD_RATE = 115200
 CACHE_COLUMN_INDEX_BITWIDTH = 3
 # 2 ^ 3 = 8 entries (32 B) per cache line
 
-CACHE_LINE_INDEX_BITWIDTH = 1
+CACHE_LINE_INDEX_BITWIDTH = 11
 # 2 ^ 11 * 32 B = 64 KB unified instruction and data cache
 #   1 to 6  : cache implemented with SSRAM; max freq 66 MHz
 #   7 to 11 : cache implemented with BSRAM; max freq 52 MHz
 
-FLASH_TRANSFER_FROM_ADDRESS = 0
+FLASH_TRANSFER_FROM_ADDRESS = 0x0070_0000
 # flash read start address
 
-FLASH_TRANSFER_BYTE_COUNT = 2048  # 0x0020_0000
-# number of bytes to transfer from flash at startup (2 MB)
+FLASH_TRANSFER_BYTE_COUNT = 0x0010_0000
+# number of bytes to transfer from flash at startup (1 MB)
 
-STARTUP_WAIT_CYCLES = 0  # 1_000_000
+STARTUP_WAIT_CYCLES = 1_000_000
 # cycles delay at startup for flash to be initiated
