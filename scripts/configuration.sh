@@ -1,6 +1,9 @@
 BOARD_NAME="tangnano20k"
 # used when flashing the bitstream to the FPGA
 
+BITSTREAM_FILE="impl/pnr/riscv.fs"
+# location of the bitstream file relative to project root
+
 #
 # configure for firmware to have 1 MB at the end of the flash storage of 8 MB
 #
