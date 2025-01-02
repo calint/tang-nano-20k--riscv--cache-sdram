@@ -6,7 +6,7 @@ BOARD_NAME="tangnano20k"
 #
 
 BITSTREAM_FLASH_TO_EXTERNAL=1
-# 0 to flash the bitstream to the FPGA, 1 to flash the bitstream to the external flash storage
+# 0 to flash the bitstream to the internal flash, 1 for the external flash
 
 BITSTREAM_FILE_MAX_SIZE_BYTES=7340032 # 7 MB
 # used to check if the bitstream size is within the allocated space
