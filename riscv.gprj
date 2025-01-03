@@ -15,7 +15,7 @@
         <File path="src/top.sv" type="file.verilog" enable="1"/>
         <File path="src/uartrx.sv" type="file.verilog" enable="1"/>
         <File path="src/uarttx.sv" type="file.verilog" enable="1"/>
-        <File path="tang-nano-20k.cst" type="file.cst" enable="1"/>
-        <File path="tang_nano_20k.sdc" type="file.sdc" enable="1"/>
+        <File path="tangnano20k.cst" type="file.cst" enable="1"/>
+        <File path="tangnano20k.sdc" type="file.sdc" enable="1"/>
     </FileList>
 </Project>

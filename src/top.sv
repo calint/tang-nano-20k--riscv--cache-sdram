@@ -21,6 +21,10 @@ module top (
     output logic flash_mosi,
     output logic flash_cs_n,
 
+    // output logic sd_clk,
+    // inout wire sd_cmd,  // MOSI
+    // inout wire [3:0] sd_dat,  // 0: MISO
+
     // "Magic" port names that the gowin compiler connects to the on-chip SDRAM
     output wire        O_sdram_clk,
     output wire        O_sdram_cke,

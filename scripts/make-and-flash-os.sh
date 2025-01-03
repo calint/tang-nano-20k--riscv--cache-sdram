@@ -2,11 +2,6 @@
 set -e
 cd $(dirname "$0")
 
-# default configuration
-FIRMWARE_FILE="os/os.bin"
-FIRMWARE_FLASH_OFFSET=0x00000000
-FIRMWARE_FILE_MAX_SIZE_BYTES=1048576 # 1 MB
-
 # override configuration
 . ./configuration.sh
 
@@ -16,6 +11,8 @@ echo
 echo "building firmware"
 
 os/make-fpga-flash-binary.sh
+
+FIRMWARE_FILE="os/os.bin"
 
 # check result
 if [ ! -f "$FIRMWARE_FILE" ]; then
