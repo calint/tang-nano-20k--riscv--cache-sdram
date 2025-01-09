@@ -26,14 +26,11 @@ module ramio #(
     parameter int unsigned DataBitWidth = 32,
     // client data bit width
 
-    parameter int unsigned ClockFrequencyHz = 20_250_000,
+    parameter int unsigned ClockFrequencyHz = 30_000_000,
     // passed to 'uartrx' and 'uarttx'
 
-    parameter int unsigned BaudRate = 9600,
+    parameter int unsigned BaudRate = 115200,
     // passed to 'uartrx' and 'uarttx'
-
-    parameter int unsigned TopAddress = {AddressBitWidth{1'b1}},
-    // last addressable byte
 
     parameter int unsigned AddressLed = 32'hffff_fffc,
     // 4 LEDs in the lower nibble of the int
@@ -58,15 +55,11 @@ module ramio #(
     parameter int unsigned AddressIOPortsStart = 32'hffff_ffe0,
     // where mapping of I/O ports start
 
-    parameter int unsigned SDCardSimulate = 0,
-    // 1: if in simulation mode
+    parameter bit SDCardSimulate = 0,
+    // 1: if in simulation mode shortening delay cycles
 
-    parameter int unsigned SDCardClockDivider = 2
-    // when clk =   0~ 25MHz , set 1,
-    // when clk =  25~ 50MHz , set 2,
-    // when clk =  50~100MHz , set 3,
-    // when clk = 100~200MHz , set 4,
-    // ......
+    parameter int unsigned SDCardClockDivider = 0
+    // 0 when clk = ~30MHz
 ) (
     input wire rst_n,
     input wire clk,
