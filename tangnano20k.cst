@@ -61,9 +61,9 @@ IO_PORT "flash_mosi" IO_TYPE=LVCMOS33 PULL_MODE=NONE;
 //
 // SD card
 //
-//IO_LOC "sd_clk" 83; // PIN83_SDIO_CLK
-//IO_LOC "sd_cmd" 82; // PIN82_SDIO_CMD (MOSI)
-//IO_LOC "sd_dat[0]" 84; // PIN84_SDIO_D0 (MISO)
-//IO_LOC "sd_dat[1]" 85; // IN85_SDIO_D1
-//IO_LOC "sd_dat[2]" 80; // PIN80_SDIO_D2
-//IO_LOC "sd_dat[3]" 81; // PIN81_SDIO_D3
+IO_LOC "sd_clk" 83; // PIN83_SDIO_CLK
+IO_LOC "sd_cmd" 82; // PIN82_SDIO_CMD (MOSI)
+IO_LOC "sd_dat[0]" 84; // PIN84_SDIO_D0 (MISO)
+IO_LOC "sd_dat[1]" 85; // IN85_SDIO_D1
+IO_LOC "sd_dat[2]" 80; // PIN80_SDIO_D2
+IO_LOC "sd_dat[3]" 81; // PIN81_SDIO_D3

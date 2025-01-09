@@ -19,9 +19,9 @@ module top (
     output logic flash_mosi,
     output logic flash_cs_n,
 
-    // output logic sd_clk,
-    // inout wire sd_cmd,  // MOSI
-    // inout wire [3:0] sd_dat,  // 0: MISO
+    output logic sd_clk,
+    inout wire sd_cmd,  // MOSI
+    inout wire [3:0] sd_dat,  // 0: MISO
 
     // "Magic" port names that the gowin compiler connects to the on-chip SDRAM
     output wire        O_sdram_clk,
@@ -116,6 +116,10 @@ module top (
   wire ramio_data_out_ready;
   wire ramio_busy;
 
+  // unused wires
+  wire sd_cs_n;
+  assign sd_dat[3:1] = 3'b111;
+
   ramio #(
       .RamAddressBitWidth(configuration::RAM_ADDRESS_BITWIDTH),
       .RamAddressingMode(configuration::RAM_ADDRESSING_MODE),
@@ -143,6 +147,11 @@ module top (
 
       .uart_tx,
       .uart_rx,
+
+      .sd_cs_n,
+      .sd_clk,
+      .sd_mosi(sd_cmd),
+      .sd_miso(sd_dat[0]),
 
       // sdram controller wires
       // note: to preserve names for consistency, the I_* and O_* have inverted meaning
@@ -174,7 +183,7 @@ module top (
   ) core (
       .rst_n(!rst && O_sdrc_init_done),
       .clk  (I_sdrc_clk),
-      //   .led  (led[0]),
+      .led  (led[0]),
 
       .ramio_enable,
       .ramio_read_type,
@@ -191,9 +200,9 @@ module top (
       .flash_cs_n
   );
 
-  assign led[0] = O_sdrc_init_done;
-  //   assign led[5] = ~ramio_busy;
-  assign led[5] = rpll_lock;
+  //   assign led[0] = O_sdrc_init_done;
+  //   assign led[5] = rpll_lock;
+  assign led[5] = ~ramio_busy;
 
 endmodule
 
