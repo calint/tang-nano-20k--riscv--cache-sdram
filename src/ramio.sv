@@ -17,6 +17,9 @@ module ramio #(
     // passed to 'cache': address refers to:
     //  0: byte, 1: half word, 2: word, 3: double word
 
+    parameter int unsigned CacheColumnIndexBitWidth = 3,
+    // 2 ^ 3 = 8 entries (32 B) per cache line
+
     parameter int unsigned CacheLineIndexBitWidth = 1,
     // passed to 'cache': 2 ^ value * 32 B cache size
 
@@ -433,9 +436,10 @@ module ramio #(
   end
 
   cache #(
-      .LineIndexBitWidth (CacheLineIndexBitWidth),
-      .RamAddressBitWidth(RamAddressBitWidth),
-      .RamAddressingMode (RamAddressingMode)
+      .LineIndexBitWidth  (CacheLineIndexBitWidth),
+      .ColumnIndexBitwidth(CacheColumnIndexBitWidth),
+      .RamAddressBitWidth (RamAddressBitWidth),
+      .RamAddressingMode  (RamAddressingMode)
   ) cache (
       .rst_n,
       .clk,
