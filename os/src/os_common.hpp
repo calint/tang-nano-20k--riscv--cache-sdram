@@ -294,7 +294,7 @@ extern "C" [[noreturn]] auto run() -> void {
   initiate_statics();
   // initiate statics in freestanding build
 
-  led_set(0b1010);
+  led_set(0b0110);
   // turn some leds on
 
   uart_send_str(ascii_art);

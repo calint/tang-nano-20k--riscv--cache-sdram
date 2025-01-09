@@ -10,7 +10,7 @@
     <OptionList>
         <Option type="disable_insert_pad" value="1"/>
         <Option type="include_path" value="/home/c/apps/gowin/IDE/ipcore/SDRC_HS/data"/>
-        <Option type="include_path" value="/home/c/w/tang-nano-20k--riscv--cache-sdram/src/sdram_controller_hs/temp/SDRC_HS"/>
+        <Option type="include_path" value="/home/c/w/tang-nano-20k--riscv--cache-sdram/src/ip/sdram_controller_hs/temp/SDRC_HS"/>
         <Option type="output_file" value="sdram_controller_hs.vg"/>
         <Option type="output_template" value="sdram_controller_hs_tmp.v"/>
         <Option type="ram_balance" value="1"/>

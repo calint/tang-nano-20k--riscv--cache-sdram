@@ -24,11 +24,11 @@ Disassembly of section .text:
       24:	06912a23          	sw	s1,116(sp)
       28:	374010ef          	jal	139c <_ZL12initiate_bssv>
 # static auto led_set(int32_t const bits) -> void { *LED = bits; }
-      2c:	00a00793          	li	a5,10
+      2c:	00600793          	li	a5,6
       30:	fef02e23          	sw	a5,-4(zero) # fffffffc <__bss_end+0xffffe0f4>
 #   // initiate statics in freestanding build
 # 
-#   led_set(0b1010);
+#   led_set(0b0110);
 #   // turn some leds on
 # 
 #   uart_send_str(ascii_art);

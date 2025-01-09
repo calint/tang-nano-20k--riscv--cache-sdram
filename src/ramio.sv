@@ -119,6 +119,10 @@ module ramio #(
     input wire O_sdrc_cmd_ack
 );
 
+  assign led[0] = uart_tx;
+  assign led[1] = uart_rx;
+  assign led[3] = !uartrx_data_ready;
+
   logic cache_enable;
   // enables / disables 'cache' RAM operation
 
@@ -430,7 +434,7 @@ module ramio #(
 
       // if writing to LEDs
       if (address == AddressLed && write_type != '0) begin
-        led <= data_in[3:0];
+        // led <= data_in[3:0];
       end
     end
   end

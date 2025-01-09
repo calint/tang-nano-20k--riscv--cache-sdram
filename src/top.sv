@@ -38,16 +38,28 @@ module top (
     output wire [ 3:0] O_sdram_dqm     // 32/4
 );
 
-  localparam int unsigned CLOCK_FREQUENCY_HZ = 27_000_000;
+  // ----------------------------------------------------------
+  // -- rPLL
+  // ----------------------------------------------------------
+
+  // wire to 'sdram_controller'
+  wire rpll_clk_out;
+  wire rpll_lock;
+
+  Gowin_rPLL rPLL (
+      .clkin(clk),  //27 Mhz
+      .clkout(rpll_clk_out),  // 166 MHz
+      .lock(rpll_lock)
+  );
 
   // ----------------------------------------------------------
   // -- sdram_controller
   // ----------------------------------------------------------
 
   // wires between 'sdram_controller' interface and 'cache'
-  wire I_sdrc_rst_n = !rst;
+  wire I_sdrc_rst_n = !rst && rpll_lock;
   wire I_sdrc_clk = clk;
-  wire I_sdram_clk = clk;
+  wire I_sdram_clk = rpll_clk_out;
   wire I_sdrc_cmd_en;
   wire [2:0] I_sdrc_cmd;
   wire I_sdrc_precharge_ctrl;
@@ -164,7 +176,7 @@ module top (
   ) core (
       .rst_n(!rst && O_sdrc_init_done),
       .clk  (I_sdrc_clk),
-      .led  (led[0]),
+      //   .led  (led[0]),
 
       .ramio_enable,
       .ramio_read_type,
@@ -181,7 +193,9 @@ module top (
       .flash_cs_n
   );
 
-  assign led[5] = ~ramio_busy;
+  assign led[0] = O_sdrc_init_done;
+  //   assign led[5] = ~ramio_busy;
+  assign led[5] = rpll_lock;
 
 endmodule
 
