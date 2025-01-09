@@ -64,22 +64,39 @@ static auto uart_read_char() -> char {
 // simple test of FPGA memory
 static auto action_mem_test() -> void {
   uart_send_str("testing memory (write)\r\n");
-  char *ptr = &__heap_start;
-  char const *const end = reinterpret_cast<char *>(MEMORY_END - 1024);
+  // char *ptr = &__heap_start;
+  //  char const *const end = reinterpret_cast<char *>(MEMORY_END - 4096);
+  char *ptr = reinterpret_cast<char *>(0x1'0000);
+  char const *const end = reinterpret_cast<char *>(2 * 1024 * 1024);
   // -1024 to avoid the stack
   // ?? don't forget about this when the application grows
   char ch = 0;
   while (ptr < end) {
-    *ptr++ = ch++;
+    *ptr = ch;
+    ++ptr;
+    ++ch;
   }
   uart_send_str("testing memory (read)\r\n");
-  ptr = &__heap_start;
+  // ptr = &__heap_start;
+  ptr = reinterpret_cast<char *>(0x1'0000);
   ch = 0;
   while (ptr < end) {
-    if (*ptr++ != ch++) {
-      uart_send_str("!!! test memory failed\r\n");
+    if (*ptr != ch) {
+      uart_send_str("!!! test memory failed\r\nexpected: ");
+      uart_send_hex_byte(ch);
+      uart_send_str(" got: ");
+      uart_send_hex_byte(*ptr);
+      uart_send_str("\r\nat: ");
+      uart_send_hex_byte(char(uint32_t(ptr) >> 24));
+      uart_send_hex_byte(char(uint32_t(ptr) >> 16));
+      uart_send_char(':');
+      uart_send_hex_byte(char(uint32_t(ptr) >> 8));
+      uart_send_hex_byte(char(uint32_t(ptr)));
+      uart_send_str("\r\n");
       return;
     }
+    ++ptr;
+    ++ch;
   }
   uart_send_str("testing memory succeeded\r\n");
 }
