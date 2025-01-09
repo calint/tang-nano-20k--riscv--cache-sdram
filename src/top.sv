@@ -42,13 +42,13 @@ module top (
 
   // wire to 'sdram_controller'
   wire rpll_clk_out;
-  wire rpll_clk_phased_out;
+  //   wire rpll_clk_phased_out;
   wire rpll_lock;
 
   Gowin_rPLL rPLL (
       .clkin(clk),  // 27 MHz
       .clkout(rpll_clk_out),  // 166 MHz
-      .clkoutp(rpll_clk_phased_out),
+      //   .clkoutp(rpll_clk_phased_out),
       .lock(rpll_lock)
   );
 
@@ -58,8 +58,8 @@ module top (
 
   // wires between 'sdram_controller' interface and 'cache'
   wire I_sdrc_rst_n = !rst && rpll_lock;
-  wire I_sdrc_clk = clk;
-  wire I_sdram_clk = rpll_clk_phased_out;
+  wire I_sdrc_clk = rpll_clk_out;
+  wire I_sdram_clk = rpll_clk_out;
   wire I_sdrc_cmd_en;
   wire [2:0] I_sdrc_cmd;
   wire I_sdrc_precharge_ctrl;

@@ -31,10 +31,12 @@ module cache #(
     //       3: 8 B
 
     parameter int unsigned WaitsAfterBurstWrite = 4,
-    // empirically found to not violate timing constraints
+    // empirically found to not violate timing constraints (minimum 1)
+    //  at 27 MHz: 4
 
     parameter int unsigned WaitsPriorToDataAtRead = 4
-    // according to specification in IPUG756-1.0.1E
+    // according to specification in: IPUG756-1.0.1E
+    //  Gowin SDRAM HS IP User Guide page 11
 ) (
     input wire rst_n,
     input wire clk,
