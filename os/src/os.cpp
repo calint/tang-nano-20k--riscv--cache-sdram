@@ -84,22 +84,28 @@ static auto action_mem_test() -> void {
   uart_send_str("testing memory succeeded\r\n");
 }
 
-static auto action_sdcard_test() -> void {
-  static size_t page = 0;
+static auto action_sdcard_test_read() -> void {
   int8_t buf[512];
-  sdcard_read_blocking(page, buf);
-  ++page;
+  sdcard_read_blocking(1, buf);
   for (size_t i = 0; i < sizeof(buf); ++i) {
     uart_send_char(buf[i]);
   }
   uart_send_str("\r\n");
 }
 
+static auto action_sdcard_test_write() -> void {
+  int8_t const buf[512] =
+      "Hello world! Writing to second sector on SD card!\r\n";
+  sdcard_write_blocking(1, buf);
+}
+
 static auto action_sdcard_status() -> void {
-  int32_t const status = *SDCARD_STATUS;
-  uart_send_str("SD card status: ");
+  uint32_t const status = *SDCARD_STATUS;
+  uart_send_str("SDCARD_STATUS: 0x");
+  uart_send_hex_byte(char(status >> 24));
+  uart_send_hex_byte(char(status >> 16));
+  uart_send_char(':');
   uart_send_hex_byte(char(status >> 8));
-  uart_send_char(' ');
   uart_send_hex_byte(char(status));
   uart_send_str("\r\n");
 }
@@ -112,17 +118,44 @@ static auto sdcard_read_blocking(size_t const sector,
   while (*SDCARD_BUSY)
     ;
   for (size_t i = 0; i < 512; ++i) {
-    *buffer512B++ = char(*SDCARD_NEXT_BYTE);
+    *buffer512B = char(*SDCARD_NEXT_BYTE);
+    ++buffer512B;
   }
+}
+
+static auto sdcard_write_blocking(size_t const sector,
+                                  int8_t const *buffer512B) -> void {
+  while (*SDCARD_BUSY)
+    ;
+  for (size_t i = 0; i < 512; ++i) {
+    *SDCARD_NEXT_BYTE = *buffer512B;
+    ++buffer512B;
+  }
+  *SDCARD_WRITE_SECTOR = sector;
+  while (*SDCARD_BUSY)
+    ;
 }
 
 // built-in function called by compiler
 extern "C" auto memset(void *str, int ch, int n) -> void * {
   char *ptr = reinterpret_cast<char *>(str);
   while (n--) {
-    *ptr++ = char(ch);
+    *ptr = char(ch);
+    ++ptr;
   }
   return str;
+}
+
+// built-in function called by compiler
+extern "C" auto memcpy(void *dst, void const *src, size_t n) -> void * {
+  char *p1 = reinterpret_cast<char *>(dst);
+  char const *p2 = reinterpret_cast<char const *>(src);
+  while (n--) {
+    *p1 = *p2;
+    ++p1;
+    ++p2;
+  }
+  return dst;
 }
 
 // zero bss section

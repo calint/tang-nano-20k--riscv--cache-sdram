@@ -112,7 +112,9 @@ module top (
       .CacheLineIndexBitWidth(configuration::CACHE_LINE_INDEX_BITWIDTH),
       .CacheColumnIndexBitWidth(configuration::CACHE_COLUMN_INDEX_BITWIDTH),
       .ClockFrequencyHz(configuration::CPU_FREQUENCY_HZ),
-      .BaudRate(configuration::UART_BAUD_RATE)
+      .BaudRate(configuration::UART_BAUD_RATE),
+      .SDCardSimulate(0),
+      .SDCardClockDivider(0)  // at 30 MHz this works
   ) ramio (
       .rst_n(!rst && O_sdrc_init_done),
       .clk  (I_sdrc_clk),

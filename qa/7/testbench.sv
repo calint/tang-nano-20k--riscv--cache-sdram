@@ -118,7 +118,9 @@ module testbench;
       .RamAddressingMode(2),  // 32 bits word per address in RAM 
       .CacheLineIndexBitWidth(1),
       .ClockFrequencyHz(20_250_000),
-      .BaudRate(20_250_000)
+      .BaudRate(20_250_000),
+      .SDCardSimulate(1),
+      .SDCardClockDivider(0)  // at 30 MHz this works
   ) ramio (
       .rst_n(rst_n && O_sdrc_init_done),
       .clk,

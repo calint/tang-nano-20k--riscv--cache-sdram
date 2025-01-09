@@ -18,7 +18,10 @@ cp -a $T9KPTH/src/registers.sv $T20KPTH/src/
 cp -a $T9KPTH/src/bram.sv $T20KPTH/src/
 cp -a $T9KPTH/src/uarttx.sv $T20KPTH/src/
 cp -a $T9KPTH/src/uartrx.sv $T20KPTH/src/
+cp -a $T9KPTH/src/sdcard.sv $T20KPTH/src/
 cp -a $T9KPTH/src/emulators/flash.sv $T20KPTH/src/emulators/
+
+cp -arf $T9KPTH/src/ip/regymm/ $T20KPTH/src/ip/
 
 
 rm -rf $T20KPTH/emulator
