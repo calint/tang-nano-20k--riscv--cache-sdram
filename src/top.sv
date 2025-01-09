@@ -42,13 +42,11 @@ module top (
 
   // wire to 'sdram_controller'
   wire rpll_clk_out;
-  //   wire rpll_clk_phased_out;
   wire rpll_lock;
 
   Gowin_rPLL rPLL (
       .clkin(clk),  // 27 MHz
-      .clkout(rpll_clk_out),  // 166 MHz
-      //   .clkoutp(rpll_clk_phased_out),
+      .clkout(rpll_clk_out),  // 60 MHz
       .lock(rpll_lock)
   );
 
