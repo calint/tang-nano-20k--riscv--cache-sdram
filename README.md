@@ -27,7 +27,7 @@
 
 ![1](notes/serial-terminal-settings/1.png)
 
-* press button S1 to reset and view the greeting
+* press button S2 to reset and view the greeting
 
 ## Greeting
 ```
