@@ -1,5 +1,3 @@
-# *** under construction ***
-
 # [Tang Nano 20K](https://www.aliexpress.com/item/1005005581148230.html)
 
 ## Intention
