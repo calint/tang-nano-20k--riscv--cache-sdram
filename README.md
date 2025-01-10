@@ -12,9 +12,9 @@
 ## Gowin EDA 1.9.10.03 Education Build (77527) Project Configuration
 ![1](notes/gowin-project-configuration/1.png)
 
-![3](notes/gowin-project-configuration/3.png)
+![2](notes/gowin-project-configuration/2.png)
 
-![5](notes/gowin-project-configuration/5.png)
+![3](notes/gowin-project-configuration/3.png)
 
 ## Howto
 * configure project as described above
