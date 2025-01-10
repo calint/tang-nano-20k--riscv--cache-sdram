@@ -54,7 +54,7 @@ module top (
   // -- sdram_controller
   // ----------------------------------------------------------
 
-  // wires between 'sdram_controller' interface and 'cache'
+  // wires between 'sdram_controller' interface and 'ramio'
   wire I_sdrc_rst_n = !rst && rpll_lock;
   wire I_sdrc_clk = rpll_clk_out;
   wire I_sdram_clk = rpll_clk_out;
