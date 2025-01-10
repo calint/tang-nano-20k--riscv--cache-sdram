@@ -23,7 +23,7 @@ module top (
     inout wire sd_cmd,  // MOSI
     inout wire [3:0] sd_dat,  // 0: MISO
 
-    // "Magic" port names that the gowin compiler connects to the on-chip SDRAM
+    // "magic" port names that the Gowin EDA connects to the on-chip SDRAM
     output wire        O_sdram_clk,
     output wire        O_sdram_cke,
     output wire        O_sdram_cs_n,   // chip select
@@ -72,7 +72,7 @@ module top (
   wire O_sdrc_cmd_ack;
 
   SDRAM_Controller_HS_Top sdram_controller (
-      // inferred ports connecting to SDRAM
+      // inferred ports connecting SDRAM
       .O_sdram_clk,
       .O_sdram_cke,
       .O_sdram_cs_n,
@@ -116,8 +116,11 @@ module top (
   wire ramio_data_out_ready;
   wire ramio_busy;
 
-  // unused wires
-  wire sd_cs_n;
+  //  connect a led to 'busy' signal
+  assign led[5] = ~ramio_busy;
+
+  // wires related to SD card
+  wire sd_cs_n;  // unused
   assign sd_dat[3:1] = 3'b111;
 
   ramio #(
@@ -128,7 +131,7 @@ module top (
       .ClockFrequencyHz(configuration::CPU_FREQUENCY_HZ),
       .BaudRate(configuration::UART_BAUD_RATE),
       .SDCardSimulate(0),
-      .SDCardClockDivider(0)  // at 30 MHz this works
+      .SDCardClockDivider(1)  // at 30 MHz this works
   ) ramio (
       .rst_n(!rst && O_sdrc_init_done),
       .clk  (I_sdrc_clk),
@@ -183,7 +186,8 @@ module top (
   ) core (
       .rst_n(!rst && O_sdrc_init_done),
       .clk  (I_sdrc_clk),
-      .led  (led[0]),
+
+      .led(led[0]),
 
       .ramio_enable,
       .ramio_read_type,
@@ -199,10 +203,6 @@ module top (
       .flash_mosi,
       .flash_cs_n
   );
-
-  //   assign led[0] = O_sdrc_init_done;
-  //   assign led[5] = rpll_lock;
-  assign led[5] = ~ramio_busy;
 
 endmodule
 
