@@ -79,16 +79,19 @@ welcome to adventure #4
 
 ## Todo
 ```
--------------------------------------------------------------------------------------------------------------
-[ ] study better FSM in /src/emulators/flash.sv
+-----------------------------------------------------------------------------
+[ ] study why memtest fails when configured with less than 32 cache lines off 
+    32 B and why it fails almost always on same addresses with same error
+[ ] sdcard: make it work
+[ ] read LEDs
+[-] study better FSM in /src/emulators/flash.sv
+    => simple emulator that implements the boot sequence of the CPU
+    => look at https://github.com/YosysHQ/picorv32/blob/main/picosoc/spiflash.v
+       for more
 [ ] os: backspace to ctrl+h (0x08) and update putty terminal configuration screenshot
     => move the 0x08 definition to console_application.cpp and 0x7f to os.cpp
 [ ] cat > /dev/ttyUSB1 should echo without dropping input
-[ ] read LEDs
 [ ] counter[highest_bit] == 1 in decreasing counters into negative instead of counter == 0
-[ ] fix red hold and recovery paths (not involved in running CPU, ignored)
-[ ]   psram: CALIB
-[ ]   psram: RESET 
 
 next step
 [ ] reduce execution cycle by one step by doing CpuExecute in CpuFetch when ramio_data_out_ready
