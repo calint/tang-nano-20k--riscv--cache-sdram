@@ -1795,7 +1795,7 @@ Disassembly of section .text:
     1190:	00000793          	li	a5,0
     1194:	fbc40413          	addi	s0,s0,-68
 #   while (ptr < end) {
-    1198:	007ff6b7          	lui	a3,0x7ff
+    1198:	007f06b7          	lui	a3,0x7f0
     119c:	06d76263          	bltu	a4,a3,1200 <_ZL15action_mem_testv+0xa8>
 #   uart_send_str("testing memory (read)\r\n");
     11a0:	00002537          	lui	a0,0x2
@@ -1806,7 +1806,7 @@ Disassembly of section .text:
 #   ch = 0;
     11b0:	00000493          	li	s1,0
 #   while (ptr < end) {
-    11b4:	007ff937          	lui	s2,0x7ff
+    11b4:	007f0937          	lui	s2,0x7f0
 #       uart_send_str("at ");
     11b8:	000029b7          	lui	s3,0x2
 #       uart_send_str(" expected ");

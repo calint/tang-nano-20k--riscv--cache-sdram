@@ -28,10 +28,10 @@ UART_BAUD_RATE = 115200
 CACHE_COLUMN_INDEX_BITWIDTH = 3
 # 2 ^ 3 = 8 entries (32 B) per cache line
 
-CACHE_LINE_INDEX_BITWIDTH = 5  # >=5 passes memory test
+CACHE_LINE_INDEX_BITWIDTH = 11  # >=5 passes memory test at 60 MHz
 # 2 ^ 11 * 32 B = 64 KB unified instruction and data cache
-#   1 to 6  : cache implemented with SSRAM; max freq 66 MHz
-#   7 to 11 : cache implemented with BSRAM; max freq 52 MHz
+#   1 to 6  : cache implemented with SSRAM
+#   7 to 11 : cache implemented with BSRAM
 
 FLASH_TRANSFER_FROM_ADDRESS = 0x70_0000
 # flash read start address
