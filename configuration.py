@@ -6,7 +6,7 @@ BOARD_NAME = "tangnano20k"
 # used when flashing the bitstream to the FPGA and creating the SDC file
 
 CLOCK_FREQUENCY_HZ = 27_000_000
-# frequency of in clock (signal 'clk')
+# frequency of clock in (signal 'clk')
 
 CPU_FREQUENCY_HZ = 60_000_000
 # frequency that CPU runs on
@@ -63,7 +63,7 @@ FIRMWARE_FILE = "os/os.bin"
 # location of the firmware file relative to project root
 
 FIRMWARE_FILE_MAX_SIZE_BYTES = 0x10_0000
-# used to check if the bitstream size is within the allocated space
+# used to check if the firmware size is within the allocated space
 
 FIRMWARE_FLASH_OFFSET = 0x70_0000
 # used to specify the offset in the flash storage where the firmware will be written
