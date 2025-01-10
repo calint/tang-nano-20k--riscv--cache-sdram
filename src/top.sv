@@ -1,5 +1,5 @@
 //
-// RISC-V reduced rv32i for Tang Nano 9K
+// RISC-V reduced rv32i for Tang Nano 20K
 //
 `timescale 1ns / 1ps
 //
