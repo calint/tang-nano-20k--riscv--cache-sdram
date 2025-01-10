@@ -1,5 +1,5 @@
 //
-// RISC-V reduced rv32i for Tang Nano 20K
+// RISC-V reduced RV32I for Tang Nano 20K
 //
 `timescale 1ns / 1ps
 //
@@ -40,7 +40,7 @@ module top (
   // -- rPLL
   // ----------------------------------------------------------
 
-  // wire to 'sdram_controller'
+  // wires to 'sdram_controller'
   wire rpll_clk_out;
   wire rpll_lock;
 
