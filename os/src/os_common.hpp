@@ -30,18 +30,30 @@ static char const *ascii_art =
     "      | |\r\n"
     "\r\n";
 
+#define let auto const
+#define mut auto
+
+#include "lib/concepts.hpp"
+//
+#include "lib/span.hpp"
+//
+#include "lib/list.hpp"
+//
+#include "lib/command_buffer.hpp"
+
+using string = span<char>;
 using name_t = char const *;
 using location_id_t = uint8_t;
 using object_id_t = uint8_t;
 using entity_id_t = uint8_t;
 using direction_t = uint8_t;
 
-static constexpr char CHAR_BACKSPACE = 0x7f;
-static constexpr char CHAR_TAB = 0x09;
-static constexpr size_t LOCATION_MAX_OBJECTS = 128;
-static constexpr size_t LOCATION_MAX_ENTITIES = 8;
-static constexpr size_t LOCATION_MAX_EXITS = 6;
-static constexpr size_t ENTITY_MAX_OBJECTS = 32;
+static let CHAR_BACKSPACE = '\x7f';
+static let CHAR_TAB = '\x09';
+static let LOCATION_MAX_OBJECTS = 128u;
+static let LOCATION_MAX_ENTITIES = 8u;
+static let LOCATION_MAX_EXITS = 6u;
+static let ENTITY_MAX_OBJECTS = 32u;
 
 // note: defines are not stored in data segment thus gives a slightly smaller
 // binary. in this case 20 B smaller
@@ -51,178 +63,7 @@ static constexpr size_t ENTITY_MAX_OBJECTS = 32;
 // #define LOCATION_MAX_ENTITIES 8
 // #define LOCATION_MAX_EXITS 6
 // #define ENTITY_MAX_OBJECTS 32
-
-template <typename T, typename U> struct is_same {
-  static constexpr bool value = false;
-};
-
-template <typename T> struct is_same<T, T> {
-  static constexpr bool value = true;
-};
-
-template <typename T, typename U>
-concept same_as = is_same<T, U>::value;
-
-template <typename Func, typename Arg>
-concept callable_returns_bool = requires(Func f, Arg arg) {
-  { f(arg) } -> same_as<bool>;
-};
-
-template <typename Func, typename Arg>
-concept callable_returns_void = requires(Func f, Arg arg) {
-  { f(arg) } -> same_as<void>;
-};
-
-class command_buffer final {
-  char line_[80]{};
-  uint8_t cursor_{};
-  uint8_t end_{};
-
-public:
-  auto insert(char const ch) -> bool {
-    if (end_ == sizeof(line_) - 1) {
-      return false;
-    }
-
-    if (cursor_ == end_) {
-      line_[cursor_] = ch;
-      ++cursor_;
-      ++end_;
-      return true;
-    }
-
-    ++end_;
-    for (size_t i = end_; i > cursor_; --i) {
-      line_[i] = line_[i - 1];
-    }
-    line_[cursor_] = ch;
-    ++cursor_;
-    return true;
-  }
-
-  auto backspace() -> bool {
-    if (cursor_ == 0) {
-      return false;
-    }
-
-    if (cursor_ == end_) {
-      --end_;
-      --cursor_;
-      return true;
-    }
-
-    for (size_t i = cursor_ - 1; i < end_; ++i) {
-      line_[i] = line_[i + 1];
-    }
-    --cursor_;
-    --end_;
-    return true;
-  }
-
-  auto del() -> void {
-    if (cursor_ == end_) {
-      return;
-    }
-
-    for (size_t i = cursor_ + 1; i < end_; ++i) {
-      line_[i - 1] = line_[i];
-    }
-    --end_;
-  }
-
-  auto reset() -> void { cursor_ = end_ = 0; }
-
-  auto set_eos() -> void { line_[end_] = '\0'; }
-
-  auto is_full() const -> bool { return end_ == sizeof(line_) - 1; }
-
-  auto move_cursor_left() -> bool {
-    if (cursor_ == 0) {
-      return false;
-    }
-    --cursor_;
-    return true;
-  }
-
-  auto move_cursor_right() -> bool {
-    if (cursor_ == end_) {
-      return false;
-    }
-    ++cursor_;
-    return true;
-  }
-
-  auto apply_on_chars_from_cursor_to_end(
-      callable_returns_void<char> auto &&f) const -> void {
-    for (size_t i = cursor_; i < end_; ++i) {
-      f(line_[i]);
-    }
-  }
-
-  auto characters_after_cursor() const -> size_t { return end_ - cursor_; }
-
-  auto command_line() -> char * { return line_; }
-
-  auto input_length() const -> size_t { return end_; }
-};
-
-template <class Type, unsigned Size> class list final {
-public:
-  Type data[Size]{};
-  size_t len{};
-
-  auto add(Type elem) -> bool {
-    if (len == Size - 1) {
-      return false;
-    }
-    data[len] = elem;
-    ++len;
-    return true;
-  }
-
-  auto remove(Type elem) -> bool {
-    for (size_t i = 0; i < len; ++i) {
-      if (data[i] != elem) {
-        continue;
-      }
-      --len;
-      for (size_t j = i; j < len; ++j) {
-        data[j] = data[j + 1];
-      }
-      return true;
-    }
-    return false;
-  }
-
-  auto remove_at_index(size_t ix) -> bool {
-    if (len == 0 || ix >= len) {
-      return false;
-    }
-    --len;
-    for (size_t i = ix; i < len; ++i) {
-      data[i] = data[i + 1];
-    }
-    return true;
-  }
-
-  auto at(size_t const ix) const -> Type {
-    if (ix < len) {
-      return data[ix];
-    }
-    return {};
-  }
-
-  auto length() const -> size_t { return len; }
-
-  auto
-  for_each_until_false(callable_returns_bool<Type> auto &&f) const -> void {
-    for (size_t i = 0; i < len; ++i) {
-      if (!f(data[i])) {
-        return;
-      }
-    }
-  }
-};
+//
 
 struct object final {
   name_t name{};
@@ -265,30 +106,26 @@ static auto uart_send_hex_nibble(char nibble) -> void;
 static auto uart_send_move_back(size_t n) -> void;
 static auto action_mem_test() -> void;
 static auto action_sdcard_status() -> void;
-static auto action_sdcard_test_read(char const *words[], size_t nwords) -> void;
-static auto action_sdcard_test_write(char const *words[],
-                                     size_t nwords) -> void;
+static auto action_sdcard_test_read(string arg) -> void;
+static auto action_sdcard_test_write(string arg) -> void;
 
 // API
 static auto print_help() -> void;
-static auto print_location(location_id_t const lid,
-                           entity_id_t const eid_exclude_from_output) -> void;
-static auto action_inventory(entity_id_t const eid) -> void;
-static auto action_give(entity_id_t const eid, name_t const obj_nm,
-                        name_t const to_ent_nm) -> void;
-static auto action_go(entity_id_t const eid, direction_t const dir) -> void;
-static auto action_drop(entity_id_t const eid, name_t const obj_nm) -> void;
-static auto action_take(entity_id_t const eid, name_t const obj_nm) -> void;
+static auto print_location(location_id_t lid,
+                           entity_id_t eid_exclude_from_output) -> void;
+static auto action_inventory(entity_id_t eid) -> void;
+static auto action_give(entity_id_t eid, string args) -> void;
+static auto action_go(entity_id_t eid, direction_t dir) -> void;
+static auto action_drop(entity_id_t eid, string args) -> void;
+static auto action_take(entity_id_t eid, string args) -> void;
 static auto input(command_buffer &cmd_buf) -> void;
-static auto handle_input(entity_id_t const eid,
-                         command_buffer &cmd_buf) -> void;
-static auto strings_equal(char const *s1, char const *s2) -> bool;
-static auto string_copy(char const *src, size_t src_len, char *dst) -> void;
+static auto handle_input(entity_id_t eid, command_buffer &cmd_buf) -> void;
 static auto sdcard_read_blocking(size_t sector, int8_t *buffer512B) -> void;
 static auto sdcard_write_blocking(size_t sector,
                                   int8_t const *buffer512B) -> void;
-static auto string_copy_to_buffer(char const *str, char *buf) -> char *;
-static auto string_to_uint32(char const *str) -> uint32_t;
+static auto cstr_equals(char const *s1, char const *s2) -> bool;
+static auto cstr_copy(char const *src, size_t src_len, char *dst) -> void;
+static auto cstr_copy(char const *str, char *buf) -> char *;
 
 extern "C" [[noreturn]] auto run() -> void {
   initiate_bss();
@@ -303,11 +140,11 @@ extern "C" [[noreturn]] auto run() -> void {
   uart_send_str(ascii_art);
   uart_send_str(hello);
 
-  entity_id_t active_entity = 1;
-  command_buffer cmd_buf{};
+  mut active_entity = entity_id_t{1};
+  mut cmd_buf = command_buffer{};
 
   while (true) {
-    entity const &ent = entities[active_entity];
+    mut &ent = entities[active_entity];
     print_location(ent.location, active_entity);
     uart_send_str(ent.name);
     uart_send_str(" > ");
@@ -318,75 +155,72 @@ extern "C" [[noreturn]] auto run() -> void {
   }
 }
 
+static auto string_equals_cstr(string const span, char const *str) -> bool {
+  mut e = span.for_each_until_false([&str](char const ch) {
+    if (*str && *str == ch) {
+      ++str;
+      return true;
+    }
+    return false;
+  });
+  return span.is_end_of_span(e) && *str == '\0';
+}
+
+static auto string_print(string const span) -> void {
+  span.for_each([](char const ch) { uart_send_char(ch); });
+}
+
+typedef struct string_next_word_return {
+  string word{};
+  string rem{};
+} string_next_word_return;
+
+static auto string_next_word(string const spn) -> string_next_word_return {
+  mut ce = spn.for_each_until_false(
+      [](char const ch) { return ch != ' ' && ch != '\0'; });
+  let word = spn.subspan_ending_at(ce);
+  let rem = spn.subspan_starting_at(ce);
+  let rem_trimmed = rem.subspan_starting_at(
+      rem.for_each_until_false([](char const ch) { return ch == ' '; }));
+  return {word, rem_trimmed};
+}
+
 static auto handle_input(entity_id_t const eid,
                          command_buffer &cmd_buf) -> void {
-  char const *words[8];
-  char *ptr = cmd_buf.command_line();
-  size_t nwords = 0;
-  while (true) {
-    words[nwords] = ptr;
-    ++nwords;
-    while (*ptr && *ptr != ' ') {
-      ++ptr;
-    }
-    if (!*ptr) {
-      break;
-    }
-    *ptr = '\0';
-    ++ptr;
-    if (nwords == sizeof(words) / sizeof(char const *)) {
-      uart_send_str("too many words, some ignored\r\n\r\n");
-      break;
-    }
-  }
-  // for (size_t i = 0; i < nwords; i++) {
-  //   uart_send_str(words[i]);
-  //   uart_send_str("\r\n");
-  // }
-  if (strings_equal(words[0], "help")) {
+
+  let line = cmd_buf.span();
+  let w1 = string_next_word(line);
+  let cmd = w1.word;
+  let args = w1.rem;
+
+  if (string_equals_cstr(cmd, "help")) {
     print_help();
-  } else if (strings_equal(words[0], "i")) {
+  } else if (string_equals_cstr(cmd, "i")) {
     action_inventory(eid);
     uart_send_str("\r\n");
-  } else if (strings_equal(words[0], "t")) {
-    if (nwords < 2) {
-      uart_send_str("take what\r\n\r\n");
-      return;
-    }
-    action_take(eid, words[1]);
-  } else if (strings_equal(words[0], "d")) {
-    if (nwords < 2) {
-      uart_send_str("drop what\r\n\r\n");
-      return;
-    }
-    action_drop(eid, words[1]);
-  } else if (strings_equal(words[0], "n")) {
+  } else if (string_equals_cstr(cmd, "t")) {
+    action_take(eid, args);
+  } else if (string_equals_cstr(cmd, "d")) {
+    action_drop(eid, args);
+  } else if (string_equals_cstr(cmd, "n")) {
     action_go(eid, 0);
-  } else if (strings_equal(words[0], "e")) {
+  } else if (string_equals_cstr(cmd, "e")) {
     action_go(eid, 1);
-  } else if (strings_equal(words[0], "s")) {
+  } else if (string_equals_cstr(cmd, "s")) {
     action_go(eid, 2);
-  } else if (strings_equal(words[0], "w")) {
+  } else if (string_equals_cstr(cmd, "w")) {
     action_go(eid, 3);
-  } else if (strings_equal(words[0], "g")) {
-    if (nwords < 2) {
-      uart_send_str("give what\r\n\r\n");
-      return;
-    }
-    if (nwords < 3) {
-      uart_send_str("give to whom\r\n\r\n");
-      return;
-    }
-    action_give(eid, words[1], words[2]);
-  } else if (strings_equal(words[0], "m")) {
+  } else if (string_equals_cstr(cmd, "g")) {
+    action_give(eid, args);
+  } else if (string_equals_cstr(cmd, "m")) {
     action_mem_test();
-  } else if (strings_equal(words[0], "sds")) {
+  } else if (string_equals_cstr(cmd, "sds")) {
     action_sdcard_status();
-  } else if (strings_equal(words[0], "sdr")) {
-    action_sdcard_test_read(words, nwords);
-  } else if (strings_equal(words[0], "sdw")) {
-    action_sdcard_test_write(words, nwords);
-  } else if (strings_equal(words[0], "q")) {
+  } else if (string_equals_cstr(cmd, "sdr")) {
+    action_sdcard_test_read(args);
+  } else if (string_equals_cstr(cmd, "sdw")) {
+    action_sdcard_test_write(args);
+  } else if (string_equals_cstr(cmd, "q")) {
     exit(0);
   } else {
     uart_send_str("not understood\r\n\r\n");
@@ -395,15 +229,15 @@ static auto handle_input(entity_id_t const eid,
 
 static auto print_location(location_id_t const lid,
                            entity_id_t const eid_exclude_from_output) -> void {
-  location &loc = locations[lid];
+  mut &loc = locations[lid];
   uart_send_str("u r in ");
   uart_send_str(loc.name);
   uart_send_str("\r\nu c: ");
 
   // print objects at location
   {
-    uint32_t counter = 0;
-    loc.objects.for_each_until_false([&](object_id_t const id) {
+    mut counter = 0;
+    loc.objects.for_each_until_false([&counter](object_id_t const id) {
       if (counter++) {
         uart_send_str(", ");
       }
@@ -418,17 +252,18 @@ static auto print_location(location_id_t const lid,
 
   // print entities in location
   {
-    uint32_t counter = 0;
-    loc.entities.for_each_until_false([&](location_id_t const id) {
-      if (id == eid_exclude_from_output) {
-        return true;
-      }
-      if (counter++) {
-        uart_send_str(", ");
-      }
-      uart_send_str(entities[id].name);
-      return true;
-    });
+    mut counter = 0;
+    loc.entities.for_each_until_false(
+        [&counter, eid_exclude_from_output](location_id_t const id) {
+          if (id == eid_exclude_from_output) {
+            return true;
+          }
+          if (counter++) {
+            uart_send_str(", ");
+          }
+          uart_send_str(entities[id].name);
+          return true;
+        });
     if (counter != 0) {
       uart_send_str(" is here\r\n");
     }
@@ -436,11 +271,11 @@ static auto print_location(location_id_t const lid,
 
   // print exits from location
   {
-    uint32_t counter = 0;
+    mut counter = 0;
     uart_send_str("exits: ");
-    auto &lse = loc.exits;
-    size_t const n = lse.length();
-    for (size_t i = 0; i < n; ++i) {
+    mut &lse = loc.exits;
+    let n = lse.length();
+    for (mut i = 0u; i < n; ++i) {
       if (!lse.at(i)) {
         continue;
       }
@@ -458,8 +293,8 @@ static auto print_location(location_id_t const lid,
 
 static auto action_inventory(entity_id_t const eid) -> void {
   uart_send_str("u have: ");
-  uint32_t counter = 0;
-  entities[eid].objects.for_each_until_false([&](object_id_t const id) {
+  mut counter = 0;
+  entities[eid].objects.for_each_until_false([&counter](object_id_t const id) {
     if (counter++) {
       uart_send_str(", ");
     }
@@ -472,13 +307,17 @@ static auto action_inventory(entity_id_t const eid) -> void {
   uart_send_str("\r\n");
 }
 
-static auto action_take(entity_id_t const eid, name_t const obj_nm) -> void {
-  entity &ent = entities[eid];
-  auto &lso = locations[ent.location].objects;
-  size_t const n = lso.length();
-  for (size_t i = 0; i < n; ++i) {
-    object_id_t const oid = lso.at(i);
-    if (!strings_equal(objects[oid].name, obj_nm)) {
+static auto action_take(entity_id_t const eid, string const args) -> void {
+  if (args.size() == 0) {
+    uart_send_str("take what\r\n\r\n");
+    return;
+  }
+  mut &ent = entities[eid];
+  mut &lso = locations[ent.location].objects;
+  let n = lso.length();
+  for (mut i = 0u; i < n; ++i) {
+    let oid = lso.at(i);
+    if (!string_equals_cstr(args, objects[oid].name)) {
       continue;
     }
     if (ent.objects.add(oid)) {
@@ -486,17 +325,21 @@ static auto action_take(entity_id_t const eid, name_t const obj_nm) -> void {
     }
     return;
   }
-  uart_send_str(obj_nm);
+  string_print(args);
   uart_send_str(" not here\r\n\r\n");
 }
 
-static auto action_drop(entity_id_t const eid, name_t const obj_nm) -> void {
-  entity &ent = entities[eid];
-  auto &lso = ent.objects;
-  size_t const n = lso.length();
-  for (size_t i = 0; i < n; ++i) {
-    object_id_t const oid = lso.at(i);
-    if (!strings_equal(objects[oid].name, obj_nm)) {
+static auto action_drop(entity_id_t const eid, string const args) -> void {
+  if (args.size() == 0) {
+    uart_send_str("drop what\r\n\r\n");
+    return;
+  }
+  mut &ent = entities[eid];
+  mut &lso = ent.objects;
+  let n = lso.length();
+  for (mut i = 0u; i < n; ++i) {
+    let oid = lso.at(i);
+    if (!string_equals_cstr(args, objects[oid].name)) {
       continue;
     }
     if (locations[ent.location].objects.add(oid)) {
@@ -505,14 +348,14 @@ static auto action_drop(entity_id_t const eid, name_t const obj_nm) -> void {
     return;
   }
   uart_send_str("u don't have ");
-  uart_send_str(obj_nm);
+  string_print(args);
   uart_send_str("\r\n\r\n");
 }
 
 static auto action_go(entity_id_t const eid, direction_t const dir) -> void {
-  entity &ent = entities[eid];
-  location &loc = locations[ent.location];
-  location_id_t const to = loc.exits.at(dir);
+  mut &ent = entities[eid];
+  mut &loc = locations[ent.location];
+  let to = loc.exits.at(dir);
   if (!to) {
     uart_send_str("cannot go there\r\n\r\n");
     return;
@@ -523,22 +366,35 @@ static auto action_go(entity_id_t const eid, direction_t const dir) -> void {
   }
 }
 
-static auto action_give(entity_id_t const eid, name_t const obj_nm,
-                        name_t const to_ent_nm) -> void {
-  entity &ent = entities[eid];
-  location &loc = locations[ent.location];
-  auto &lse = loc.entities;
-  size_t const n = lse.length();
-  for (size_t i = 0; i < n; ++i) {
-    entity &to = entities[lse.at(i)];
-    if (!strings_equal(to.name, to_ent_nm)) {
+static auto action_give(entity_id_t const eid, string args) -> void {
+  let w1 = string_next_word(args);
+  let obj_nm = w1.word;
+  if (obj_nm.is_empty()) {
+    uart_send_str("give what\r\n\r\n");
+    return;
+  }
+
+  let w2 = string_next_word(w1.rem);
+  let to_ent_nm = w2.word;
+  if (to_ent_nm.is_empty()) {
+    uart_send_str("give to whom\r\n\r\n");
+    return;
+  }
+
+  mut &ent = entities[eid];
+  let &loc = locations[ent.location];
+  let &lse = loc.entities;
+  let n = lse.length();
+  for (mut i = 0u; i < n; ++i) {
+    mut &to = entities[lse.at(i)];
+    if (!string_equals_cstr(to_ent_nm, to.name)) {
       continue;
     }
-    auto &lso = ent.objects;
-    size_t const m = lso.length();
-    for (size_t j = 0; j < m; j++) {
-      object_id_t const oid = lso.at(j);
-      if (!strings_equal(objects[oid].name, obj_nm)) {
+    mut &lso = ent.objects;
+    let m = lso.length();
+    for (mut j = 0u; j < m; j++) {
+      let oid = lso.at(j);
+      if (!string_equals_cstr(obj_nm, objects[oid].name)) {
         continue;
       }
       if (to.objects.add(oid)) {
@@ -546,11 +402,11 @@ static auto action_give(entity_id_t const eid, name_t const obj_nm,
       }
       return;
     }
-    uart_send_str(obj_nm);
+    string_print(obj_nm);
     uart_send_str(" not in inventory\r\n\r\n");
     return;
   }
-  uart_send_str(to_ent_nm);
+  string_print(to_ent_nm);
   uart_send_str(" is not here\r\n\r\n");
 }
 
@@ -559,13 +415,15 @@ static auto print_help() -> void {
       "\r\ncommand:\r\n  n: go north\r\n  e: go east\r\n  s: go south\r\n  w: "
       "go west\r\n  i: "
       "display inventory\r\n  t <object>: take object\r\n  d <object>: drop "
-      "object\r\n  g <object> <entity>: give object to entity\r\n  help: this "
+      "object\r\n  g <object> <entity>: give object to entity\r\n  sdr "
+      "<sector>: read from SD card sector\r\n  sdw <sector> <text>: write to "
+      "SD card sector\r\n  help: this "
       "message\r\n\r\n");
 }
 
 static char input_escape_sequence[8];
 static auto input_escape_sequence_clear() -> void {
-  for (size_t i = 0; i < sizeof(input_escape_sequence); ++i) {
+  for (mut i = 0u; i < sizeof(input_escape_sequence); ++i) {
     input_escape_sequence[i] = '\0';
   }
 }
@@ -574,11 +432,11 @@ enum class input_state { NORMAL, ESCAPE, ESCAPE_BRACKET };
 
 static auto input(command_buffer &cmd_buf) -> void {
   cmd_buf.reset();
-  input_state state = input_state::NORMAL;
-  int escape_sequence_parameter = 0;
+  mut state = input_state::NORMAL;
+  mut escape_sequence_parameter = 0;
 
   while (true) {
-    char const ch = uart_read_char();
+    let ch = uart_read_char();
     led_set(~ch);
     switch (state) {
     case input_state::NORMAL:
@@ -652,7 +510,7 @@ static auto input(command_buffer &cmd_buf) -> void {
   }
 }
 
-static auto strings_equal(char const *s1, char const *s2) -> bool {
+static auto cstr_equals(char const *s1, char const *s2) -> bool {
   while (true) {
     if (*s1 != *s2) {
       return false;
@@ -665,13 +523,13 @@ static auto strings_equal(char const *s1, char const *s2) -> bool {
   }
 }
 
-static auto string_copy(char const *src, size_t src_len, char *dst) -> void {
+static auto cstr_copy(char const *src, size_t src_len, char *dst) -> void {
   while (src_len--) {
     *dst++ = *src++;
   }
 }
 
-static auto string_copy_to_buffer(char const *str, char *buf) -> char * {
+static auto cstr_copy(char const *str, char *buf) -> char * {
   while (*str) {
     *buf = *str;
     ++buf;
@@ -680,17 +538,15 @@ static auto string_copy_to_buffer(char const *str, char *buf) -> char * {
   return buf;
 }
 
-static auto string_to_uint32(char const *str) -> uint32_t {
-  uint32_t num = 0;
-  while (true) {
-    char const ch = *str;
-    if (ch >= '0' && ch <= '9') {
-      num = num * 10 + uint32_t(ch - '0');
-    } else {
-      break;
+static auto string_to_uint32(string str) -> uint32_t {
+  mut num = 0u;
+  str.for_each_until_false([&num](char const ch) {
+    if (ch <= '0' || ch >= '9') {
+      return false;
     }
-    ++str;
-  }
+    num = num * 10 + uint32_t(ch - '0');
+    return true;
+  });
   return num;
 }
 
@@ -708,7 +564,7 @@ static auto uart_send_hex_nibble(char const nibble) -> void {
 }
 
 static auto uart_send_move_back(size_t const n) -> void {
-  for (size_t i = 0; i < n; ++i) {
+  for (mut i = 0u; i < n; ++i) {
     uart_send_char('\b');
   }
 }
