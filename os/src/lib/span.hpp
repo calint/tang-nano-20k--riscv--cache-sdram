@@ -16,19 +16,23 @@ public:
   span() : begin_{nullptr}, end_{nullptr} {}
 
   span(Type *const span_begin, Type *const span_end)
-      : begin_{span_begin}, end_{span_end} {}
+      : begin_{span_begin}, end_{span_end} {
+    if constexpr (safe_span) {
+      if (begin_ > end_) {
+        begin_ = end_ = nullptr;
+      }
+    }
+  }
 
   span(Type *const span_begin, size_t const size)
       : begin_{span_begin}, end_{span_begin + size} {}
 
-  auto size() const -> size_t {
-    return size_t(end_ - begin_);
-  } // ? what if end<begin
+  auto size() const -> size_t { return size_t(end_ - begin_); }
 
   auto subspan(size_t const begin_index,
                size_t const end_index) const -> span<Type> {
-    size_t const n = size();
     if constexpr (safe_span) {
+      size_t const n = size();
       if (begin_index > n || end_index > n || begin_index > end_index) {
         return {};
       }
@@ -134,11 +138,7 @@ public:
     return {it};
   }
 
-  auto is_within_span(position const pos) const -> bool {
-    return pos.ptr >= begin_ && pos.ptr <= end_;
-  }
-
-  auto is_end_of_span(position const t) const -> bool { return t.ptr == end_; }
+  auto is_at_end(position const t) const -> bool { return t.ptr == end_; }
 
   auto is_null() const -> bool { return begin_ = nullptr && end_ == nullptr; }
 
