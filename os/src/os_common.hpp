@@ -1,6 +1,7 @@
-static char const *hello = "welcome to adventure #4\r\n    type 'help'\r\n\r\n";
+static char const *const hello =
+    "welcome to adventure #4\r\n    type 'help'\r\n\r\n";
 
-static char const *ascii_art =
+static char const *const ascii_art =
     "                                  oOo.o.\r\n"
     "         frameless osca          oOo.oOo\r\n"
     "      __________________________  .oOo.\r\n"
@@ -46,6 +47,7 @@ using string = span<char>;
 
 #include "lib/command_buffer.hpp"
 
+static let safe_arrays = true;
 static let char_backspace = '\x7f';
 static let char_tab = '\x09';
 static let location_max_objects = 128u;
@@ -84,12 +86,10 @@ struct location_link final {
 
 struct location final {
   name_t name{};
+  list<location_link, location_max_links> links{};
   list<object_id_t, location_max_objects> objects{};
   list<entity_id_t, location_max_entities> entities{};
-  list<location_link, location_max_links> links{};
 };
-
-static bool constexpr safe_arrays = true;
 
 static object objects[] = {{}, {"notebook"}, {"mirror"}, {"lighter"}};
 
@@ -97,15 +97,15 @@ static entity entities[] = {{}, {"me", 1, {{2}, 1}}, {"u", 2, {}}};
 
 static location locations[] = {
     {},
-    {"roome", {}, {{1}, 1}, {{{1, 2}, {2, 3}, {4, 4}}, 3}},
-    {"office", {{1, 3}, 2}, {{2}, 1}, {{{3, 1}}, 1}},
+    {"roome", {{{1, 2}, {2, 3}, {4, 4}}, 3}, {}, {{1}, 1}},
+    {"office", {{{3, 1}}, 1}, {{1, 3}, 2}, {{2}, 1}},
     {"bathroom"},
-    {"kitchen", {}, {}, {{{2, 1}}, 1}}};
+    {"kitchen", {{{2, 1}}, 1}, {}, {}}};
 
 static cstr links[] = {"", "north", "east", "south", "west", "up", "down"};
 
 // implemented in platform dependent source
-static auto led_set(int32_t bits) -> void;
+static auto led_set(uint32_t bits) -> void;
 static auto uart_send_cstr(cstr str) -> void;
 static auto uart_send_char(char ch) -> void;
 static auto uart_read_char() -> char;
@@ -463,7 +463,7 @@ static auto input(command_buffer &cmd_buf) -> void {
   cmd_buf.reset();
   while (true) {
     let ch = uart_read_char();
-    led_set(~ch);
+    led_set(uint32_t(~ch));
     switch (state) {
     case input_state::NORMAL:
       if (ch == 0x1B) {
