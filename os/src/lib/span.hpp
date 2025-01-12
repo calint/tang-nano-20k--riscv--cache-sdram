@@ -1,6 +1,6 @@
 #pragma once
 
-bool constexpr safe_span = true;
+static bool constexpr safe_span = true;
 
 template <typename Type> class span {
   Type *begin_{};
@@ -15,8 +15,7 @@ public:
 
   span() : begin_{nullptr}, end_{nullptr} {}
 
-  span(Type *const span_begin, Type *const span_end)
-      : begin_{span_begin}, end_{span_end} {
+  span(Type *const begin, Type *const end) : begin_{begin}, end_{end} {
     if constexpr (safe_span) {
       if (begin_ > end_) {
         begin_ = end_ = nullptr;
@@ -24,40 +23,16 @@ public:
     }
   }
 
-  span(Type *const span_begin, size_t const size)
-      : begin_{span_begin}, end_{span_begin + size} {}
+  span(Type *const begin, size_t const size)
+      : begin_{begin}, end_{begin + size} {}
 
   auto size() const -> size_t { return size_t(end_ - begin_); }
 
-  auto subspan(size_t const begin_index,
-               size_t const end_index) const -> span<Type> {
-    if constexpr (safe_span) {
-      size_t const n = size();
-      if (begin_index > n || end_index > n || begin_index > end_index) {
-        return {};
-      }
-    }
-    return {begin_ + begin_index, begin_ + end_index};
-  }
+  auto is_at_end(position const t) const -> bool { return t.ptr == end_; }
 
-  auto subspan(Type *const span_begin,
-               Type *const span_end) const -> span<Type> {
-    if constexpr (safe_span) {
-      if (span_begin > end_ || span_end > end_ || span_begin > span_end) {
-        return {};
-      }
-    }
-    return {span_begin, span_end};
-  }
+  auto is_null() const -> bool { return begin_ = nullptr && end_ == nullptr; }
 
-  auto subspan_starting_at_index(size_t begin_index) const -> span<Type> {
-    if constexpr (safe_span) {
-      if (begin_index > size()) {
-        return {};
-      }
-    }
-    return {begin_ + begin_index, end_};
-  }
+  auto is_empty() const -> bool { return begin_ == end_; }
 
   auto subspan_starting_at(position const pos) const -> span<Type> {
     if constexpr (safe_span) {
@@ -66,15 +41,6 @@ public:
       }
     }
     return {pos.ptr, end_};
-  }
-
-  auto subspan_ending_at_index(size_t const end_index) const -> span<Type> {
-    if constexpr (safe_span) {
-      if (end_index > size()) {
-        return {};
-      }
-    }
-    return {begin_, end_index};
   }
 
   auto subspan_ending_at(position const pos) const -> span<Type> {
@@ -86,27 +52,27 @@ public:
     return {begin_, pos.ptr};
   }
 
-  auto for_each(callable_returns_void<Type> auto f) const -> void {
+  auto for_each(callable_returns_void<Type> auto &&f) const -> void {
     for (Type *it = begin_; it < end_; ++it) {
       f(*it);
     }
   }
 
-  auto for_each_ref(callable_returns_void<Type &> auto f) const -> void {
+  auto for_each_ref(callable_returns_void<Type &> auto &&f) const -> void {
+    for (Type *it = begin_; it < end_; ++it) {
+      f(*it);
+    }
+  }
+
+  auto for_each_const_ref(callable_returns_void<Type const &> auto &&f) const
+      -> void {
     for (Type *it = begin_; it < end_; ++it) {
       f(*it);
     }
   }
 
   auto
-  for_each_const_ref(callable_returns_void<Type const &> auto f) const -> void {
-    for (Type *it = begin_; it < end_; ++it) {
-      f(*it);
-    }
-  }
-
-  auto
-  for_each_until_false(callable_returns_bool<Type> auto f) const -> position {
+  for_each_until_false(callable_returns_bool<Type> auto &&f) const -> position {
     Type *it = begin_;
     for (; it < end_; ++it) {
       if (!f(*it)) {
@@ -116,7 +82,7 @@ public:
     return {it};
   }
 
-  auto for_each_ref_until_false(callable_returns_bool<Type &> auto f) const
+  auto for_each_ref_until_false(callable_returns_bool<Type &> auto &&f) const
       -> position {
     Type *it = begin_;
     for (; it < end_; ++it) {
@@ -128,7 +94,7 @@ public:
   }
 
   auto for_each_const_ref_until_false(
-      callable_returns_bool<Type const &> auto f) const -> position {
+      callable_returns_bool<Type const &> auto &&f) const -> position {
     Type *it = begin_;
     for (; it < end_; ++it) {
       if (!f(*it)) {
@@ -137,10 +103,4 @@ public:
     }
     return {it};
   }
-
-  auto is_at_end(position const t) const -> bool { return t.ptr == end_; }
-
-  auto is_null() const -> bool { return begin_ = nullptr && end_ == nullptr; }
-
-  auto is_empty() const -> bool { return begin_ == end_; }
 };
