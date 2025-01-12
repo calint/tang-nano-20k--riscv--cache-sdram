@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "osqa: debug console application",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/os/console_application",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "osqa: build console application",
+        }
+    ]
+}
