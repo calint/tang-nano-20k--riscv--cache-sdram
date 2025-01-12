@@ -1,6 +1,9 @@
 //
 // source for console build
 //
+// note: meant to be run in Visual Code terminal for debugging purposes where
+// backspace is encoded 0x7f
+//
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -13,7 +16,7 @@ static auto initiate_bss() -> void {}
 static auto initiate_statics() -> void {}
 // note: statics are initiated by the C++ runtime
 
-static constexpr char CHAR_CARRIAGE_RETURN = 0x0a;
+static char constexpr char_carriage_return = '\x0a';
 // console application uses newline
 
 #include "os_common.hpp"
@@ -44,12 +47,12 @@ static auto led_set(uint32_t const bits) -> void {}
 
 static auto action_mem_test() -> void { printf("memory test not supported\n"); }
 
-static auto action_sdcard_test_read(string const args) -> void {
-  printf("sdcard test read not supported\n");
+static auto action_sdcard_read(string const args) -> void {
+  printf("action sdcard read not supported\n");
 }
 
-static auto action_sdcard_test_write(string const args) -> void {
-  printf("sdcard test write not supported\n");
+static auto action_sdcard_write(string const args) -> void {
+  printf("action sdcard write not supported\n");
 }
 
 static auto action_sdcard_status() -> void {
