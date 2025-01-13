@@ -43,9 +43,6 @@ cp -rfa $T9KPTH/.vscode/* $T20KPTH/.vscode/
 
 cp -rfa $T9KPTH/scripts/* $T20KPTH/scripts/
 
-echo apply configuraiton
-../configuration-apply.py
-
 echo run tests
 ../scripts/run-tests.sh
 
