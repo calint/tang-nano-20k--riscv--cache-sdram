@@ -49,7 +49,7 @@ using string = span<char>;
 
 static let safe_arrays = true;
 static let char_backspace = '\x7f';
-static let char_tab = '\x09';
+static let char_tab = '\t';
 static let location_max_objects = 128u;
 static let location_max_entities = 8u;
 static let location_max_links = 6u;
@@ -134,8 +134,8 @@ static auto action_take(entity_id_t eid, string args) -> void;
 static auto input(command_buffer &cmd_buf) -> void;
 static auto handle_input(entity_id_t eid, command_buffer &cmd_buf) -> void;
 static auto sdcard_read_blocking(size_t sector, int8_t *buffer512B) -> void;
-static auto sdcard_write_blocking(size_t sector,
-                                  int8_t const *buffer512B) -> void;
+static auto sdcard_write_blocking(size_t sector, int8_t const *buffer512B)
+    -> void;
 static auto string_equals_cstr(string str, cstr s) -> bool;
 static auto string_to_uint32(string str) -> uint32_t;
 static auto string_print(string str) -> void;
@@ -190,10 +190,9 @@ struct string_next_word_return {
   string rem{};
 };
 
-static auto
-string_next_word(string const str) -> struct string_next_word_return {
-  mut ce =
-      str.for_each_until_false([](let ch) { return ch != ' ' && ch != '\0'; });
+static auto string_next_word(string const str)
+    -> struct string_next_word_return {
+  mut ce = str.for_each_until_false([](let ch) { return ch != ' '; });
   let word = str.subspan_ending_at(ce);
   let rem = str.subspan_starting_at(ce);
   let rem_trimmed = rem.subspan_starting_at(
@@ -245,7 +244,7 @@ handle_input(entity_id_t const eid, command_buffer &cmd_buf) -> void {
 
 static auto print_location(location_id_t const lid,
                            entity_id_t const eid_excluded_from_output) -> void {
-  mut &loc = location_by_id(lid);
+  let &loc = location_by_id(lid);
   uart_send_cstr("u r in ");
   uart_send_cstr(loc.name);
   uart_send_cstr("\r\nu c: ");
@@ -285,13 +284,13 @@ static auto print_location(location_id_t const lid,
   // print links from location
   {
     uart_send_cstr("exits: ");
-    mut &lse = loc.links;
+    let &lse = loc.links;
     mut counter = 0;
-    lse.for_each([&counter](let loc_link) {
+    lse.for_each([&counter](let &lnk) {
       if (counter++) {
         uart_send_cstr(", ");
       }
-      uart_send_cstr(link_by_id(loc_link.link));
+      uart_send_cstr(link_by_id(lnk.link));
     });
     if (counter == 0) {
       uart_send_cstr("none");
@@ -329,13 +328,13 @@ static auto action_take(entity_id_t const eid, string const args) -> void {
     }
     return true;
   });
-
   if (lso.is_at_end(pos)) {
     string_print(args);
     uart_send_cstr(" not here\r\n\r\n");
     return;
   }
 
+  // ? lso.at extra lookup
   if (ent.objects.add(lso.at(pos))) {
     lso.remove_at(pos);
   }
@@ -355,7 +354,6 @@ static auto action_drop(entity_id_t const eid, string const args) -> void {
     }
     return true;
   });
-
   if (lso.is_at_end(pos)) {
     uart_send_cstr("u don't have ");
     string_print(args);
@@ -363,6 +361,7 @@ static auto action_drop(entity_id_t const eid, string const args) -> void {
     return;
   }
 
+  // ? lso.at extra lookup
   if (location_by_id(ent.location).objects.add(lso.at(pos))) {
     lso.remove_at(pos);
   }
@@ -370,23 +369,25 @@ static auto action_drop(entity_id_t const eid, string const args) -> void {
 
 static auto action_go(entity_id_t const eid, link_id_t const link_id) -> void {
   mut &ent = entity_by_id(eid);
+
+  // find link in entity location
   mut &loc = location_by_id(ent.location);
-  let link_pos = loc.links.for_each_until_false([link_id](let lnk) {
+  let lnk_pos = loc.links.for_each_until_false([link_id](let &lnk) {
     if (lnk.link == link_id) {
       return false;
     }
     return true;
   });
-
-  if (loc.links.is_at_end(link_pos)) {
+  if (loc.links.is_at_end(lnk_pos)) {
     uart_send_cstr("cannot go there\r\n\r\n");
     return;
   }
 
-  let loc_exit = loc.links.at(link_pos);
-  if (location_by_id(loc_exit.location).entities.add(eid)) {
+  // move entity
+  let lnk = loc.links.at(lnk_pos); // ? extra lookup
+  if (location_by_id(lnk.location).entities.add(eid)) {
     loc.entities.remove(eid);
-    ent.location = loc_exit.location;
+    ent.location = lnk.location;
   }
 }
 
@@ -406,9 +407,9 @@ static auto action_give(entity_id_t const eid, string const args) -> void {
   }
 
   mut &from_entity = entity_by_id(eid);
+  // find 'to' entity in location
   let &loc = location_by_id(from_entity.location);
   let &lse = loc.entities;
-  // find 'to' entity in location
   let to_pos = lse.for_each_until_false([&to_ent_nm](let id) {
     if (string_equals_cstr(to_ent_nm, entity_by_id(id).name)) {
       return false;
@@ -422,8 +423,8 @@ static auto action_give(entity_id_t const eid, string const args) -> void {
   }
 
   // get 'to' entity
+  // ? lse.at, entity_by_id extra lookup
   mut &to_entity = entity_by_id(lse.at(to_pos));
-
   // find object to give
   let obj_pos = from_entity.objects.for_each_until_false([&obj_nm](let id) {
     if (string_equals_cstr(obj_nm, object_by_id(id).name)) {
@@ -438,6 +439,7 @@ static auto action_give(entity_id_t const eid, string const args) -> void {
   }
 
   // transfer object
+  // ? from_entity.objects.at extra lookup
   if (to_entity.objects.add(from_entity.objects.at(obj_pos))) {
     from_entity.objects.remove_at(obj_pos);
   }
@@ -446,13 +448,10 @@ static auto action_give(entity_id_t const eid, string const args) -> void {
 static auto print_help() -> void {
   uart_send_cstr(
       "\r\ncommand:\r\n  n: go north\r\n  e: go east\r\n  s: go south\r\n  "
-      "w: "
-      "go west\r\n  i: "
-      "display inventory\r\n  t <object>: take object\r\n  d <object>: drop "
-      "object\r\n  g <object> <entity>: give object to entity\r\n  sdr "
-      "<sector>: read from SD card sector\r\n  sdw <sector> <text>: write to "
-      "SD card sector\r\n  help: this "
-      "message\r\n\r\n");
+      "w: go west\r\n  i: display inventory\r\n  t <object>: take object\r\n  "
+      "d <object>: drop object\r\n  g <object> <entity>: give object to "
+      "entity\r\n  sdr <sector>: read sector from SD card\r\n  sdw <sector> "
+      "<text>: write sector to SD card\r\n  help: this message\r\n\r\n");
 }
 
 static auto input(command_buffer &cmd_buf) -> void {
