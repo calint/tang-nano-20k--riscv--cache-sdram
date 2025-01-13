@@ -25,28 +25,28 @@ cp -arf $T9KPTH/src/ip/regymm/ $T20KPTH/src/ip/
 
 
 rm -rf $T20KPTH/emulator
-cp -ra $T9KPTH/emulator $T20KPTH/
+cp -ra $T9KPTH/emulator/ $T20KPTH/
 rm $T20KPTH/emulator/osqa
 
-rm -rf $T20KPTH/os
-cp -ra $T9KPTH/os $T20KPTH/
+rm -rf $T20KPTH/os/
+cp -ra $T9KPTH/os/ $T20KPTH/
 rm -f $T20KPTH/os/console_application
 rm -f $T20KPTH/os/os
 rm -f $T20KPTH/os/os.bin
 rm -f $T20KPTH/os/os.dat
 rm -f $T20KPTH/os/os.lst
 
-rm -rf $T20KPTH/notes/samples
-cp -ra $T9KPTH/notes/samples $T20KPTH/notes/
+rm -rf $T20KPTH/notes/samples/
+cp -ra $T9KPTH/notes/samples/ $T20KPTH/notes/
 
 cp -rfa $T9KPTH/.vscode/* $T20KPTH/.vscode/
+
+cp -rfa $T9KPTH/scripts/* $T20KPTH/scripts/
 
 echo apply configuraiton
 ../configuration-apply.py
 
-echo make emulator and firmware
-../emulator/make.sh
-../os/make-console-application.sh
-../os/make-fpga-flash-binary.sh
+echo run tests
+../scripts/run-tests.sh
 
 echo done
