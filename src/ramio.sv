@@ -366,7 +366,7 @@ module ramio #(
   logic       uarttx_go;
   // enable to start sending and disable to acknowledge that data has been sent
 
-  logic       uarttx_bsy;
+  logic       uarttx_busy;
   // enabled when 'uarttx' is busy sending, low when done (assert with uarttx_go = 0)
 
   logic       uartrx_data_ready;
@@ -406,7 +406,7 @@ module ramio #(
 
       // if UART is done sending data then acknowledge (uarttx_go = 0)
       //  and set idle (0xffff'ffff)
-      if (uarttx_go && !uarttx_bsy) begin
+      if (uarttx_go && !uarttx_busy) begin
         uarttx_go <= 0;
         uarttx_data_sending <= -1;
       end
@@ -476,7 +476,7 @@ module ramio #(
       .go(uarttx_go),
       // enable to start transmission, disable after 'data' has been read
 
-      .bsy(uarttx_bsy)
+      .busy(uarttx_busy)
       // enabled while sendng
   );
 

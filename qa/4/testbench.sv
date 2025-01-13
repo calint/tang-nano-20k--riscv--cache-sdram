@@ -441,10 +441,10 @@ module testbench;
     assert (ramio_data_out == 8'b1010_1010)
     else $fatal;
 
-    // start bit
-    #clk_tk;
+    // start bit was sent during the cycle
     assert (ramio_uart_tx == 0)
     else $fatal;
+
     // bit 1
     #clk_tk;
     assert (ramio_uart_tx == 0)
@@ -491,7 +491,7 @@ module testbench;
 
     #clk_tk;
 
-    assert (ramio.uarttx.bsy == 0)
+    assert (ramio.uarttx.busy == 0)
     else $fatal;
 
     #clk_tk;
