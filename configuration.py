@@ -53,8 +53,8 @@ BITSTREAM_FILE = "impl/pnr/riscv.fs"
 # configure for firmware to have 1 MB at the end of the flash storage of 8 MB
 #
 
-BITSTREAM_FLASH_TO_EXTERNAL = 1
-# 0 to flash the bitstream to the internal flash, 1 for the external flash
+BITSTREAM_FLASH_TO_EXTERNAL = True
+# False to flash the bitstream to the internal flash, True for the external flash
 
 BITSTREAM_FILE_MAX_SIZE_BYTES = 0x70_0000
 # used to check if the bitstream size is within the allocated space
