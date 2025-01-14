@@ -392,9 +392,7 @@ module ramio #(
         $display("%m: %0t: uart read  uartrx_data_received: %h", $time, uartrx_data_received);
 `endif
         uartrx_data_received <= -1;
-      end
-
-      if (uartrx_go && uartrx_data_ready) begin
+      end else if (uartrx_go && uartrx_data_ready) begin
 `ifdef DBG
         $display("%m: %0t: uart data ready  uartrx_data_received: %h", $time, uartrx_data);
 `endif
