@@ -66,6 +66,15 @@ welcome to adventure #4
 ## Source
 * SystemVerilog adhering to most of style guide https://github.com/lowRISC/style-guides/blob/master/VerilogCodingStyle.md
 
+## Coding Style
+* no default nettype
+* module, input, output, logic and wire names verbose, descriptive, lower snake case
+* module parameters pascal case
+* output ports declared `logic`
+* input ports declared `wire`
+* local parameters upper snake case
+* `enum` types have name suffix `_e`
+
 ## Todo
 ```
 -----------------------------------------------------------------------------
