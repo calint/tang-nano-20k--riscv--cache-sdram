@@ -389,9 +389,7 @@ module ramio #(
       // if read from UART then reset the read data to -1
       if (address == AddressUartIn && read_type != '0) begin
         uartrx_data_received <= -1;
-      end
-
-      if (uartrx_go && uartrx_data_ready) begin
+      end else if (uartrx_go && uartrx_data_ready) begin
         // if UART has data ready then copy the data and acknowledge (uartrx_go = 0)
         //  note: read data can be overrun
         uartrx_data_received <= {{24'h00}, uartrx_data};

@@ -441,7 +441,7 @@ module testbench;
     assert (ramio_data_out == 8'b1010_1010)
     else $fatal;
 
-    #clk_tk;  // uarttx enters start bit state
+    // uarttx is sending start bit
 
     assert (ramio_uart_tx == 0)
     else $fatal;
