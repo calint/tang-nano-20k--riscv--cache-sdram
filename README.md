@@ -78,6 +78,12 @@ welcome to adventure #4
 ## Todo
 ```
 -----------------------------------------------------------------------------
+[ ] investigate and try to recreate the "// !!!" issue in 'ramio'
+    => the simulation works as expected
+    => Tang Nano 9K fails occasionally
+    => Tang Nano 20K works
+    => issue reappeared. reverted to ramio workaround.
+       
 [ ] study why memtest fails when configured with less than 32 cache lines off 
     32 B and why it fails almost always on same addresses with same error
 [ ] sdcard: make it work

@@ -195,8 +195,8 @@ module ramio #(
     if (enable) begin
 
 `ifdef DBG
-      $display("address: %h  read_type: %b  write_type: %b  data_in: %h", address, read_type,
-               write_type, data_in);
+      $display("%m: %0t: address: %h  read_type: %b  write_type: %b  data_in: %h", $time, address,
+               read_type, write_type, data_in);
 `endif
 
       if (write_type != '0) begin
