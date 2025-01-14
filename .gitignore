@@ -3,7 +3,9 @@
 /__pycache__
 /os/os
 /os/console_application
-**/impl/
+/impl/gwsynthesis/
+/impl/pnr/
+/impl/temp/
 *.gprj.user
 *.vvp
 *.vcd

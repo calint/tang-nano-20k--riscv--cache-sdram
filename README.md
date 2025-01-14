@@ -9,20 +9,11 @@
 * developing a back-to-basics freestanding bare metal C++23 application
 * explore the FPGA board
 
-## Gowin EDA 1.9.10.03 Education Build (77527) Project Configuration
-![1](notes/gowin-project-configuration/1.png)
-
-![2](notes/gowin-project-configuration/2.png)
-
-## Howto
-* configure project as described above
-* build bitstream file
+## Howto Gowin EDA 1.9.10.03 Education
+* build bitstream in Gowin EDA or using `/scripts/build-using-gowin.sh` (note: `gw_sh` assumed to be in path)
 * run `/scripts/make-and-flash-os.sh` to flash the firmware
-* then `/scripts/flash-fpga.sh` to flash the bitstream file or `/scripts/program-fpga.sh`
+* then `/scripts/flash-fpga.sh` to flash bitstream file or `/scripts/program-fpga.sh`
 * connect with serial terminal to the tty (e.g. `/dev/ttyUSB1`) at 115200 baud, 8 bit data, 1 stop bit, no parity, no flow control
-
-![1](notes/serial-terminal-settings/1.png)
-
 * press button S2 to reset and view the greeting
 
 ## Greeting
