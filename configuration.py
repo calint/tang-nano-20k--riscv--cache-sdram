@@ -28,8 +28,8 @@ UART_BAUD_RATE = 115200
 CACHE_COLUMN_INDEX_BITWIDTH = 3
 # 2 ^ 3 = 8 entries (32 B) per cache line
 
-CACHE_LINE_INDEX_BITWIDTH = 11  # >=5 passes memory test at 60 MHz
-# 2 ^ 11 * 32 B = 64 KB unified instruction and data cache
+CACHE_LINE_INDEX_BITWIDTH = 7  # >=6 passes memory test at 60 MHz
+# 2 ^ 7 * 32 B = 4 KB unified instruction and data cache
 #   1 to 6  : cache implemented with SSRAM
 #   7 to 11 : cache implemented with BSRAM
 
