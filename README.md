@@ -116,7 +116,8 @@ step 13
     => int instead to avoid the sign extension assembler op
 [x] investigate and try to recreate the "// !!!" issue in 'ramio'
     => the simulation works as expected
-    => the board fails occasionally
+    => Tang Nano 9K fails occasionally
+    => Tang Nano 20K works
 [x] emulator/flash: fix so start address is honored
 [x] study why terminal drops characters
     => receive is being overrun but how can baud 9600 outpace 20 MHz?

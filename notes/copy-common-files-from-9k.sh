@@ -16,7 +16,7 @@ cp -a $T9KPTH/scripts/flash-fpga.sh $T20KPTH/scripts/
 cp -a $T9KPTH/src/core.sv $T20KPTH/src/
 cp -a $T9KPTH/src/registers.sv $T20KPTH/src/
 cp -a $T9KPTH/src/bram.sv $T20KPTH/src/
-cp -a $T9KPTH/src/uarttx.sv $T20KPTH/src/
+# cp -a $T9KPTH/src/uarttx.sv $T20KPTH/src/
 cp -a $T9KPTH/src/uartrx.sv $T20KPTH/src/
 cp -a $T9KPTH/src/sdcard.sv $T20KPTH/src/
 cp -a $T9KPTH/src/emulators/flash.sv $T20KPTH/src/emulators/
