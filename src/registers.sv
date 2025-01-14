@@ -12,7 +12,6 @@ module registers #(
     parameter int unsigned AddressBitWidth = 5,
     parameter int unsigned DataBitWidth = 32
 ) (
-    input wire rst_n,
     input wire clk,
 
     input wire [AddressBitWidth-1:0] rs1,
