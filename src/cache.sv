@@ -33,6 +33,7 @@ module cache #(
     parameter int unsigned WaitsAfterBurstWrite = 4,
     // empirically found to not violate timing constraints (minimum 1)
     //  at 27 MHz: 4
+    //  at 60 MHz: 4
 
     parameter int unsigned WaitsPriorToDataAtRead = 4
     // according to specification in: IPUG756-1.0.1E
