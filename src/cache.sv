@@ -30,11 +30,6 @@ module cache #(
     //       2: 4 B
     //       3: 8 B
 
-    parameter int unsigned WaitsAfterBurstWrite = 4,
-    // empirically found to not violate timing constraints (minimum 1)
-    //  at 27 MHz: 4
-    //  at 60 MHz: 4
-
     parameter int unsigned WaitsPriorToDataAtRead = 4
     // according to specification in: IPUG756-1.0.1E
     //  Gowin SDRAM HS IP User Guide page 11
@@ -260,13 +255,11 @@ module cache #(
     Write2,
     Write3,
     Write4,
-    Write5,
     Read1,
     Read2,
     Read3,
     Read4,
-    Read5,
-    Read6
+    Read5
   } state_e;
 
   state_e state;
@@ -334,34 +327,35 @@ module cache #(
         end
 
         Write1: begin
-          // O_sdrc_cmd_ack == 1
           I_sdrc_cmd_en <= 0;
-          state <= Write2;
+`ifdef DBG
+          $display("%m: %t: wait for ACTIVE to complete before write", $time);
+`endif
+          // wait for ACTIVE command to complete
+          if (O_sdrc_cmd_ack == 1) begin
+            I_sdrc_cmd_en <= 1;
+            I_sdrc_cmd <= 3'b100;  // write
+            I_sdrc_addr <= cached_line_address;
+            I_sdrc_data_len <= COLUMN_COUNT - 1;
+            I_sdrc_data <= column_data_out[0];
+`ifdef DBG
+            $display("%m: %t: flush column[0]=%h", $time, column_data_out[0]);
+`endif
+            state <= Write2;
+          end
         end
 
         Write2: begin
-          I_sdrc_cmd_en <= 1;
-          I_sdrc_cmd <= 3'b100;  // write
-          I_sdrc_addr <= cached_line_address;
-          I_sdrc_data_len <= COLUMN_COUNT - 1;
-          I_sdrc_data <= column_data_out[0];
-`ifdef DBG
-          $display("%m: %t: flush column[0]=%h", $time, column_data_out[0]);
-`endif
-          state <= Write3;
-        end
-
-        Write3: begin
           I_sdrc_cmd_en <= 0;
           I_sdrc_data   <= column_data_out[1];
 `ifdef DBG
           $display("%m: %t: flush column[1]=%h", $time, column_data_out[1]);
 `endif
           write_column <= 2;
-          state <= Write4;
+          state <= Write3;
         end
 
-        Write4: begin
+        Write3: begin
           I_sdrc_data <= column_data_out[write_column];
 `ifdef DBG
           $display("%m: %t: flush column[%0d]=%h", $time, write_column,
@@ -369,13 +363,15 @@ module cache #(
 `endif
           if (write_column == COLUMN_COUNT - 1) begin
             counter <= 1;
-            state   <= Write5;
+            state   <= Write4;
           end
           write_column <= write_column + 1'b1;
         end
 
-        Write5: begin
-          if (counter == WaitsAfterBurstWrite) begin
+        Write4: begin
+          if (O_sdrc_cmd_ack == 1) begin
+            // ! note: in the manual ACK arrives 3 cycles after command issued
+            // !       in simulation ACK arrives 3 cycles after data has been written
             burst_is_writing <= 0;
             burst_is_reading <= 1;
             I_sdrc_cmd_en <= 1;
@@ -383,53 +379,60 @@ module cache #(
             I_sdrc_addr <= burst_line_address;
             state <= Read1;
           end
-          counter <= counter + 1'b1;
         end
 
         Read1: begin
           I_sdrc_cmd_en <= 0;
-          state <= Read2;
+          // wait for ACTIVE command to complete
+`ifdef DBG
+          $display("%m: %t: wait for ACTIVE to complete before read", $time);
+`endif
+          if (O_sdrc_cmd_ack == 1) begin
+            I_sdrc_cmd_en <= 1;
+            I_sdrc_cmd <= 3'b101;  // read
+            I_sdrc_addr <= burst_line_address;
+            I_sdrc_data_len <= COLUMN_COUNT - 1;
+            counter <= 0;
+            state <= Read2;
+          end
         end
 
         Read2: begin
-          I_sdrc_cmd_en <= 1;
-          I_sdrc_cmd <= 3'b101;  // read
-          I_sdrc_addr <= burst_line_address;
-          I_sdrc_data_len <= COLUMN_COUNT - 1;
-          counter <= 0;
-          state <= Read3;
-        end
-
-        Read3: begin
           I_sdrc_cmd_en <= 0;
           counter <= counter + 1'b1;
           if (counter == WaitsPriorToDataAtRead) begin
             burst_write_enable[0] <= 4'b1111;
             burst_data_in[0] <= O_sdrc_data;
+`ifdef DBG
+            $display("%m: %t: data 0 from SDRAM %h", $time, O_sdrc_data);
+`endif
             counter <= 1;
+            state   <= Read3;
+          end
+        end
+
+        Read3: begin
+          burst_write_enable[counter-1] <= 0;
+          burst_write_enable[counter] <= 4'b1111;
+          burst_data_in[counter] <= O_sdrc_data;
+`ifdef DBG
+          $display("%m: %t: data %0d from SDRAM %h", $time, counter, O_sdrc_data);
+`endif
+          counter <= counter + 1'b1;
+          if (counter == COLUMN_COUNT - 1) begin
             state <= Read4;
           end
         end
 
         Read4: begin
-          burst_write_enable[counter-1] <= 0;
-          burst_write_enable[counter] <= 4'b1111;
-          burst_data_in[counter] <= O_sdrc_data;
-          counter <= counter + 1'b1;
-          if (counter == COLUMN_COUNT - 1) begin
-            state <= Read5;
-          end
-        end
-
-        Read5: begin
           // note: reading line can be initiated after a cache eviction
           //       'burst_write_enable' then high, set to low
           burst_write_enable[COLUMN_COUNT-1] <= 0;
           burst_tag_write_enable <= 4'b1111;
-          state <= Read6;
+          state <= Read5;
         end
 
-        Read6: begin
+        Read5: begin
           // note: tag has been written after read data has settled
           burst_is_reading <= 0;
           burst_tag_write_enable <= 0;

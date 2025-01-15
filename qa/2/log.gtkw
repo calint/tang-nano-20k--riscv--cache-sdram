@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.120 (w)1999-2024 BSI
-[*] Mon Dec 30 17:08:40 2024
+[*] Wed Jan 15 13:56:41 2025
 [*]
 [dumpfile] "/home/c/w/tang-nano-20k--riscv--cache-sdram/qa/2/log.vcd"
-[dumpfile_mtime] "Mon Dec 30 17:05:09 2024"
-[dumpfile_size] 35094132
+[dumpfile_mtime] "Wed Jan 15 13:50:22 2025"
+[dumpfile_size] 20046736
 [savefile] "/home/c/w/tang-nano-20k--riscv--cache-sdram/qa/2/log.gtkw"
-[timestart] 1180703600
+[timestart] 327921600
 [size] 2230 1344
 [pos] -2 -2
-*-15.306623 1180872000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-15.306623 328120000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] testbench.
 [sst_width] 273
 [signals_width] 271
@@ -34,9 +34,8 @@ testbench.O_sdrc_cmd_ack
 testbench.I_sdrc_precharge_ctrl
 @200
 -
-@29
-testbench.rst_n
 @28
+testbench.rst_n
 testbench.clk
 testbench.enable
 @22
@@ -86,5 +85,7 @@ testbench.data_out[31:0]
 testbench.data_out_ready
 @22
 testbench.address_next[31:0]
+@421
+testbench.cache.state
 [pattern_trace] 1
 [pattern_trace] 0
