@@ -160,13 +160,8 @@ module testbench;
     // wait for burst RAM to initiate
     while (!O_sdrc_init_done) #clk_tk;
 
-    // I_sdrc_cmd_en <= 1;
-    // I_sdrc_cmd <= 3'b001;  // auto-refresh
-    // #clk_tk;
-    // I_sdrc_cmd_en <= 0;
-    // while (!O_sdrc_cmd_ack) #clk_tk;
-
-    // $finish;
+    // wait for cache to initiate SDRAM and enter Idle state
+    while (cache.state != 2) #clk_tk;
 
     address <= 0;
     address_next <= 0;
