@@ -157,9 +157,6 @@ module testbench;
     rst_n <= 1;
     #clk_tk;
 
-    // wait for burst RAM to initiate
-    while (!O_sdrc_init_done) #clk_tk;
-
     // wait for cache to initiate SDRAM and enter Idle state
     while (cache.state != 2) #clk_tk;
 
