@@ -167,7 +167,7 @@ module testbench;
 
   flash #(
       .DataFilePath("os.mem"),
-      .AddressBitWidth(2 ** FLASH_ADDRESS_BIT_WIDTH)
+      .AddressBitWidth(FLASH_ADDRESS_BIT_WIDTH)
   ) flash (
       .rst_n,
       .clk (flash_clk),
