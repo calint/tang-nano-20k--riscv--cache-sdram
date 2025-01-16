@@ -7,7 +7,8 @@
 
 module testbench;
 
-  localparam int unsigned RAM_ADDRESS_BIT_WIDTH = 21;  // 2 ^ 14 * 4 B = 16 KB
+  localparam int unsigned RAM_ADDRESS_BIT_WIDTH = 21;  // 2 ^ 21 * 4 B = 8 MB
+  localparam int unsigned FLASH_ADDRESS_BIT_WIDTH = 14;  // 2 ^ 14 * 1 B = 16 KB
 
   logic rst_n;
   logic clk = 1;
@@ -166,7 +167,7 @@ module testbench;
 
   flash #(
       .DataFilePath("os.mem"),
-      .AddressBitWidth(RAM_ADDRESS_BIT_WIDTH + 2)  // +2 because ram addressing is 4 byte word
+      .AddressBitWidth(2 ** FLASH_ADDRESS_BIT_WIDTH)
   ) flash (
       .rst_n,
       .clk (flash_clk),
