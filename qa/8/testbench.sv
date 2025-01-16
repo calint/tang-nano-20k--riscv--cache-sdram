@@ -1,5 +1,5 @@
 //
-// core  (bug fix #1)
+// core  "action_mem_test()" for errors in simulated SDRAM
 //
 `timescale 1ns / 1ps
 //
@@ -7,7 +7,7 @@
 
 module testbench;
 
-  localparam int unsigned RAM_ADDRESS_BIT_WIDTH = 15;  // 2 ^ 14 * 4 B = 16 KB
+  localparam int unsigned RAM_ADDRESS_BIT_WIDTH = 21;  // 2 ^ 14 * 4 B = 16 KB
 
   logic rst_n;
   logic clk = 1;
@@ -221,7 +221,13 @@ module testbench;
     // wait for burst RAM to initiate
     while (!O_sdrc_init_done) #clk_tk;
 
-    while (1) #clk_tk;
+    // wait for first access to LEDs (starting test)
+    while (ramio.address != 32'hffff_fffc) #clk_tk;
+
+    #clk_tk;
+
+    // wait for second access to LEDs (after test done)
+    while (ramio.address != 32'hffff_fffc) #clk_tk;
 
     $display("");
     $display("PASSED");

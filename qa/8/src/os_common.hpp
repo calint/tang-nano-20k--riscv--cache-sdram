@@ -152,24 +152,12 @@ extern "C" [[noreturn]] auto run() -> void {
   led_set(0b0000);
   // turn on all leds
 
-  uart_send_cstr(ascii_art);
-  uart_send_cstr(hello);
-
-  mut active_entity = entity_id_t{1};
-  mut cmd_buf = command_buffer{};
-
   action_mem_test();
 
-  while (true) {
-    mut &ent = entity_by_id(active_entity);
-    print_location(ent.location, active_entity);
-    uart_send_cstr(ent.name);
-    uart_send_cstr(" > ");
-    input(cmd_buf);
-    uart_send_cstr("\r\n");
-    handle_input(active_entity, cmd_buf);
-    active_entity = active_entity == 1 ? 2 : 1;
-  }
+  led_set(0b1111);
+
+  while (true)
+    ;
 }
 
 static auto string_equals_cstr(string const str, cstr s) -> bool {
