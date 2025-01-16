@@ -3,10 +3,6 @@
 // see: IPUG756-1.0.1E - Gowin SDRAM HS IP User Guide.pdf
 //      SDRAM model used in simulation: MT48LC2M32B2.v
 //
-// reviewed 2024-06-07
-// reviewed 2024-06-12
-// reviewed 2024-06-14
-//
 `timescale 1ns / 1ps
 //
 `default_nettype none
@@ -370,7 +366,7 @@ module cache #(
 
         Write4: begin
           if (O_sdrc_cmd_ack == 1) begin
-            // ! note: in the manual ACK arrives 3 cycles after command issued
+            // ! note: in the manual ACK arrives 2 cycles after command issued
             // !       in simulation ACK arrives 3 cycles after data has been written
             burst_is_writing <= 0;
             burst_is_reading <= 1;
