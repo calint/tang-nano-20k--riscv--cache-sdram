@@ -1,4 +1,4 @@
-# About SDRAM Controller HS
+# Support from Gowin regarding IP "SDRAM Controller HS"
 
 There are no special requirements, the default parameters settings should be fine.
 
