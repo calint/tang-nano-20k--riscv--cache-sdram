@@ -1,3 +1,4 @@
+#include <array>
 #include <cstdint>
 #include <cstdio>
 #include <fstream>
@@ -12,13 +13,13 @@
 using namespace std;
 
 // initialize RAM with -1 being the default value from flash
-static vector<int8_t> ram(osqa::memory_end, -1);
+static vector<uint8_t> ram(osqa::memory_end, -1);
 
 // initialize SD card 1 GB
-static vector<int8_t> sdcard(1024 * 1024 * 1024, 0);
+static vector<uint8_t> sdcard(1024 * 1024 * 1024, 0);
 
 // sdcard sector buffer
-static array<int8_t, 512> sector_buffer;
+static array<uint8_t, 512> sector_buffer;
 static size_t sector_buffer_index;
 
 // preserved terminal settings
@@ -29,6 +30,8 @@ static auto bus(uint32_t const address, rv32i::bus_op_width const op_width,
                 bool const is_store, uint32_t &data) -> rv32i::bus_status {
 
   uint32_t const width = static_cast<uint32_t>(op_width);
+
+  // check if address is not an IO address and outside the memory range
   if (address < osqa::io_addresses_start && address + width > ram.size()) {
     return 1;
   }
@@ -36,15 +39,15 @@ static auto bus(uint32_t const address, rv32i::bus_op_width const op_width,
   if (is_store) {
     switch (address) {
     case osqa::sdcard_busy: {
-      // does not support write
+      // address does not support write
       return 2;
     }
     case osqa::sdcard_status: {
-      // does not support write
+      // address does not support write
       return 3;
     }
     case osqa::sdcard_next_byte: {
-      sector_buffer[sector_buffer_index] = char(data);
+      sector_buffer[sector_buffer_index] = uint8_t(data);
       sector_buffer_index = (sector_buffer_index + 1) % sector_buffer.size();
       break;
     }
@@ -80,7 +83,7 @@ static auto bus(uint32_t const address, rv32i::bus_op_width const op_width,
       break;
     }
     case osqa::uart_in: {
-      // does not support write
+      // address does not support write
       return 4;
     }
     case osqa::led: {
@@ -89,7 +92,7 @@ static auto bus(uint32_t const address, rv32i::bus_op_width const op_width,
     }
     default: {
       for (uint32_t i = 0; i < width; ++i) {
-        ram[address + i] = int8_t(data >> (i * 8));
+        ram[address + i] = uint8_t(data >> (i * 8));
       }
     }
     }
@@ -110,15 +113,15 @@ static auto bus(uint32_t const address, rv32i::bus_op_width const op_width,
       break;
     }
     case osqa::sdcard_read_sector: {
-      // does not support read
+      // address does not support read
       return 5;
     }
     case osqa::sdcard_write_sector: {
-      // does not support read
+      // address does not support read
       return 6;
     }
     case osqa::led: {
-      // does not support read
+      // address does not support read
       return 7;
     }
     case osqa::uart_out: {
@@ -139,7 +142,7 @@ static auto bus(uint32_t const address, rv32i::bus_op_width const op_width,
         data = 0x7f;
         break;
       default:
-        data = ch;
+        data = uint32_t(ch);
         break;
       }
       break;
@@ -147,7 +150,7 @@ static auto bus(uint32_t const address, rv32i::bus_op_width const op_width,
     default: {
       data = 0;
       for (uint32_t i = 0; i < width; ++i) {
-        data |= (ram[address + i] & 0xff) << (i * 8);
+        data |= uint32_t(ram[address + i]) << (i * 8);
       }
     }
     }
