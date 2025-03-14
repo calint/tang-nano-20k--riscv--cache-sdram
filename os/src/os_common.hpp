@@ -45,7 +45,9 @@ static char const *const ascii_art =
 using cstr = char const *;
 using string = span<char>;
 
-#include "lib/command_buffer.hpp"
+#include "lib/cursor_buffer.hpp"
+
+using command_buffer = cursor_buffer<char, 160>;
 
 static let safe_arrays = true;
 static let char_backspace = '\x7f';
@@ -204,7 +206,7 @@ static auto string_next_word(string const str)
 static auto
 handle_input(entity_id_t const eid, command_buffer &cmd_buf) -> void {
 
-  let line = cmd_buf.string();
+  let line = cmd_buf.span();
   let w1 = string_next_word(line);
   let cmd = w1.word;
   let args = w1.rem;
@@ -446,6 +448,37 @@ static auto action_give(entity_id_t const eid, string const args) -> void {
   }
 }
 
+static auto action_sdcard_read(string const args) -> void {
+  let w1 = string_next_word(args);
+  if (w1.word.is_empty()) {
+    uart_send_cstr("<sector>\r\n");
+    return;
+  }
+  let sector = string_to_uint32(w1.word);
+  int8_t buf[512];
+  sdcard_read_blocking(sector, buf);
+  for (mut i = 0u; i < sizeof(buf); ++i) {
+    uart_send_char(buf[i]);
+  }
+  uart_send_cstr("\r\n");
+}
+
+static auto action_sdcard_write(string const args) -> void {
+  let w1 = string_next_word(args);
+  if (w1.word.is_empty()) {
+    uart_send_cstr("<sector> <text>\r\n");
+    return;
+  }
+  int8_t buf[512]{};
+  mut *buf_ptr = buf;
+  w1.rem.for_each([&buf_ptr](char const ch) {
+    *buf_ptr = ch;
+    ++buf_ptr;
+  });
+  size_t const sector = string_to_uint32(w1.word);
+  sdcard_write_blocking(sector, buf);
+}
+
 static auto print_help() -> void {
   uart_send_cstr(
       "\r\ncommand:\r\n  n: go north\r\n  e: go east\r\n  s: go south\r\n  "
@@ -471,20 +504,20 @@ static auto input(command_buffer &cmd_buf) -> void {
       } else if (ch == char_backspace) {
         if (cmd_buf.backspace()) {
           uart_send_char(ch);
-          cmd_buf.apply_on_chars_from_cursor_to_end(
+          cmd_buf.apply_on_elements_from_cursor_to_end(
               [](let c) { uart_send_char(c); });
           uart_send_char(' ');
-          uart_send_move_back(cmd_buf.characters_after_cursor() + 1);
+          uart_send_move_back(cmd_buf.elements_after_cursor_count() + 1);
         }
       } else if (ch == char_carriage_return || cmd_buf.is_full()) {
-        cmd_buf.set_eos();
+        cmd_buf.set_terminator();
         return;
       } else {
         uart_send_char(ch);
         cmd_buf.insert(ch);
-        cmd_buf.apply_on_chars_from_cursor_to_end(
+        cmd_buf.apply_on_elements_from_cursor_to_end(
             [](let c) { uart_send_char(c); });
-        uart_send_move_back(cmd_buf.characters_after_cursor());
+        uart_send_move_back(cmd_buf.elements_after_cursor_count());
       }
       break;
 
@@ -517,10 +550,10 @@ static auto input(command_buffer &cmd_buf) -> void {
           if (escape_sequence_parameter == 3) {
             // delete key
             cmd_buf.del();
-            cmd_buf.apply_on_chars_from_cursor_to_end(
+            cmd_buf.apply_on_elements_from_cursor_to_end(
                 [](let c) { uart_send_char(c); });
             uart_send_char(' ');
-            uart_send_move_back(cmd_buf.characters_after_cursor() + 1);
+            uart_send_move_back(cmd_buf.elements_after_cursor_count() + 1);
           }
           break;
 

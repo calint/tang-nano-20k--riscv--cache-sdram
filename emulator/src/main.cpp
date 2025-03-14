@@ -29,10 +29,9 @@ static struct termios saved_termios;
 static auto bus(uint32_t const address, rv32i::bus_op_width const op_width,
                 bool const is_store, uint32_t &data) -> rv32i::bus_status {
 
-  uint32_t const width = static_cast<uint32_t>(op_width);
-
   // check if address is not an IO address and outside the memory range
-  if (address < osqa::io_addresses_start && address + width > ram.size()) {
+  if (address < osqa::io_addresses_start &&
+      address + uint32_t(op_width) > ram.size()) {
     return 1;
   }
 
@@ -56,7 +55,7 @@ static auto bus(uint32_t const address, rv32i::bus_op_width const op_width,
       auto const bgn = sector_buffer.begin();
       auto const end = sector_buffer.end();
       if (dst + sector_buffer.size() > sdcard.end()) {
-        return 3;
+        return 4;
       }
       copy(bgn, end, dst);
       break;
@@ -64,9 +63,9 @@ static auto bus(uint32_t const address, rv32i::bus_op_width const op_width,
     case osqa::sdcard_read_sector: {
       int32_t const ix = int32_t(data * sector_buffer.size());
       auto const bgn = sdcard.begin() + ix;
-      auto const end = sdcard.begin() + ix + sector_buffer.size();
+      auto const end = bgn + sector_buffer.size();
       if (end > sdcard.end()) {
-        return 2;
+        return 5;
       }
       copy(bgn, end, sector_buffer.data());
       break;
@@ -84,14 +83,14 @@ static auto bus(uint32_t const address, rv32i::bus_op_width const op_width,
     }
     case osqa::uart_in: {
       // address does not support write
-      return 4;
+      return 6;
     }
     case osqa::led: {
       // do nothing when writing to address LED
       break;
     }
     default: {
-      for (uint32_t i = 0; i < width; ++i) {
+      for (uint32_t i = 0; i < uint32_t(op_width); ++i) {
         ram[address + i] = uint8_t(data >> (i * 8));
       }
     }
@@ -114,15 +113,15 @@ static auto bus(uint32_t const address, rv32i::bus_op_width const op_width,
     }
     case osqa::sdcard_read_sector: {
       // address does not support read
-      return 5;
+      return 7;
     }
     case osqa::sdcard_write_sector: {
       // address does not support read
-      return 6;
+      return 8;
     }
     case osqa::led: {
       // address does not support read
-      return 7;
+      return 9;
     }
     case osqa::uart_out: {
       data = 0xffff'ffff; // -1
@@ -149,7 +148,7 @@ static auto bus(uint32_t const address, rv32i::bus_op_width const op_width,
     }
     default: {
       data = 0;
-      for (uint32_t i = 0; i < width; ++i) {
+      for (uint32_t i = 0; i < uint32_t(op_width); ++i) {
         data |= uint32_t(ram[address + i]) << (i * 8);
       }
     }
@@ -212,9 +211,8 @@ auto main(int argc, char **argv) -> int {
   }
 
   // configure terminal to not echo and enable non-blocking getchar()
-  struct termios newt;
   tcgetattr(STDIN_FILENO, &saved_termios);
-  newt = saved_termios;
+  struct termios newt = saved_termios;
   newt.c_lflag &= tcflag_t(~(ICANON | ECHO));
   tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 
