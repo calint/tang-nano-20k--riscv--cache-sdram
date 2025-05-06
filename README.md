@@ -6,7 +6,7 @@
 * multi-cycle with ad-hoc pipeline
 * configurable unified instruction and data cache backed by 8 MB of on-board SDRAM
 * transfer binary image from on-board flash to RAM
-* read and write sectors to and from the SD card
+* read and write sectors to and from the SD card in SPI mode
 * developing a back-to-basics freestanding bare metal C++23 application
 * explore the FPGA board
 
