@@ -121,7 +121,10 @@ module top (
 
   // wires related to SD card
   wire sd_cs_n;  // unused
-  assign sd_dat[3:1] = 3'b011;  // note: dat[3]=0 for SPI mode
+  assign sd_dat[3:1] = 3'b011;
+  // note: in SPI mode, the DAT3 pin is repurposed as the Chip Select (CS) pin.
+  //       to enter SPI mode at power-up, the host must hold DAT3/CS low while
+  //       sending at least 74 clock pulses
 
   ramio #(
       .RamAddressBitWidth(configuration::RAM_ADDRESS_BITWIDTH),
