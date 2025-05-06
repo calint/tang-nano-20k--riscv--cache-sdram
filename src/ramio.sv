@@ -304,8 +304,8 @@ module ramio #(
             data_out = sdcard_status;
           end
           AddressSDCardNextByte: begin
-            data_out = sdcard_data_out;
             sdcard_command = 2;
+            data_out = sdcard_data_out;
           end
           default: begin
             cache_enable = 1;
