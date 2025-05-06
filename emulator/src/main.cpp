@@ -11,6 +11,8 @@
 //
 #include "main_config.hpp"
 
+// #define LOG_UART_IN_TO_STDERR
+
 using namespace std;
 
 // initialize RAM with -1 being the default value from flash
@@ -99,7 +101,7 @@ static auto bus(uint32_t const address, rv32i::bus_op_width const op_width,
     // read op
     switch (address) {
     case osqa::sdcard_status: {
-      data = 0;
+      data = 6;
       break;
     }
     case osqa::sdcard_busy: {
@@ -144,6 +146,11 @@ static auto bus(uint32_t const address, rv32i::bus_op_width const op_width,
         data = uint32_t(ch);
         break;
       }
+#ifdef LOG_UART_IN_TO_STDERR
+      if (ch != -1) {
+        fputc(char(data), stderr);
+      }
+#endif
       break;
     }
     default: {
@@ -215,15 +222,15 @@ auto main(int argc, char **argv) -> int {
   struct termios newt = saved_termios;
   newt.c_lflag &= tcflag_t(~(ICANON | ECHO));
   tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-
-  int flags = fcntl(STDIN_FILENO, F_GETFL, 0);
-  fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
-
+  { // note: code block to not get shadowed by 'flags' in 'atexit'
+    int const flags = fcntl(STDIN_FILENO, F_GETFL, 0);
+    fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
+  }
   // reset terminal settings at exit
   atexit([] {
     tcsetattr(STDIN_FILENO, TCSANOW, &saved_termios);
-    int flgs = fcntl(STDIN_FILENO, F_GETFL, 0);
-    fcntl(STDIN_FILENO, F_SETFL, flgs & ~O_NONBLOCK);
+    int const flags = fcntl(STDIN_FILENO, F_GETFL, 0);
+    fcntl(STDIN_FILENO, F_SETFL, flags & ~O_NONBLOCK);
   });
 
   rv32i::cpu cpu{bus};
