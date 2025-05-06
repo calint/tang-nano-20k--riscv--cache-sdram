@@ -121,7 +121,7 @@ module top (
 
   // wires related to SD card
   wire sd_cs_n;  // unused
-  assign sd_dat[3:1] = 3'b111;
+  assign sd_dat[3:1] = 3'b011;  // note: dat[3]=0 for SPI mode
 
   ramio #(
       .RamAddressBitWidth(configuration::RAM_ADDRESS_BITWIDTH),
@@ -131,7 +131,7 @@ module top (
       .ClockFrequencyHz(configuration::CPU_FREQUENCY_HZ),
       .BaudRate(configuration::UART_BAUD_RATE),
       .SDCardSimulate(0),
-      .SDCardClockDivider(1)  // ??? not true: at 60 MHz this works
+      .SDCardClockDivider(0)  // 0: works at 54 MHz  (1 does not)
   ) ramio (
       .rst_n(!rst && O_sdrc_init_done),
       .clk  (I_sdrc_clk),

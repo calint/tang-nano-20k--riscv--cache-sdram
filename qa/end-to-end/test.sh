@@ -8,7 +8,7 @@ cd $(dirname "$0")
 
 TTY=/dev/ttyUSB1
 BAUD=115200
-SLP=1
+SLP=0.5
 
 # capture ctrl+c and kill cat
 trap 'kill $(jobs -p); exit 130' INT
@@ -51,6 +51,26 @@ sleep $SLP
 printf "i\r" > $TTY
 sleep $SLP
 printf "i\r" > $TTY
+sleep $SLP
+printf "sds\r" > $TTY
+sleep $SLP
+printf "sdw 123 hello world\r" > $TTY
+sleep $SLP
+printf "sdr 123\r" > $TTY
+sleep $SLP
+printf "sdw 123 another hello world\r" > $TTY
+sleep $SLP
+printf "sdr 123\r" > $TTY
+sleep $SLP
+printf "sdw 1 sector 1\r" > $TTY
+sleep $SLP
+printf "sdr 1\r" > $TTY
+sleep $SLP
+printf "sdw 1 sector 1 again\r" > $TTY
+sleep $SLP
+printf "sdr 1\r" > $TTY
+sleep $SLP
+printf "sdr 123\r" > $TTY
 sleep $SLP
 
 # send SIGTERM (termination signal) to 'cat'

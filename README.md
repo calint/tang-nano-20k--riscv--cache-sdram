@@ -6,6 +6,7 @@
 * multi-cycle with ad-hoc pipeline
 * configurable unified instruction and data cache backed by 8 MB of on-board SDRAM
 * transfer binary image from on-board flash to RAM
+* read and write sectors to and from the SD card
 * developing a back-to-basics freestanding bare metal C++23 application
 * explore the FPGA board
 
@@ -84,7 +85,8 @@ welcome to adventure #4
     => Tang Nano 20K works
     => issue reappeared. reverted to ramio workaround.
     => both 9K and 20K now work without ramio workaround. unclear why ...
-[ ] study why memtest fails when configured with less than 32 cache lines off 
+[ ] study why memtest fails whe
+n configured with less than 32 cache lines off 
     32 B and why it fails almost always on same addresses with same error
 [ ] sdcard: make it work
 [ ] read LEDs
