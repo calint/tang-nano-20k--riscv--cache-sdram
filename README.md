@@ -85,7 +85,7 @@ welcome to adventure #4
     => Tang Nano 20K works
     => issue reappeared. reverted to ramio workaround.
     => both 9K and 20K now work without ramio workaround. unclear why ...
-[ ] study why memtest fails whe n configured with less than 32 cache lines off 
+[ ] study why memtest fails when configured with less than 16 cache lines off 
     32 B and why it fails almost always on same addresses with same error
 [x] sdcard: make it work
 [ ] read LEDs
