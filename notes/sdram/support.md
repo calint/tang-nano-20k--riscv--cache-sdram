@@ -9,3 +9,7 @@ Note the EtronTech EM638325GD 2M x 32 bit Synchronous DRAM (SDRAM) datasheet can
 If the customer wants to achieve higher speed performance, such as 150MHz clock speed, you can use the following parameters to set the SDRAM Controller IP. 
 
 [image 4](4.jpg)
+
+## From Etron
+SDRAM: EM638325GD
+model: sdr2mx32.v
