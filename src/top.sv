@@ -21,19 +21,19 @@ module top (
 
     output logic sd_clk,
     inout wire sd_cmd,  // MOSI
-    inout wire [3:0] sd_dat,  // 0: MISO
+    inout wire [3:0] sd_dat,  // 0: MISO, 3: CS_n
 
     // "magic" port names that the Gowin EDA connects to the on-chip SDRAM
-    output wire        O_sdram_clk,
-    output wire        O_sdram_cke,
+    output wire        O_sdram_clk,    // clock
+    output wire        O_sdram_cke,    // clock enable
     output wire        O_sdram_cs_n,   // chip select
     output wire        O_sdram_cas_n,  // columns address select
     output wire        O_sdram_ras_n,  // row address select
     output wire        O_sdram_wen_n,  // write enable
     inout  wire [31:0] IO_sdram_dq,    // 32 bit bidirectional data bus
     output wire [10:0] O_sdram_addr,   // 11 bit multiplexed address bus
-    output wire [ 1:0] O_sdram_ba,     // two banks
-    output wire [ 3:0] O_sdram_dqm     // 32/4
+    output wire [ 1:0] O_sdram_ba,     // bank address
+    output wire [ 3:0] O_sdram_dqm     // data mask (byte enable)
 );
 
   // ----------------------------------------------------------
