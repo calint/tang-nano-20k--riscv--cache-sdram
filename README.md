@@ -79,15 +79,8 @@ welcome to adventure #4
 ## Todo
 ```
 -----------------------------------------------------------------------------
-[x] investigate and try to recreate the "// !!!" issue in 'ramio'
-    => the simulation works as expected
-    => Tang Nano 9K fails occasionally
-    => Tang Nano 20K works
-    => issue reappeared. reverted to ramio workaround.
-    => both 9K and 20K now work without ramio workaround. unclear why ...
 [ ] study why memtest fails when configured with less than 16 cache lines off 
     32 B and why it fails almost always on same addresses with same error
-[x] sdcard: make it work
 [ ] read LEDs
 [-] study better FSM in /src/emulators/flash.sv
     => simple emulator that implements the boot sequence of the CPU
@@ -116,6 +109,13 @@ step 13
 [ ] fully pipe-lined core
 [ ] consider FIFO in UART
 -------------------------------------------------------------------------------------------------------------
+[x] sdcard: make it work
+[x] investigate and try to recreate the "// !!!" issue in 'ramio'
+    => the simulation works as expected
+    => Tang Nano 9K fails occasionally
+    => Tang Nano 20K works
+    => issue reappeared. reverted to ramio workaround.
+    => both 9K and 20K now work without ramio workaround. unclear why ...
 [x] qa: task that copies data from flash to ramio
 [x] study why BAUD rate less than 2400 does not work
     => possibly limitation of board or Arch Linux or putty or cutecom
