@@ -28,9 +28,9 @@
 
 //  Speed Grade Selection  (Default: tCK= 6.0ns(166MHz))
     
-    `define sg5                     //Speed Grand tCK = 5.0ns(200MHz)  
+//    `define sg5                     //Speed Grand tCK = 5.0ns(200MHz)  
 //  `define sg6                    // Speed Grade tCK = 6.0ns(166MHz)
-//  `define sg7                    // Speed Grade tCK = 7.0ns(143MHz)
+  `define sg7                    // Speed Grade tCK = 7.0ns(143MHz)
 
 /**********************************************************
 *    The verilog compiler directive "`define" must be used to choose between

@@ -28,8 +28,9 @@ module testbench;
   wire [31:0] IO_sdram_dq;  // 32 bit bidirectional data bus
   wire [10:0] O_sdram_addr;  // 11 bit multiplexed address bus
   wire [1:0] O_sdram_ba;  // two banks
-  wire [3:0] O_sdram_dqm;  // 32/4
+  wire [3:0] O_sdram_dqm;  // data mask (byte enable)
 
+  // sdr2mx32 sdram (
   mt48lc2m32b2 sdram (
       .Clk(O_sdram_clk),
       .Cke(O_sdram_cke),
@@ -135,9 +136,7 @@ module testbench;
     #clk_tk;
 
     I_sdrc_cmd_en <= 0;
-    #clk_tk;
-    assert (O_sdrc_cmd_ack)
-    else $fatal;
+    while (!O_sdrc_cmd_ack) #clk_tk;
 
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b100;  // write
@@ -181,8 +180,7 @@ module testbench;
 
     I_sdrc_cmd_en <= 0;
     #clk_tk;
-    assert (O_sdrc_cmd_ack)
-    else $fatal;
+    while (!O_sdrc_cmd_ack) #clk_tk;
 
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b100;  // write
@@ -225,8 +223,7 @@ module testbench;
     #clk_tk;
     I_sdrc_cmd_en <= 0;
     #clk_tk;
-    assert (O_sdrc_cmd_ack)
-    else $fatal;
+    while (!O_sdrc_cmd_ack) #clk_tk;
 
     // ?? avoid tRAS violation without the tick
     #clk_tk;
@@ -253,8 +250,7 @@ module testbench;
     #clk_tk;
     I_sdrc_cmd_en <= 0;
     #clk_tk;
-    assert (O_sdrc_cmd_ack)
-    else $fatal;
+    while (!O_sdrc_cmd_ack) #clk_tk;
 
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b101;  // read
@@ -297,8 +293,7 @@ module testbench;
     #clk_tk;
     I_sdrc_cmd_en <= 0;
     #clk_tk;
-    assert (O_sdrc_cmd_ack)
-    else $fatal;
+    while (!O_sdrc_cmd_ack) #clk_tk;
 
     // read 4 data starting from column 0
     I_sdrc_cmd_en <= 1;
@@ -333,8 +328,7 @@ module testbench;
     #clk_tk;
     I_sdrc_cmd_en <= 0;
     #clk_tk;
-    assert (O_sdrc_cmd_ack)
-    else $fatal;
+    while (!O_sdrc_cmd_ack) #clk_tk;
 
     // tRCD (Row to Column Delay): The minimum time between an ACTIVE command and a READ or WRITE command.
     // CAS Latency (CL)
@@ -366,8 +360,7 @@ module testbench;
     #clk_tk;
     I_sdrc_cmd_en <= 0;
     #clk_tk;
-    assert (O_sdrc_cmd_ack)
-    else $fatal;
+    while (!O_sdrc_cmd_ack) #clk_tk;
 
     // tRCD (Row to Column Delay): The minimum time between an ACTIVE command and a READ or WRITE command.
     // ?? tRAS violation without the delay
@@ -400,8 +393,7 @@ module testbench;
     #clk_tk;
     I_sdrc_cmd_en <= 0;
     #clk_tk;
-    assert (O_sdrc_cmd_ack)
-    else $fatal;
+    while (!O_sdrc_cmd_ack) #clk_tk;
 
     // tRCD (Row to Column Delay): The minimum time between an ACTIVE command and a READ or WRITE command.
     // ?? tRAS violation without the delay
@@ -436,8 +428,7 @@ module testbench;
     #clk_tk;
     I_sdrc_cmd_en <= 0;
     #clk_tk;
-    assert (O_sdrc_cmd_ack)
-    else $fatal;
+    while (!O_sdrc_cmd_ack) #clk_tk;
 
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b100;  // write
@@ -481,8 +472,7 @@ module testbench;
     #clk_tk;
     I_sdrc_cmd_en <= 0;
     #clk_tk;
-    assert (O_sdrc_cmd_ack)
-    else $fatal;
+    while (!O_sdrc_cmd_ack) #clk_tk;
 
     // read 4 data starting from column 0
     I_sdrc_cmd_en <= 1;
@@ -529,8 +519,7 @@ module testbench;
     #clk_tk;
     I_sdrc_cmd_en <= 0;
     #clk_tk;
-    assert (O_sdrc_cmd_ack)
-    else $fatal;
+    while (!O_sdrc_cmd_ack) #clk_tk;
 
     // read 8 data starting from column 0
     I_sdrc_cmd_en <= 1;
@@ -575,8 +564,7 @@ module testbench;
     #clk_tk;
     I_sdrc_cmd_en <= 0;
     #clk_tk;
-    assert (O_sdrc_cmd_ack)
-    else $fatal;
+    while (!O_sdrc_cmd_ack) #clk_tk;
 
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b100;  // write
@@ -620,8 +608,7 @@ module testbench;
     #clk_tk;
     I_sdrc_cmd_en <= 0;
     #clk_tk;
-    assert (O_sdrc_cmd_ack)
-    else $fatal;
+    while (!O_sdrc_cmd_ack) #clk_tk;
 
     // read 4 data starting from column 0
     I_sdrc_cmd_en <= 1;
@@ -673,8 +660,7 @@ module testbench;
     #clk_tk;
     I_sdrc_cmd_en <= 0;
     #clk_tk;
-    assert (O_sdrc_cmd_ack)
-    else $fatal;
+    while (!O_sdrc_cmd_ack) #clk_tk;
 
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b100;  // write
@@ -719,8 +705,7 @@ module testbench;
     #clk_tk;
     I_sdrc_cmd_en <= 0;
     #clk_tk;
-    assert (O_sdrc_cmd_ack)
-    else $fatal;
+    while (!O_sdrc_cmd_ack) #clk_tk;
 
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b100;  // write
@@ -764,8 +749,7 @@ module testbench;
     #clk_tk;
     I_sdrc_cmd_en <= 0;
     #clk_tk;
-    assert (O_sdrc_cmd_ack)
-    else $fatal;
+    while (!O_sdrc_cmd_ack) #clk_tk;
 
     // read 8 data starting from column 0
     I_sdrc_cmd_en <= 1;

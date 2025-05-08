@@ -328,7 +328,7 @@ module cache #(
           $display("%m: %t: wait for ACTIVE to complete before write", $time);
 `endif
           // wait for ACTIVE command to complete
-          if (O_sdrc_cmd_ack == 1) begin
+          if (O_sdrc_cmd_ack) begin
             I_sdrc_cmd_en <= 1;
             I_sdrc_cmd <= 3'b100;  // write
             I_sdrc_addr <= cached_line_address;
@@ -365,7 +365,7 @@ module cache #(
         end
 
         Write4: begin
-          if (O_sdrc_cmd_ack == 1) begin
+          if (O_sdrc_cmd_ack) begin
             // ! note: in the manual ACK arrives 2 cycles after command issued
             // !       in simulation ACK arrives 3 cycles after data has been written
             burst_is_writing <= 0;
@@ -383,7 +383,7 @@ module cache #(
 `ifdef DBG
           $display("%m: %t: wait for ACTIVE to complete before read", $time);
 `endif
-          if (O_sdrc_cmd_ack == 1) begin
+          if (O_sdrc_cmd_ack) begin
             I_sdrc_cmd_en <= 1;
             I_sdrc_cmd <= 3'b101;  // read
             I_sdrc_addr <= burst_line_address;
