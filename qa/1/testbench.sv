@@ -97,7 +97,7 @@ module testbench;
       .IO_sdram_dq,  // 32 bit bidirectional data bus
       .O_sdram_addr,  // 11 bit multiplexed address bus
       .O_sdram_ba,  // two banks
-      .O_sdram_dqm  // 32/4
+      .O_sdram_dqm  // data mask (byte enable)
   );
 
   //------------------------------------------------------------------------

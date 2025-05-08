@@ -33,7 +33,7 @@ module testbench;
   wire  [31:0] IO_sdram_dq;  // 32 bit bidirectional data bus
   wire  [10:0] O_sdram_addr;  // 11 bit multiplexed address bus
   wire  [ 1:0] O_sdram_ba;  // two banks
-  wire  [ 3:0] O_sdram_dqm;  // 32/4
+  wire  [ 3:0] O_sdram_dqm;  // data mask (byte enable)
 
   mt48lc2m32b2 sdram (
       .Clk(O_sdram_clk),

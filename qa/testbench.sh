@@ -21,6 +21,7 @@ iverilog -g2012 -Winfloop -pfileline=1 -o iverilog.vvp -s testbench \
     $SRCPTH/emulators/etron/sdr2mx32.v \
     $SRCPTH/emulators/flash.sv \
     $SRCPTH/ip/sdram_controller_hs/sdram_controller_hs.vo \
+    $SRCPTH/ip/gowin_rpll/gowin_rpll.v \
     $SRCPTH/ip/regymm/sd_controller.v \
     $SRCPTH/configuration.sv \
     $SRCPTH/bram.sv \
