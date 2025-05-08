@@ -30,7 +30,7 @@ module testbench;
   wire [1:0] O_sdram_ba;  // two banks
   wire [3:0] O_sdram_dqm;  // data mask (byte enable)
 
-  // sdr2mx32 sdram (
+  // sdr2mx32 sdram (  // note: very slow until it reaches initialized state at ~328 us
   mt48lc2m32b2 sdram (
       .Clk(O_sdram_clk),
       .Cke(O_sdram_cke),

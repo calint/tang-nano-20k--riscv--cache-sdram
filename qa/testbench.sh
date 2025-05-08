@@ -9,14 +9,17 @@
 set -e
 cd $(dirname "$0")
 
+# path to directory containing the simulation primitives
 PRIMLIBPTH=~/apps/gowin/IDE/simlib/gw2a
+
+# path to source directory
 SRCPTH=../../src
 
 cd $1
 pwd
 
 iverilog -g2012 -Winfloop -pfileline=1 -o iverilog.vvp -s testbench \
-    ~/apps/gowin/IDE/simlib/gw2a/prim_sim.v \
+    $PRIMLIBPTH/prim_sim.v \
     $SRCPTH/emulators/micron/MT48LC2M32B2.v \
     $SRCPTH/emulators/etron/sdr2mx32.v \
     $SRCPTH/emulators/flash.sv \
