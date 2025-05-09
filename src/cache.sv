@@ -12,6 +12,7 @@
 module cache #(
     parameter int unsigned ColumnIndexBitwidth = 3,
     // 2 ^ 3 = 8 entries (32 B) per cache line
+    // minimum value is 2
 
     parameter int unsigned LineIndexBitWidth = 6,
     // 2 ^ 6 * 32 B = 2 KB unified instruction and data cache
@@ -208,7 +209,7 @@ module cache #(
       tag_data_in = {1'b0, 1'b1, address_tag};
       // note: {dirty, valid, upper address bits}
     end else if (burst_is_writing) begin
-      //
+      // do nothing while writing to ram
     end else if (write_enable != '0) begin
 `ifdef DBG
       $display("%m: %t: write 0x%h = 0x%h  mask: %b  line: %0d  column: %0d", $time, address,
@@ -290,7 +291,7 @@ module cache #(
         end
         Idle: begin
           if (enable && !cache_line_hit) begin
-            // cache miss, start reading the addressed cache line
+            // cache miss, start reading the addressed cache line and evict current if dirty
 `ifdef DBG
             $display("%m: %t: cache miss address 0x%h  line: %0d  write enable: %b", $time,
                      address, line_ix, write_enable);
@@ -305,7 +306,7 @@ module cache #(
               I_sdrc_cmd <= 3'b011;  // activate bank and row of cache line
               I_sdrc_addr <= cached_line_address;
               state <= Write1;
-            end else begin  // not (write_enable && line_dirty)
+            end else begin  // not line_dirty
 `ifdef DBG
               if (write_enable && !line_dirty) begin
                 $display("%m: %t: line %0d not dirty", $time, line_ix);
@@ -315,7 +316,7 @@ module cache #(
 `endif
               I_sdrc_cmd_en <= 1;
               I_sdrc_cmd <= 3'b011;  // activate bank and row of cache line
-              I_sdrc_addr <= burst_line_address;  // activate bank 0 row 0
+              I_sdrc_addr <= burst_line_address;
               burst_is_reading <= 1;
               state <= Read1;
             end
@@ -358,8 +359,8 @@ module cache #(
                    column_data_out[write_column]);
 `endif
           if (write_column == COLUMN_COUNT - 1) begin
-            counter <= 1;
-            state   <= Write4;
+            // note: this was the last column
+            state <= Write4;
           end
           write_column <= write_column + 1'b1;
         end
@@ -397,8 +398,8 @@ module cache #(
           I_sdrc_cmd_en <= 0;
           counter <= counter + 1'b1;
           if (counter == WaitsPriorToDataAtRead) begin
-            burst_write_enable[0] <= 4'b1111;
-            burst_data_in[0] <= O_sdrc_data;
+            burst_write_enable[0] <= 4'b1111;  // enable write to first column
+            burst_data_in[0] <= O_sdrc_data;  // data to write to first column
 `ifdef DBG
             $display("%m: %t: data 0 from SDRAM %h", $time, O_sdrc_data);
 `endif
@@ -408,28 +409,29 @@ module cache #(
         end
 
         Read3: begin
-          burst_write_enable[counter-1] <= 0;
-          burst_write_enable[counter] <= 4'b1111;
-          burst_data_in[counter] <= O_sdrc_data;
+          burst_write_enable[counter-1] <= 0;  // disable write to previous column
+          burst_write_enable[counter] <= 4'b1111;  // enable write to current column
+          burst_data_in[counter] <= O_sdrc_data;  // data to write to current column
 `ifdef DBG
           $display("%m: %t: data %0d from SDRAM %h", $time, counter, O_sdrc_data);
 `endif
           counter <= counter + 1'b1;
           if (counter == COLUMN_COUNT - 1) begin
+            // note: this was last column
             state <= Read4;
           end
         end
 
         Read4: begin
-          // note: reading line can be initiated after a cache eviction
-          //       'burst_write_enable' then high, set to low
-          burst_write_enable[COLUMN_COUNT-1] <= 0;
+          burst_write_enable[COLUMN_COUNT-1] <= 0;  // disable write to last column
           burst_tag_write_enable <= 4'b1111;
+          // note: last column data written during this cycle, enable write tag for next cycle
           state <= Read5;
         end
 
         Read5: begin
-          // note: tag has been written after read data has settled
+          // note: tag is being written during this cycle
+          //       after data written to last column has settled
           burst_is_reading <= 0;
           burst_tag_write_enable <= 0;
           state <= Idle;
