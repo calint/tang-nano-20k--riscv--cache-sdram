@@ -35,7 +35,9 @@ module testbench;
   wire  [ 1:0] O_sdram_ba;  // two banks
   wire  [ 3:0] O_sdram_dqm;  // data mask (byte enable)
 
-  mt48lc2m32b2 sdram (
+
+  sdr2mx32 sdram (  // note: very slow until it reaches initialized state at ~328 us
+      //mt48lc2m32b2 sdram (
       .Clk(O_sdram_clk),
       .Cke(O_sdram_cke),
       .Cs_n(O_sdram_cs_n),
@@ -210,8 +212,8 @@ module testbench;
   //------------------------------------------------------------------------
 
   initial begin
-    $dumpfile("log.vcd");
-    $dumpvars(0, testbench);
+    //$dumpfile("log.vcd");
+    //$dumpvars(0, testbench);
 
     rst_n <= 0;
     #clk_tk;
