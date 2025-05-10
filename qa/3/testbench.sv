@@ -106,15 +106,15 @@ module testbench;
     $dumpfile("log.vcd");
     $dumpvars(0, testbench);
 
+    I_sdrc_precharge_ctrl = 1;
+    I_sdram_power_down = 0;
+    I_sdram_selfrefresh = 0;
+
     rst <= 1;
     #clk_tk;
     #clk_tk;
     rst <= 0;
     #clk_tk;
-
-    I_sdrc_precharge_ctrl = 1;
-    I_sdram_power_down = 0;
-    I_sdram_selfrefresh <= 0;
 
     $display("waiting for controller to be initialized");
     while (!O_sdrc_init_done) #clk_tk;
