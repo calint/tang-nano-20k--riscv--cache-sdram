@@ -28,20 +28,3 @@ while true; do
     printf "m\r" > $TTY
     sleep 10
 done
-
-# send SIGTERM (termination signal) to 'cat'
-kill -SIGTERM %1
-
-# wait for 'cat' to exit
-wait %1 || true
-
-if cmp -s test.diff test.out; then
-    echo
-    echo
-    echo "test: OK"
-    rm test.out
-else
-    echo
-    echo
-    echo "test: FAILED, check 'diff test.diff test.out'"
-fi
