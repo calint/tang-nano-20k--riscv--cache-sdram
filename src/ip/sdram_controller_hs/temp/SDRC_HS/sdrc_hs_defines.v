@@ -6,5 +6,5 @@
 `define SDRAM_tRP 3
 `define SDRAM_tRFC 9
 `define SDRAM_tMRD 3
-`define SDRAM_tRCD 3
+`define SDRAM_tRCD 4
 `define SDRAM_tWR 2

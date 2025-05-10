@@ -134,7 +134,6 @@ module testbench;
     I_sdrc_cmd <= 3'b011;  // active
     I_sdrc_addr <= 0;  // activate bank 0 row 0
     #clk_tk;
-
     I_sdrc_cmd_en <= 0;
     while (!O_sdrc_cmd_ack) #clk_tk;
 
@@ -179,7 +178,6 @@ module testbench;
     I_sdrc_cmd <= 3'b011;  // active
     I_sdrc_addr <= 21'h1_00;  // bank 0, row 1
     #clk_tk;
-
     I_sdrc_cmd_en <= 0;
     #clk_tk;
     while (!O_sdrc_cmd_ack) #clk_tk;
@@ -229,8 +227,8 @@ module testbench;
     #clk_tk;
     while (!O_sdrc_cmd_ack) #clk_tk;
 
-    // ?? avoid tRAS violation without the tick
-    #clk_tk;
+    // ?? tRAS violation without the delay at RCD=3
+    // #clk_tk;
 
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b100;  // write
@@ -327,11 +325,8 @@ module testbench;
     #clk_tk;
     while (!O_sdrc_cmd_ack) #clk_tk;
 
-    // tRCD (Row to Column Delay): The minimum time between an ACTIVE command and a READ or WRITE command.
-    // CAS Latency (CL)
-    // ?? tRAS violation without the delay
-    #clk_tk;
-    #clk_tk;
+    // ?? tRAS violation without the delay at RCD=3
+    //#clk_tk;
 
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b101;  // read
@@ -343,8 +338,9 @@ module testbench;
     #clk_tk;
     #clk_tk;
     #clk_tk;
+
+    // data arrives
     #clk_tk;
-    // data arrived
     assert (O_sdrc_data == 'habcd_ef01)
     else $fatal;
 
@@ -360,10 +356,8 @@ module testbench;
     #clk_tk;
     while (!O_sdrc_cmd_ack) #clk_tk;
 
-    // tRCD (Row to Column Delay): The minimum time between an ACTIVE command and a READ or WRITE command.
-    // ?? tRAS violation without the delay
-    #clk_tk;
-    #clk_tk;
+    // ?? tRAS violation without the delay at RCD=3
+    //#clk_tk;
 
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b101;  // read
@@ -373,7 +367,6 @@ module testbench;
 
     I_sdrc_cmd_en <= 0;
     #clk_tk;
-
     #clk_tk;
     #clk_tk;
 
@@ -394,10 +387,8 @@ module testbench;
     #clk_tk;
     while (!O_sdrc_cmd_ack) #clk_tk;
 
-    // tRCD (Row to Column Delay): The minimum time between an ACTIVE command and a READ or WRITE command.
-    // ?? tRAS violation without the delay
-    #clk_tk;
-    #clk_tk;
+    // ?? tRAS violation without the delay at RCD=3
+    //#clk_tk;
 
     I_sdrc_cmd_en <= 1;
     I_sdrc_cmd <= 3'b100;  // write
@@ -510,7 +501,7 @@ module testbench;
 
 
 
-    $display("fetch from same row (expect xxxxxxxx. testing for timing violations)");
+    $display("read from same row (expect xxxxxxxx. testing for timing violations)");
     // -----------------------------------------------------------------------
     // activate and read 8 data from bank 0 row 1
     I_sdrc_cmd_en <= 1;
@@ -555,7 +546,7 @@ module testbench;
 
 
     // -----------------------------------------------------------------------
-    $display("test write then read from same cache line activating same bank");
+    $display("write then read from same cache line activating same bank");
     // -----------------------------------------------------------------------
     // activate and write 8 data to bank 0 row 0
 
@@ -649,8 +640,7 @@ module testbench;
 
 
 
-    $display("read again same cache line");
-    // fetch same row to test for timing violation
+    $display("read same cache line to test timing violation");
     // -----------------------------------------------------------------------
     // activate and read 8 data from bank 0 row 0
     I_sdrc_cmd_en <= 1;
