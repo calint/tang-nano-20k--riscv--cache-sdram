@@ -472,7 +472,6 @@ module testbench;
 
     I_sdrc_cmd_en <= 0;
     #clk_tk;
-
     #clk_tk;
     #clk_tk;
 
@@ -500,7 +499,6 @@ module testbench;
     else $fatal;
 
 
-
     $display("read from same row (expect xxxxxxxx. testing for timing violations)");
     // -----------------------------------------------------------------------
     // activate and read 8 data from bank 0 row 1
@@ -521,31 +519,20 @@ module testbench;
 
     I_sdrc_cmd_en <= 0;
     #clk_tk;
-
     #clk_tk;
     #clk_tk;
 
     // data arrives
     #clk_tk;
-
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
+    #clk_tk;
     #clk_tk;
 
-    #clk_tk;
 
-    #clk_tk;
-
-    #clk_tk;
-
-    #clk_tk;
-
-    #clk_tk;
-
-    #clk_tk;
-    // -----------------------------------------------------------------------
-
-
-
-    // -----------------------------------------------------------------------
     $display("write then read from same cache line activating same bank");
     // -----------------------------------------------------------------------
     // activate and write 8 data to bank 0 row 0
@@ -611,7 +598,6 @@ module testbench;
 
     I_sdrc_cmd_en <= 0;
     #clk_tk;
-
     #clk_tk;
     #clk_tk;
 
@@ -637,7 +623,6 @@ module testbench;
     #clk_tk;
     assert (O_sdrc_data == 'habcd_ef04)
     else $fatal;
-
 
 
     $display("read same cache line to test timing violation");
@@ -686,7 +671,6 @@ module testbench;
     else $fatal;
 
 
-
     $display("read cache line from different bank testing timing violation");
     // fetch same row to test for timing violation
     // -----------------------------------------------------------------------
@@ -719,8 +703,6 @@ module testbench;
     #clk_tk;
     #clk_tk;
     #clk_tk;
-
-
 
 
     // -----------------------------------------------------------------------
