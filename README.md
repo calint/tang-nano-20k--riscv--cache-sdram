@@ -81,6 +81,10 @@ welcome to adventure #4
 -----------------------------------------------------------------------------
 [ ] study why memtest fails when configured with less than 16 cache lines off 
     32 B and why it fails almost always on same addresses with same error
+    => extensive testing shows that it fails even with 2^11 lines after a while
+       if running memtest in loop. it fails mostly on same locations (2-3) with
+       same values. heating problem? defect circuit? after a fail the card needs
+       to cool down before passing the memtest more than 10 times in a row.
 [ ] read LEDs
 [-] study better FSM in /src/emulators/flash.sv
     => simple emulator that implements the boot sequence of the CPU
