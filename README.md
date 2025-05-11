@@ -86,6 +86,8 @@ welcome to adventure #4
        same values. heating problem? defect circuit? after a fail the card needs
        to cool down before passing the memtest more than 10 times in a row.
     => mem_test in litex does not result in errors during 60 runs
+    => write the memtest once then read and compare in a loop fails after a long
+       while (~20 min)
 [ ] read LEDs
 [-] study better FSM in /src/emulators/flash.sv
     => simple emulator that implements the boot sequence of the CPU
