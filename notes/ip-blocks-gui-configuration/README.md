@@ -5,4 +5,4 @@
 * RCD=3 gives RAS violation in both emulators
 * RCD=4 gives no timing violation in emulators
 
-In the use case of cache, when reading or writing 8 values or more, RCD=3 does not give timing violation RAS or RCD in both emulators
+In the use case of cache, when reading or writing 8 values or more, RCD=3 does not give timing violation RAS or RCD in either emulators
