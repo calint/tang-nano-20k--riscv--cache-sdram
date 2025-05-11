@@ -85,6 +85,7 @@ welcome to adventure #4
        if running memtest in loop. it fails mostly on same locations (2-3) with
        same values. heating problem? defect circuit? after a fail the card needs
        to cool down before passing the memtest more than 10 times in a row.
+    => mem_test in litex does not result in errors during 60 runs
 [ ] read LEDs
 [-] study better FSM in /src/emulators/flash.sv
     => simple emulator that implements the boot sequence of the CPU
