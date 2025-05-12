@@ -1,16 +1,17 @@
 [*]
 [*] GTKWave Analyzer v3.3.121 (w)1999-2024 BSI
-[*] Sat May 10 12:24:37 2025
+[*] Mon May 12 05:07:51 2025
 [*]
 [dumpfile] "/home/c/w/tang-nano-20k--riscv--cache-sdram/qa/3/log.vcd"
-[dumpfile_mtime] "Sat May 10 12:23:38 2025"
+[dumpfile_mtime] "Mon May 12 05:04:24 2025"
 [dumpfile_size] 17401805
 [savefile] "/home/c/w/tang-nano-20k--riscv--cache-sdram/qa/3/log.gtkw"
-[timestart] 0
+[timestart] 328077630
 [size] 2230 1344
-[pos] -2 -2
-*-14.195307 328560000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] -1 -1
+*-14.195307 328150000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] testbench.
+[treeopen] testbench.sdram_controller.
 [sst_width] 273
 [signals_width] 390
 [sst_expanded] 1
@@ -22,9 +23,7 @@ testbench.I_sdrc_rst_n
 testbench.I_sdrc_clk
 testbench.I_sdram_selfrefresh
 testbench.I_sdram_power_down
-@29
 testbench.I_sdrc_precharge_ctrl
-@28
 testbench.I_sdrc_cmd_en
 testbench.O_sdrc_cmd_ack
 testbench.I_sdrc_cmd[2:0]
@@ -39,20 +38,21 @@ testbench.O_sdrc_init_done
 testbench.I_sdram_clk
 @200
 -
+@28
+testbench.sdram_controller.O_sdram_clk
+testbench.sdram_controller.O_sdram_cke
+testbench.O_sdram_cs_n
+testbench.sdram_controller.O_sdram_cas_n
+testbench.O_sdram_ras_n
+testbench.O_sdram_wen_n
+@23
+testbench.sdram_controller.O_sdram_dqm[3:0]
 @22
-testbench.IO_sdram_dq[31:0]
 testbench.O_sdram_addr[10:0]
 @28
 testbench.O_sdram_ba[1:0]
-testbench.O_sdram_cas_n
-testbench.O_sdram_cke
-testbench.O_sdram_clk
-testbench.O_sdram_cs_n
 @22
-testbench.O_sdram_dqm[3:0]
-@28
-testbench.O_sdram_ras_n
-testbench.O_sdram_wen_n
+testbench.IO_sdram_dq[31:0]
 @200
 -
 @28
