@@ -88,6 +88,9 @@ welcome to adventure #4
     => mem_test in litex does not result in errors during 60 runs
     => write the memtest once then read and compare in a loop fails after a long
        while (~20 min)
+    => tried with CL=3, MRD=3, RCD=4, RFC=16, RP=4, WR=3 with 2^11 cache lines
+       and failures started much later but did happen at same addresses with
+       same values (0x00C:C437  C7->D7  0x0054:C2CE  5E->56)
 [ ] read LEDs
 [-] study better FSM in /src/emulators/flash.sv
     => simple emulator that implements the boot sequence of the CPU
