@@ -91,6 +91,8 @@ welcome to adventure #4
     => tried with CL=3, MRD=3, RCD=4, RFC=16, RP=4, WR=3 with 2^11 cache lines
        and failures started much later but did happen at same addresses with
        same values (0x00C:C437  C7->D7  0x0054:C2CE  5E->56)
+    => extensive testing using litex (several hours) of "mem_test 0x40000000 0x800000"
+       without errors
 [ ] read LEDs
 [-] study better FSM in /src/emulators/flash.sv
     => simple emulator that implements the boot sequence of the CPU
