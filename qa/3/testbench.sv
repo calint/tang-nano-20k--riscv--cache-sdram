@@ -50,8 +50,8 @@ module testbench;
 
   // register and wires to 'sdram_controller'
   wire I_sdrc_rst_n = !rst;
-  wire I_sdrc_clk = clk;  // 27 MHz
-  wire I_sdram_clk = clk;  // 66 MHz
+  wire I_sdrc_clk = clk;
+  wire I_sdram_clk = clk;
   logic I_sdrc_cmd_en;
   logic [2:0] I_sdrc_cmd;
   logic I_sdrc_precharge_ctrl;
