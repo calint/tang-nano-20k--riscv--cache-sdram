@@ -2,6 +2,7 @@
 // clock
 //
 IO_LOC  "clk" 4; // PIN04_SYS_CLK: 27 MHz (generates warning PR1014)
+IO_PORT "clk" IO_TYPE=LVCMOS33;
 
 // see https://wiki.sipeed.com/hardware/en/tang/tang-nano-20k/example/unbox.html#pll_clk
 // note: when using rPLL IP to scale up frequency then the 'lock' signal does not get asserted
@@ -14,7 +15,10 @@ IO_LOC  "clk" 4; // PIN04_SYS_CLK: 27 MHz (generates warning PR1014)
 // buttons
 //
 IO_LOC  "rst" 87; // PIN87_MODE1_KEY2
+IO_PORT "rst" IO_TYPE=LVCMOS33;
+
 IO_LOC  "btn1" 88; // PIN88_MODE0_KEY1
+IO_PORT "btn1" IO_TYPE=LVCMOS33;
 
 //
 // LEDs

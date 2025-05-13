@@ -10,7 +10,7 @@
 * developing a back-to-basics freestanding bare metal C++23 application
 * explore the FPGA board
 
-## Howto Gowin EDA 1.9.10.03 Education
+## Howto Gowin EDA 1.9.11.02 build(80616)
 * build bitstream in Gowin EDA or using `/scripts/build-using-gowin.sh` (note: `gw_sh` assumed to be in path)
 * run `/scripts/make-and-flash-os.sh` to flash the firmware
 * then `/scripts/flash-fpga.sh` to flash bitstream file or `/scripts/program-fpga.sh`
@@ -93,6 +93,9 @@ welcome to adventure #4
        same values (0x00C:C437  C7->D7  0x0054:C2CE  5E->56)
     => extensive testing using litex (several hours) of "mem_test 0x40000000 0x800000"
        without errors
+    => upgraded to Gowin EDA 1.9.11.02 build(80616) and still same problems
+       tried with CL=3 ... etc incase it is a SDRAM timing error and still same
+       problems
 [ ] read LEDs
 [-] study better FSM in /src/emulators/flash.sv
     => simple emulator that implements the boot sequence of the CPU
