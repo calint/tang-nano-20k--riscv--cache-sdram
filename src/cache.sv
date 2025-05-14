@@ -6,7 +6,7 @@
 `timescale 1ns / 1ps
 //
 `default_nettype none
-// `define DBG
+//`define DBG
 // `define INFO
 
 module cache #(
@@ -27,9 +27,17 @@ module cache #(
     //       2: 4 B
     //       3: 8 B
 
-    parameter int unsigned WaitsPriorToDataAtRead = 4
+    parameter int unsigned WaitsPriorToDataAtRead = 4,
     // according to specification in: IPUG756-1.0.1E
     //  Gowin SDRAM HS IP User Guide page 11
+    //  note: default for CL=2
+    //        when CL=3 then 5
+
+    parameter int unsigned AutoRefreshPeriodCycles = 600
+    // number of cycles before issuing an auto refresh to SDRAM
+    //  note: at 54 MHz with Tang Nano 20K SDRAM (EM638325GD):
+    //        4096 times in 64 ms (according to the spec)
+    //        at 54 MHz gives 843 cycles before refresh
 ) (
     input wire rst_n,
     input wire clk,
@@ -248,6 +256,7 @@ module cache #(
     InitSDRAM1,
     InitSDRAM2,
     Idle,
+    Refresh,
     Write1,
     Write2,
     Write3,
@@ -262,6 +271,7 @@ module cache #(
   state_e state;
 
   logic [4:0] counter;  // used in read / write FSM
+  logic [15:0] refresh_cycle_counter;  // keeps track of auto refresh interval
 
   always_ff @(posedge clk) begin
     if (!rst_n) begin
@@ -286,40 +296,59 @@ module cache #(
         InitSDRAM2: begin
           I_sdrc_cmd_en <= 0;
           if (O_sdrc_cmd_ack) begin
+            refresh_cycle_counter <= 0;
             state <= Idle;
           end
         end
         Idle: begin
-          if (enable && !cache_line_hit) begin
-            // cache miss, start reading the addressed cache line and evict current if dirty
+          refresh_cycle_counter <= refresh_cycle_counter + 1'd1;
+          if (refresh_cycle_counter > AutoRefreshPeriodCycles) begin
 `ifdef DBG
-            $display("%m: %t: cache miss address 0x%h  line: %0d  write enable: %b", $time,
-                     address, line_ix, write_enable);
+            $display("%m: %t: auto refresh at cycle counter: %0d", $time, refresh_cycles_counter);
 `endif
-            if (line_dirty) begin
+            I_sdrc_cmd_en <= 1;
+            I_sdrc_cmd <= 3'b001;  // auto-refresh
+            state <= Refresh;
+          end else begin
+            if (enable && !cache_line_hit) begin
+              // cache miss, start reading the addressed cache line and evict current if dirty
 `ifdef DBG
-              $display("%m: %t: line %0d dirty, evict to RAM address 0x%h", $time, line_ix,
-                       cached_line_address);
-              $display("%m: %t: activating for write bank/row: 0x%h", $time, cached_line_address);
+              $display("%m: %t: cache miss address 0x%h  line: %0d  write enable: %b", $time,
+                       address, line_ix, write_enable);
 `endif
-              I_sdrc_cmd_en <= 1;
-              I_sdrc_cmd <= 3'b011;  // activate bank and row of cache line
-              I_sdrc_addr <= cached_line_address;
-              state <= Write1;
-            end else begin  // not line_dirty
+              if (line_dirty) begin
 `ifdef DBG
-              if (write_enable && !line_dirty) begin
-                $display("%m: %t: line %0d not dirty", $time, line_ix);
+                $display("%m: %t: line %0d dirty, evict to RAM address 0x%h", $time, line_ix,
+                         cached_line_address);
+                $display("%m: %t: activating for write bank/row: 0x%h", $time, cached_line_address);
+`endif
+                I_sdrc_cmd_en <= 1;
+                I_sdrc_cmd <= 3'b011;  // activate bank and row of cache line
+                I_sdrc_addr <= cached_line_address;
+                state <= Write1;
+              end else begin  // not line_dirty
+`ifdef DBG
+                if (write_enable && !line_dirty) begin
+                  $display("%m: %t: line %0d not dirty", $time, line_ix);
+                end
+                $display("%m: %t: read line from RAM address 0x%h", $time, burst_line_address);
+                $display("%m: %t: activating for read bank/row: 0x%h", $time, burst_line_address);
+`endif
+                I_sdrc_cmd_en <= 1;
+                I_sdrc_cmd <= 3'b011;  // activate bank and row of cache line
+                I_sdrc_addr <= burst_line_address;
+                burst_is_reading <= 1;
+                state <= Read1;
               end
-              $display("%m: %t: read line from RAM address 0x%h", $time, burst_line_address);
-              $display("%m: %t: activating for read bank/row: 0x%h", $time, burst_line_address);
-`endif
-              I_sdrc_cmd_en <= 1;
-              I_sdrc_cmd <= 3'b011;  // activate bank and row of cache line
-              I_sdrc_addr <= burst_line_address;
-              burst_is_reading <= 1;
-              state <= Read1;
             end
+          end
+        end
+
+        Refresh: begin
+          I_sdrc_cmd_en <= 0;
+          if (O_sdrc_cmd_ack) begin
+            refresh_cycle_counter <= 0;
+            state <= Idle;
           end
         end
 

@@ -79,7 +79,7 @@ welcome to adventure #4
 ## Todo
 ```
 -----------------------------------------------------------------------------
-[ ] study why memtest fails when configured with less than 16 cache lines off 
+[x] study why memtest fails when configured with less than 16 cache lines off 
     32 B and why it fails almost always on same addresses with same error
     => extensive testing shows that it fails even with 2^11 lines after a while
        if running memtest in loop. it fails mostly on same locations (2-3) with
@@ -95,7 +95,11 @@ welcome to adventure #4
        without errors
     => upgraded to Gowin EDA 1.9.11.02 build(80616) and still same problems
        tried with CL=3 ... etc incase it is a SDRAM timing error and still same
-       problems
+       problemso
+    => :) auto-refresh 4096 times every 64 ms is not done by the controller
+       at 54 MHz SDRAM needs an auto-refresh every 843 cycles
+       (64 000 000 / 4096 / (1 000 / 54)) = 843.75
+       implemented in cache as parameter and now passes memtest with 2 cache lines
 [ ] read LEDs
 [-] study better FSM in /src/emulators/flash.sv
     => simple emulator that implements the boot sequence of the CPU

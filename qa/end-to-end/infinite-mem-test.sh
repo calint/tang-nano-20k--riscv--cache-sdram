@@ -8,7 +8,7 @@ cd $(dirname "$0")
 
 TTY=/dev/ttyUSB1
 BAUD=115200
-SLP=0.5
+SLP=60
 
 # capture ctrl+c and kill cat
 trap 'kill $(jobs -p); exit 130' INT
@@ -26,5 +26,5 @@ cat $TTY | tee test.out &
 
 while true; do
     printf "m\r" > $TTY
-    sleep 10
+    sleep $SLP
 done
