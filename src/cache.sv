@@ -7,7 +7,7 @@
 //
 `default_nettype none
 //`define DBG
-// `define INFO
+//`define INFO
 
 module cache #(
     parameter int unsigned ColumnIndexBitwidth = 3,
@@ -89,6 +89,7 @@ module cache #(
     $display("    columns: %0d x 4 B", 2 ** ColumnIndexBitwidth);
     $display("        tag: %0d bits", TAG_BITWIDTH);
     $display(" cache size: %0d B", LINE_COUNT * (2 ** ColumnIndexBitwidth) * 4);
+    $display("    refresh: %0d cycles", AutoRefreshPeriodCycles);
   end
 `endif
 
