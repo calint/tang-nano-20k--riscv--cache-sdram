@@ -305,7 +305,7 @@ module cache #(
           refresh_cycle_counter <= refresh_cycle_counter + 1'd1;
           if (refresh_cycle_counter > AutoRefreshPeriodCycles) begin
 `ifdef DBG
-            $display("%m: %t: auto refresh at cycle counter: %0d", $time, refresh_cycles_counter);
+            $display("%m: %t: auto refresh at cycle counter: %0d", $time, refresh_cycle_counter);
 `endif
             I_sdrc_cmd_en <= 1;
             I_sdrc_cmd <= 3'b001;  // auto-refresh
