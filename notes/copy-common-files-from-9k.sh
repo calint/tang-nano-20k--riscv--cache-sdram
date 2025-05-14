@@ -6,13 +6,6 @@ echo copy common files
 T9KPTH=../../tang-nano-9k--riscv--cache-psram
 T20KPTH=..
 
-cp -a $T9KPTH/scripts/README.md $T20KPTH/scripts/
-cp -a $T9KPTH/configuration-apply.py $T20KPTH/
-cp -a $T9KPTH/scripts/build-using-gowin.sh $T20KPTH/scripts/
-cp -a $T9KPTH/scripts/program-fpga.sh $T20KPTH/scripts/
-cp -a $T9KPTH/scripts/make-and-flash-os.sh $T20KPTH/scripts/
-cp -a $T9KPTH/scripts/flash-fpga.sh $T20KPTH/scripts/
-cp -a $T9KPTH/scripts/tag-and-push.sh $T20KPTH/scripts/
 
 cp -a $T9KPTH/src/core.sv $T20KPTH/src/
 cp -a $T9KPTH/src/registers.sv $T20KPTH/src/

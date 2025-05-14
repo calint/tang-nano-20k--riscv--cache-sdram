@@ -9,3 +9,5 @@
 *.gprj.user
 *.vvp
 *.vcd
+.cache
+compile_commands.json
