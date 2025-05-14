@@ -126,7 +126,7 @@ step 13
        problemso
     => :) auto-refresh 4096 times every 64 ms is not done by the controller
        at 54 MHz SDRAM needs an auto-refresh every 843 cycles
-       (64_000_000_000 / 4096 / (1_000_000 / 54)) = 843.75
+       (64_000_000 / 4096 / (1_000 / 54)) = 843.75
        implemented in cache as parameter and now passes memtest with 2 cache lines
 [x] sdcard: make it work
 [x] investigate and try to recreate the "// !!!" issue in 'ramio'
