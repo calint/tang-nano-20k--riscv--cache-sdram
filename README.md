@@ -79,27 +79,6 @@ welcome to adventure #4
 ## Todo
 ```
 -----------------------------------------------------------------------------
-[x] study why memtest fails when configured with less than 16 cache lines off 
-    32 B and why it fails almost always on same addresses with same error
-    => extensive testing shows that it fails even with 2^11 lines after a while
-       if running memtest in loop. it fails mostly on same locations (2-3) with
-       same values. heating problem? defect circuit? after a fail the card needs
-       to cool down before passing the memtest more than 10 times in a row.
-    => mem_test in litex does not result in errors during 60 runs
-    => write the memtest once then read and compare in a loop fails after a long
-       while (~20 min)
-    => tried with CL=3, MRD=3, RCD=4, RFC=16, RP=4, WR=3 with 2^11 cache lines
-       and failures started much later but did happen at same addresses with
-       same values (0x00C:C437  C7->D7  0x0054:C2CE  5E->56)
-    => extensive testing using litex (several hours) of "mem_test 0x40000000 0x800000"
-       without errors
-    => upgraded to Gowin EDA 1.9.11.02 build(80616) and still same problems
-       tried with CL=3 ... etc incase it is a SDRAM timing error and still same
-       problemso
-    => :) auto-refresh 4096 times every 64 ms is not done by the controller
-       at 54 MHz SDRAM needs an auto-refresh every 843 cycles
-       (64 000 000 / 4096 / (1 000 / 54)) = 843.75
-       implemented in cache as parameter and now passes memtest with 2 cache lines
 [ ] read LEDs
 [-] study better FSM in /src/emulators/flash.sv
     => simple emulator that implements the boot sequence of the CPU
@@ -128,6 +107,27 @@ step 13
 [ ] fully pipe-lined core
 [ ] consider FIFO in UART
 -------------------------------------------------------------------------------------------------------------
+[x] study why memtest fails when configured with less than 16 cache lines off 
+    32 B and why it fails almost always on same addresses with same error
+    => extensive testing shows that it fails even with 2^11 lines after a while
+       if running memtest in loop. it fails mostly on same locations (2-3) with
+       same values. heating problem? defect circuit? after a fail the card needs
+       to cool down before passing the memtest more than 10 times in a row.
+    => mem_test in litex does not result in errors during 60 runs
+    => write the memtest once then read and compare in a loop fails after a long
+       while (~20 min)
+    => tried with CL=3, MRD=3, RCD=4, RFC=16, RP=4, WR=3 with 2^11 cache lines
+       and failures started much later but did happen at same addresses with
+       same values (0x00C:C437  C7->D7  0x0054:C2CE  5E->56)
+    => extensive testing using litex (several hours) of "mem_test 0x40000000 0x800000"
+       without errors
+    => upgraded to Gowin EDA 1.9.11.02 build(80616) and still same problems
+       tried with CL=3 ... etc incase it is a SDRAM timing error and still same
+       problemso
+    => :) auto-refresh 4096 times every 64 ms is not done by the controller
+       at 54 MHz SDRAM needs an auto-refresh every 843 cycles
+       (64_000_000_000 / 4096 / (1_000_000 / 54)) = 843.75
+       implemented in cache as parameter and now passes memtest with 2 cache lines
 [x] sdcard: make it work
 [x] investigate and try to recreate the "// !!!" issue in 'ramio'
     => the simulation works as expected
