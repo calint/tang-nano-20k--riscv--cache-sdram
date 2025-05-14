@@ -38,6 +38,7 @@ module cache #(
     //  note: at 54 MHz with Tang Nano 20K SDRAM (EM638325GD):
     //        4096 times in 64 ms (according to the spec)
     //        at 54 MHz gives 843 cycles before refresh
+    //  note: maximum 2^16-2, minimum >0
 ) (
     input wire rst_n,
     input wire clk,

@@ -67,7 +67,7 @@ module ramio #(
     // refresh SDRAM parameters
     parameter int unsigned SDRAMRefreshIntervalMs = 64,
     parameter int unsigned SDRAMRefreshCountDuringInterval = 4096,
-    parameter int unsigned SDRAMFrequencyHz = 54_000_000
+    parameter int unsigned SDRAMClockFrequencyHz = 54_000_000
 ) (
     input wire rst_n,
     input wire clk,
@@ -440,7 +440,12 @@ module ramio #(
       .ColumnIndexBitwidth(CacheColumnIndexBitWidth),
       .RamAddressBitWidth(RamAddressBitWidth),
       .RamAddressingMode(RamAddressingMode),
-      .AutoRefreshPeriodCycles((SDRAMRefreshIntervalMs*1_000_000/SDRAMRefreshCountDuringInterval)/(1_000_000_000/SDRAMFrequencyHz)*0.8)
+      .AutoRefreshPeriodCycles(
+        (SDRAMRefreshIntervalMs*1_000_000/SDRAMRefreshCountDuringInterval)
+        /(1_000_000_000/SDRAMClockFrequencyHz)
+        *0.9
+      )
+      // note: 0.9 for margin to the least necessary according to SDRAM spec
   ) cache (
       .rst_n,
       .clk,
