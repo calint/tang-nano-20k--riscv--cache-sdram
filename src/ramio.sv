@@ -62,7 +62,7 @@ module ramio #(
     // 1: if in simulation mode shortening delay cycles
 
     parameter int unsigned SDCardClockDivider = 0,
-    // 0 when clk = ~30MHz
+    // 0 when clk = 30 MHz, 54 MHz, 60 MHz
 
     // refresh SDRAM parameters
     parameter int unsigned SDRAMRefreshIntervalMs = 64,
