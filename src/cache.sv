@@ -12,8 +12,8 @@
 module cache #(
     parameter int unsigned ColumnIndexBitwidth = 3,
     // 2 ^ 3 = 8 entries (32 B) per cache line
-    // note: minimum value is 2
-    //       maximum value is 2^5
+    // note: minimum value 2
+    //       maximum value 5 (can easily be extended)
 
     parameter int unsigned LineIndexBitWidth = 6,
     // 2 ^ 6 * 32 B = 2 KB unified instruction and data cache
