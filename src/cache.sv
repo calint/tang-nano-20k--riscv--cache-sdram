@@ -12,7 +12,8 @@
 module cache #(
     parameter int unsigned ColumnIndexBitwidth = 3,
     // 2 ^ 3 = 8 entries (32 B) per cache line
-    // minimum value is 2
+    // note: minimum value is 2
+    //       maximum value is 2^5
 
     parameter int unsigned LineIndexBitWidth = 6,
     // 2 ^ 6 * 32 B = 2 KB unified instruction and data cache
@@ -32,6 +33,7 @@ module cache #(
     //  Gowin SDRAM HS IP User Guide page 11
     //  note: default for CL=2
     //        when CL=3 then 5
+    //  note: maximum 2^5-1
 
     parameter int unsigned AutoRefreshPeriodCycles = 600
     // number of cycles before issuing an auto refresh to SDRAM
@@ -133,9 +135,9 @@ module cache #(
   };
 
   logic burst_is_reading;  // true if in burst read operation
-  logic [31:0] burst_data_in;
-  logic burst_write_enable[COLUMN_COUNT];
-  logic burst_tag_write_enable;
+  logic [31:0] burst_data_in;  // current data to write to cache line column
+  logic burst_write_enable[COLUMN_COUNT];  // which column(s) to write enable 'burst_data_in'
+  logic burst_tag_write_enable;  // true if write tag - done at the end of reading a cache line
 
   logic burst_is_writing;  // true if in burst write operation
 
@@ -165,12 +167,6 @@ module cache #(
 
   wire cache_line_hit = line_valid && address_tag == cached_tag;
 
-  // counts the delay before first data is available at read
-  logic [2:0] data_available_delay_counter;
-
-  // which column is active during burst read and write
-  logic [ColumnIndexBitwidth-1:0] write_column;
-
   assign busy = enable && !cache_line_hit;
 
   // select data from requested column
@@ -181,6 +177,11 @@ module cache #(
   // if cache miss then connect to the state machine that loads a cache line
   logic [3:0] column_write_enable[COLUMN_COUNT];
   logic [31:0] column_data_out[COLUMN_COUNT];
+
+  logic [15:0] refresh_cycle_counter;  // keeps track of auto refresh interval
+
+  // counter used in FSM at read and write cache line
+  logic [4:0] counter;
 
   generate
     for (genvar i = 0; i < COLUMN_COUNT; i++) begin : column
@@ -267,9 +268,6 @@ module cache #(
 
   state_e state;
 
-  logic [4:0] counter;  // used in read / write FSM
-  logic [15:0] refresh_cycle_counter;  // keeps track of auto refresh interval
-
   always_ff @(posedge clk) begin
     if (!rst_n) begin
       burst_tag_write_enable <= 0;
@@ -278,7 +276,6 @@ module cache #(
       end
       burst_is_reading <= 0;
       burst_is_writing <= 0;
-      write_column <= 0;
       state <= InitSDRAM1;
     end else begin
 `ifdef DBG
@@ -374,21 +371,20 @@ module cache #(
 `ifdef DBG
           $display("%m: %t: flush column[1]=%h", $time, column_data_out[1]);
 `endif
-          write_column <= 2;
-          state <= Write3;
+          counter <= 2;
+          state   <= Write3;
         end
 
         Write3: begin
-          I_sdrc_data <= column_data_out[write_column];
+          I_sdrc_data <= column_data_out[counter];
 `ifdef DBG
-          $display("%m: %t: flush column[%0d]=%h", $time, write_column,
-                   column_data_out[write_column]);
+          $display("%m: %t: flush column[%0d]=%h", $time, counter, column_data_out[counter]);
 `endif
-          if (write_column == COLUMN_COUNT - 1) begin
+          if (counter == COLUMN_COUNT - 1) begin
             // note: this was the last column
             state <= Write4;
           end
-          write_column <= write_column + 1'b1;
+          counter <= counter + 1'b1;
         end
 
         Write4: begin
