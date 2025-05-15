@@ -178,9 +178,7 @@ module cache #(
   assign data_out_ready = write_enable != '0 ? 0 : enable && cache_line_hit;
 
   // 8 instances of byte enabled semi dual port RAM blocks
-  // if cache hit at write then connect 'column_data_in' to the column
   // if cache miss then connect to the state machine that loads a cache line
-  logic [31:0] column_data_in[COLUMN_COUNT];
   logic [3:0] column_write_enable[COLUMN_COUNT];
   logic [31:0] column_data_out[COLUMN_COUNT];
 
@@ -192,7 +190,7 @@ module cache #(
           .clk,
           .write_enable(column_write_enable[i]),
           .address(line_ix),
-          .data_in(burst_is_reading ? burst_data_in : column_data_in[i]),
+          .data_in(burst_is_reading ? burst_data_in : data_in),
           .data_out(column_data_out[i])
       );
     end
@@ -201,7 +199,6 @@ module cache #(
   always_comb begin
     for (int i = 0; i < COLUMN_COUNT; i++) begin
       column_write_enable[i] = 0;
-      column_data_in[i] = 0;
     end
 
     tag_write_enable = 0;
@@ -234,10 +231,8 @@ module cache #(
         tag_data_in = {1'b1, 1'b1, address_tag};
         // note: { dirty, valid, tag }
 
-        // connect 'column_data_in' to the input and set 'column_write_enable'
-        //  for the addressed column in the cache line
+        // write enable the addressed column in the cache line
         column_write_enable[column_ix] = write_enable;
-        column_data_in[column_ix] = data_in;
 `ifdef DBG
         $display("%m: %t: set column[%0d]=0x%h", $time, column_ix, data_in);
 `endif
