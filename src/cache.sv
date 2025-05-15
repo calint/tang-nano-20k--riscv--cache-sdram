@@ -133,21 +133,21 @@ module cache #(
   };
 
   logic burst_is_reading;  // true if in burst read operation
-  logic [31:0] burst_data_in[COLUMN_COUNT];
-  logic [3:0] burst_write_enable[COLUMN_COUNT];
-  logic [3:0] burst_tag_write_enable;
+  logic [31:0] burst_data_in;
+  logic burst_write_enable[COLUMN_COUNT];
+  logic burst_tag_write_enable;
 
   logic burst_is_writing;  // true if in burst write operation
 
   wire [31:0] cached_tag_and_flags;
-  logic [3:0] tag_write_enable;  // true when cache hit; write to set line dirty
+  logic tag_write_enable;  // true when cache hit; write to set line dirty
   logic [31:0] tag_data_in;  // tag and flags written when cache hit write
 
   bram #(
       .AddressBitWidth(LineIndexBitWidth)
   ) tag (
       .clk,
-      .write_enable(tag_write_enable),
+      .write_enable({4{tag_write_enable}}),
       .address(line_ix),
       .data_in(tag_data_in),
       .data_out(cached_tag_and_flags)
@@ -192,7 +192,7 @@ module cache #(
           .clk,
           .write_enable(column_write_enable[i]),
           .address(line_ix),
-          .data_in(burst_is_reading ? burst_data_in[i] : column_data_in[i]),
+          .data_in(burst_is_reading ? burst_data_in : column_data_in[i]),
           .data_out(column_data_out[i])
       );
     end
@@ -211,7 +211,7 @@ module cache #(
       // writing to the cache line in a burst read from RAM
       // select the write from burst registers
       for (int i = 0; i < COLUMN_COUNT; i++) begin
-        column_write_enable[i] = burst_write_enable[i];
+        column_write_enable[i] = {4{burst_write_enable[i]}};
       end
       // write tag of the fetched cache line when burst is finished reading
       // the line
@@ -230,7 +230,7 @@ module cache #(
         $display("%m: %t: cache hit, set dirty flag", $time);
 `endif
         // enable write tag with dirty bit set
-        tag_write_enable = 4'b1111;
+        tag_write_enable = 1;
         tag_data_in = {1'b1, 1'b1, address_tag};
         // note: { dirty, valid, tag }
 
@@ -429,8 +429,8 @@ module cache #(
           I_sdrc_cmd_en <= 0;
           counter <= counter + 1'b1;
           if (counter == WaitsPriorToDataAtRead) begin
-            burst_write_enable[0] <= 4'b1111;  // enable write to first column
-            burst_data_in[0] <= O_sdrc_data;  // data to write to first column
+            burst_write_enable[0] <= 1;  // enable write to first column
+            burst_data_in <= O_sdrc_data;  // data to write to first column
 `ifdef DBG
             $display("%m: %t: data 0 from SDRAM %h", $time, O_sdrc_data);
 `endif
@@ -441,8 +441,8 @@ module cache #(
 
         Read3: begin
           burst_write_enable[counter-1] <= 0;  // disable write to previous column
-          burst_write_enable[counter] <= 4'b1111;  // enable write to current column
-          burst_data_in[counter] <= O_sdrc_data;  // data to write to current column
+          burst_write_enable[counter] <= 1;  // enable write to current column
+          burst_data_in <= O_sdrc_data;  // data to write to current column
 `ifdef DBG
           $display("%m: %t: data %0d from SDRAM %h", $time, counter, O_sdrc_data);
 `endif
@@ -455,7 +455,7 @@ module cache #(
 
         Read4: begin
           burst_write_enable[COLUMN_COUNT-1] <= 0;  // disable write to last column
-          burst_tag_write_enable <= 4'b1111;
+          burst_tag_write_enable <= 1;
           // note: last column data written during this cycle, enable write tag for next cycle
           state <= Read5;
         end
