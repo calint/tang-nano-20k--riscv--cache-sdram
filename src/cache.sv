@@ -178,8 +178,8 @@ module cache #(
   assign data_out_ready = write_enable != '0 ? 0 : enable && cache_line_hit;
 
   // 8 instances of byte enabled semi dual port RAM blocks
-  // if cache hit at write then connect 'data_in' to the column
-  // if cache miss connect to the state machine that loads a cache line
+  // if cache hit at write then connect 'column_data_in' to the column
+  // if cache miss then connect to the state machine that loads a cache line
   logic [31:0] column_data_in[COLUMN_COUNT];
   logic [3:0] column_write_enable[COLUMN_COUNT];
   logic [31:0] column_data_out[COLUMN_COUNT];
