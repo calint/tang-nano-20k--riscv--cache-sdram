@@ -137,7 +137,8 @@ module top (
       .SDCardClockDivider(0),  // 0: works at 54 MHz and 60 MHz (1 does not)
       .SDRAMRefreshIntervalMs(64),  // 4096 refreshes during every 64 ms according to SDRAM spec
       .SDRAMRefreshCountDuringInterval(4096),
-      .SDRAMClockFrequencyHz(configuration::CPU_FREQUENCY_HZ)
+      .SDRAMClockFrequencyHz(configuration::CPU_FREQUENCY_HZ),
+      .SDRAMRefreshRequirementsMarginPercent(10)  // note: 0 fails 'qa/end-to-end/test.sh' at 60 MHz
   ) ramio (
       .rst_n(!rst && O_sdrc_init_done),
       .clk  (I_sdrc_clk),
