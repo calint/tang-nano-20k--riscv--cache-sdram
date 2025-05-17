@@ -1,7 +1,7 @@
 #define LED ((volatile int *)0xffff'fffc)
 #define UART_OUT ((volatile int *)0xffff'fff8)
 #define UART_IN ((volatile int *)0xffff'fff4)
-#define MEMORY_TOP 0x200000
+#define MEMORY_TOP 0x0080'0000
 
 void uart_send_char(char ch);
 char uart_read_char();
