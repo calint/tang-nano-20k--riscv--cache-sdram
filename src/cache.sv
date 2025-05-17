@@ -12,7 +12,7 @@
 module cache #(
     parameter int unsigned ColumnIndexBitwidth = 3,
     // 2 ^ 3 = 8 entries (32 B) per cache line
-    // note: minimum value 2
+    // note: minimum value 1
     //       maximum value 5 (can easily be extended)
 
     parameter int unsigned LineIndexBitWidth = 6,
@@ -258,7 +258,6 @@ module cache #(
     Write1,
     Write2,
     Write3,
-    Write4,
     Read1,
     Read2,
     Read3,
@@ -359,35 +358,27 @@ module cache #(
             I_sdrc_data_len <= COLUMN_COUNT - 1;
             I_sdrc_data <= column_data_out[0];
 `ifdef DBG
-            $display("%m: %t: flush column[0]=%h", $time, column_data_out[0]);
+            $display("%m: %t: write column[0]=0x%h", $time, column_data_out[0]);
 `endif
-            state <= Write2;
+            counter <= 1;
+            state   <= Write2;
           end
         end
 
         Write2: begin
           I_sdrc_cmd_en <= 0;
-          I_sdrc_data   <= column_data_out[1];
+          I_sdrc_data   <= column_data_out[counter];
 `ifdef DBG
-          $display("%m: %t: flush column[1]=%h", $time, column_data_out[1]);
-`endif
-          counter <= 2;
-          state   <= Write3;
-        end
-
-        Write3: begin
-          I_sdrc_data <= column_data_out[counter];
-`ifdef DBG
-          $display("%m: %t: flush column[%0d]=%h", $time, counter, column_data_out[counter]);
+          $display("%m: %t: write column[%0d]=0x%h", $time, counter, column_data_out[counter]);
 `endif
           if (counter == COLUMN_COUNT - 1) begin
             // note: this was the last column
-            state <= Write4;
+            state <= Write3;
           end
           counter <= counter + 1'b1;
         end
 
-        Write4: begin
+        Write3: begin
           if (O_sdrc_cmd_ack) begin
             // ! note: in the manual ACK arrives 2 cycles after command issued
             // !       in simulation ACK arrives 3 cycles after data has been written
