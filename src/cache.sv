@@ -261,8 +261,7 @@ module cache #(
     Read1,
     Read2,
     Read3,
-    Read4,
-    Read5
+    Read4
   } state_e;
 
   state_e state;
@@ -431,22 +430,15 @@ module cache #(
           counter <= counter + 1'b1;
           if (counter == COLUMN_COUNT - 1) begin
             // note: this was last column
+            burst_tag_write_enable <= 1;  // write tag during next cycle
             state <= Read4;
           end
         end
 
         Read4: begin
           burst_write_enable[COLUMN_COUNT-1] <= 0;  // disable write to last column
-          burst_tag_write_enable <= 1;
-          // note: last column data written during this cycle, enable write tag for next cycle
-          state <= Read5;
-        end
-
-        Read5: begin
-          // note: tag is being written during this cycle
-          //       after data written to last column has settled
-          burst_is_reading <= 0;
-          burst_tag_write_enable <= 0;
+          burst_is_reading <= 0;  // done burst reading, enable cache next cycle
+          burst_tag_write_enable <= 0;  // disable write to tag
           state <= Idle;
         end
 
