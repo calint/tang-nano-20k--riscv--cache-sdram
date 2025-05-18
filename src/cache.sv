@@ -429,13 +429,14 @@ module cache #(
 `endif
           counter <= counter + 1'b1;
           if (counter == COLUMN_COUNT - 1) begin
-            // note: this was last column
-            burst_tag_write_enable <= 1;  // write tag during next cycle
+            // note: this is the last column, will be written during next cycle
+            burst_tag_write_enable <= 1;  // also write tag during next cycle
             state <= Read4;
           end
         end
 
         Read4: begin
+          // note: last column is being written during this cycle
           burst_write_enable[COLUMN_COUNT-1] <= 0;  // disable write to last column
           burst_is_reading <= 0;  // done burst reading, enable cache next cycle
           burst_tag_write_enable <= 0;  // disable write to tag

@@ -1,17 +1,17 @@
 [*]
 [*] GTKWave Analyzer v3.3.121 (w)1999-2024 BSI
-[*] Wed May  7 10:26:09 2025
+[*] Sun May 18 02:10:06 2025
 [*]
 [dumpfile] "/home/c/w/tang-nano-20k--riscv--cache-sdram/qa/2/log.vcd"
-[dumpfile_mtime] "Wed May  7 10:23:29 2025"
-[dumpfile_size] 16792667
+[dumpfile_mtime] "Sun May 18 02:08:50 2025"
+[dumpfile_size] 20649593
 [savefile] "/home/c/w/tang-nano-20k--riscv--cache-sdram/qa/2/log.gtkw"
-[timestart] 0
+[timestart] 335166600
 [size] 2230 1344
 [pos] -1 -1
-*-15.306623 328780000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-14.306623 335240000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] testbench.
-[sst_width] 273
+[sst_width] 290
 [signals_width] 271
 [sst_expanded] 1
 [sst_vpaned_height] 415
@@ -32,6 +32,35 @@ testbench.O_sdrc_data[31:0]
 @28
 testbench.O_sdrc_init_done
 testbench.I_sdrc_precharge_ctrl
+@200
+-
+@420
+testbench.cache.state
+@28
+testbench.cache.enable
+@22
+testbench.cache.address[31:0]
+testbench.cache.write_enable[3:0]
+testbench.cache.data_in[31:0]
+testbench.cache.data_out[31:0]
+@29
+testbench.cache.data_out_ready
+@28
+testbench.cache.burst_is_reading
+testbench.cache.burst_is_writing
+testbench.cache.burst_tag_write_enable
+testbench.cache.tag_write_enable
+@22
+testbench.cache.tag_data_in[31:0]
+@28
+testbench.cache.address_tag[2:0]
+testbench.cache.busy
+testbench.cache.burst_is_reading
+testbench.cache.burst_is_writing
+@22
+testbench.cache.counter[4:0]
+@28
+testbench.cache.busy
 @200
 -
 @28
@@ -85,8 +114,6 @@ testbench.data_out[31:0]
 testbench.data_out_ready
 @22
 testbench.address_next[31:0]
-@420
-testbench.cache.state
 @200
 -
 @28
@@ -103,5 +130,7 @@ testbench.O_sdram_addr[10:0]
 testbench.O_sdram_ba[1:0]
 @22
 testbench.O_sdram_dqm[3:0]
+@200
+-
 [pattern_trace] 1
 [pattern_trace] 0
