@@ -401,7 +401,7 @@ module cache #(
             burst_write_enable[0] <= 1;  // enable write to first column
             burst_data_in <= O_sdrc_data;  // data to write to first column
 `ifdef DBG
-            $display("%m: %t: data 0 from SDRAM %h", $time, O_sdrc_data);
+            $display("%m: %t: data 0 from SDRAM 0x%h", $time, O_sdrc_data);
 `endif
             counter <= 1;
             state   <= Read3;
@@ -413,7 +413,7 @@ module cache #(
           burst_write_enable[counter] <= 1;  // enable write to current column
           burst_data_in <= O_sdrc_data;  // data to write to current column
 `ifdef DBG
-          $display("%m: %t: data %0d from SDRAM %h", $time, counter, O_sdrc_data);
+          $display("%m: %t: data %0d from SDRAM 0x%h", $time, counter, O_sdrc_data);
 `endif
           counter <= counter + 1'b1;
           if (counter == COLUMN_COUNT - 1) begin
