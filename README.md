@@ -107,6 +107,18 @@ step 13
 [ ] fully pipe-lined core
 [ ] consider FIFO in UART
 -------------------------------------------------------------------------------------------------------------
+[x] study why cache code below does not work in emulator but works in hardware:
+    if (!rst_n) begin
+      burst_tag_write_enable <= 0;
+      for (int i = 0; i < COLUMN_COUNT; i++) begin
+        burst_write_enable[i] <= 0;
+      end
+      burst_is_reading <= 0;
+      burst_is_writing <= 0;
+      refresh_cycle_counter <= AutoRefreshPeriodCycles + 1;
+      state <= Idle
+      
+      => problem was in testbench waiting for Idle state which was 2 now 0
 [x] study why memtest fails when configured with less than 16 cache lines off 
     32 B and why it fails almost always on same addresses with same error
     => extensive testing shows that it fails even with 2^11 lines after a while

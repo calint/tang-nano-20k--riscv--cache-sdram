@@ -251,8 +251,6 @@ module cache #(
   end
 
   typedef enum {
-    InitSDRAM1,
-    InitSDRAM2,
     Idle,
     Refresh,
     Write1,
@@ -274,24 +272,14 @@ module cache #(
       end
       burst_is_reading <= 0;
       burst_is_writing <= 0;
-      state <= InitSDRAM1;
+      refresh_cycle_counter <= AutoRefreshPeriodCycles + 1;
+      // note: +1 to trigger a refresh at first Idle state
+      state <= Idle;
     end else begin
 `ifdef DBG
       $display("%m: %t: state: %0d", $time, state);
 `endif
       unique case (state)
-        InitSDRAM1: begin
-          I_sdrc_cmd_en <= 1;
-          I_sdrc_cmd <= 3'b001;  // auto-refresh
-          state <= InitSDRAM2;
-        end
-        InitSDRAM2: begin
-          I_sdrc_cmd_en <= 0;
-          if (O_sdrc_cmd_ack) begin
-            refresh_cycle_counter <= 0;
-            state <= Idle;
-          end
-        end
         Idle: begin
           refresh_cycle_counter <= refresh_cycle_counter + 1'd1;
           if (refresh_cycle_counter > AutoRefreshPeriodCycles) begin

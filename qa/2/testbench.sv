@@ -159,11 +159,9 @@ module testbench;
     #clk_tk;
 
     // wait for cache to initiate SDRAM and enter Idle state
-    while (cache.state != 2) #clk_tk;
+    while (O_sdrc_init_done != 1) #clk_tk;
 
-    address <= 0;
-    address_next <= 0;
-    #clk_tk;
+    address_next = 0;
 
     // write some data
     for (int i = 0; i < 2 ** RAM_ADDRESS_BIT_WIDTH; i = i + 1) begin
