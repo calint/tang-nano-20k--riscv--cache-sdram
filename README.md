@@ -79,6 +79,8 @@ welcome to adventure #4
 ## Todo
 ```
 -----------------------------------------------------------------------------
+[ ] study whether last read state is unnecessary by writing tag and switch
+    state to Idle at the end of last column write
 [ ] read LEDs
 [-] study better FSM in /src/emulators/flash.sv
     => simple emulator that implements the boot sequence of the CPU
