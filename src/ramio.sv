@@ -438,7 +438,7 @@ module ramio #(
 
   cache #(
       .LineIndexBitWidth(CacheLineIndexBitWidth),
-      .ColumnIndexBitwidth(CacheColumnIndexBitWidth),
+      .ColumnIndexBitWidth(CacheColumnIndexBitWidth),
       .RamAddressBitWidth(RamAddressBitWidth),
       .RamAddressingMode(RamAddressingMode),
       .AutoRefreshPeriodCycles(

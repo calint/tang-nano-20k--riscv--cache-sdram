@@ -10,10 +10,10 @@
 //`define INFO
 
 module cache #(
-    parameter int unsigned ColumnIndexBitwidth = 3,
+    parameter int unsigned ColumnIndexBitWidth = 3,
     // 2 ^ 3 = 8 entries (32 B) per cache line
     // note: minimum value 1
-    //       maximum value 5 (can easily be extended)
+    //       maximum value 5
 
     parameter int unsigned LineIndexBitWidth = 6,
     // 2 ^ 6 * 32 B = 2 KB unified instruction and data cache
@@ -93,19 +93,20 @@ module cache #(
     $display("        tag: %0d bits", TAG_BITWIDTH);
     $display(" cache size: %0d B", LINE_COUNT * (2 ** ColumnIndexBitwidth) * 4);
     $display("    refresh: %0d cycles", AutoRefreshPeriodCycles);
+    $display(" waits read: %0d cycles", WaitsPriorToDataAtRead);
   end
 `endif
 
   localparam int unsigned ZEROS_BITWIDTH = 2;  // leading zeros in the address
-  localparam int unsigned COLUMN_COUNT = 2 ** ColumnIndexBitwidth;
+  localparam int unsigned COLUMN_COUNT = 2 ** ColumnIndexBitWidth;
   localparam int unsigned LINE_COUNT = 2 ** LineIndexBitWidth;
   localparam int unsigned TAG_BITWIDTH = 
-    RamAddressBitWidth + RamAddressingMode - LineIndexBitWidth - ColumnIndexBitwidth - ZEROS_BITWIDTH;
+    RamAddressBitWidth + RamAddressingMode - LineIndexBitWidth - ColumnIndexBitWidth - ZEROS_BITWIDTH;
   // note: assumes there are 2 bits free after 'TAG_BITWIDTH' for 'valid' and 'dirty' flags in storage
 
   localparam int unsigned LINE_VALID_BIT = TAG_BITWIDTH;
   localparam int unsigned LINE_DIRTY_BIT = TAG_BITWIDTH + 1;
-  localparam int unsigned LINE_TO_RAM_ADDRESS_LEFT_SHIFT = ColumnIndexBitwidth + ZEROS_BITWIDTH - RamAddressingMode;
+  localparam int unsigned LINE_TO_RAM_ADDRESS_LEFT_SHIFT = ColumnIndexBitWidth + ZEROS_BITWIDTH - RamAddressingMode;
 
   // wires dividing the address into components
   // |tag|line| col |00| address
@@ -115,22 +116,22 @@ module cache #(
   // |tag|               address_tag: upper bits followed by 'valid' and 'dirty' flag
 
   // extract cache line info from current address
-  wire [ColumnIndexBitwidth-1:0] column_ix = address[
-    ColumnIndexBitwidth+ZEROS_BITWIDTH-1
-    -:ColumnIndexBitwidth
+  wire [ColumnIndexBitWidth-1:0] column_ix = address[
+    ColumnIndexBitWidth+ZEROS_BITWIDTH-1
+    -:ColumnIndexBitWidth
   ];
   wire [LineIndexBitWidth-1:0] line_ix =  address[
-    LineIndexBitWidth+ColumnIndexBitwidth+ZEROS_BITWIDTH-1
+    LineIndexBitWidth+ColumnIndexBitWidth+ZEROS_BITWIDTH-1
     -:LineIndexBitWidth
   ];
   wire [TAG_BITWIDTH-1:0] address_tag = address[
-    TAG_BITWIDTH+LineIndexBitWidth+ColumnIndexBitwidth+ZEROS_BITWIDTH-1
+    TAG_BITWIDTH+LineIndexBitWidth+ColumnIndexBitWidth+ZEROS_BITWIDTH-1
     -:TAG_BITWIDTH
   ];
 
   // starting address of cache line in RAM for current address
   wire [RamAddressBitWidth-1:0] burst_line_address = {
-    address[TAG_BITWIDTH+LineIndexBitWidth+ColumnIndexBitwidth+ZEROS_BITWIDTH-1:ColumnIndexBitwidth+ZEROS_BITWIDTH],
+    address[TAG_BITWIDTH+LineIndexBitWidth+ColumnIndexBitWidth+ZEROS_BITWIDTH-1:ColumnIndexBitWidth+ZEROS_BITWIDTH],
     {LINE_TO_RAM_ADDRESS_LEFT_SHIFT{1'b0}}
   };
 
@@ -178,10 +179,15 @@ module cache #(
   logic [3:0] column_write_enable[COLUMN_COUNT];
   logic [31:0] column_data_out[COLUMN_COUNT];
 
-  logic [15:0] refresh_cycle_counter;  // keeps track of auto refresh interval
+  // counter that keeps track of auto refresh interval
+  logic [$clog2(AutoRefreshPeriodCycles+2)-1:0] refresh_cycle_counter;
+  // note: +2 because counter is compared using >AutoRefreshPeriodCycles
 
   // counter used in FSM at read and write cache line
-  logic [4:0] counter;
+  localparam int unsigned MAX_COUNTER_VALUE = 
+    (COLUMN_COUNT>(WaitsPriorToDataAtRead+1))?COLUMN_COUNT:(WaitsPriorToDataAtRead+1);
+  // note: +1 because counter is compared using ==WaitsPriorToDataAtSend
+  logic [$clog2(MAX_COUNTER_VALUE)-1:0] counter;
 
   generate
     for (genvar i = 0; i < COLUMN_COUNT; i++) begin : column
@@ -281,7 +287,7 @@ module cache #(
 `endif
       unique case (state)
         Idle: begin
-          refresh_cycle_counter <= refresh_cycle_counter + 1'd1;
+          refresh_cycle_counter <= refresh_cycle_counter + 1'b1;
           if (refresh_cycle_counter > AutoRefreshPeriodCycles) begin
 `ifdef DBG
             $display("%m: %t: auto refresh at cycle counter: %0d", $time, refresh_cycle_counter);
