@@ -6,8 +6,8 @@
 `timescale 1ns / 1ps
 //
 `default_nettype none
-// `define DBG
-// `define INFO
+//`define DBG
+//`define INFO
 
 module ramio #(
     parameter int unsigned RamAddressBitwidth = 10,
@@ -201,8 +201,8 @@ module ramio #(
     if (enable) begin
 
 `ifdef DBG
-      $display("%m: %0t: address: %h  read_type: %b  write_type: %b  data_in: %h", $time, address,
-               read_type, write_type, data_in);
+      $display("%m: %0t: address: 0x%h  read_type: 0b%b  write_type: 0b%b  data_in: 0x%h", $time,
+               address, read_type, write_type, data_in);
 `endif
 
       if (write_type != '0) begin
@@ -395,14 +395,14 @@ module ramio #(
       // if read from UART then reset the read data to -1
       if (address == AddressUartIn && read_type != '0) begin
 `ifdef DBG
-        $display("%m: %0t: uart read  uartrx_data_received: %h", $time, uartrx_data_received);
+        $display("%m: %0t: uart read  uartrx_data_received: 0x%h", $time, uartrx_data_received);
 `endif
         uartrx_data_received <= -1;
       end
 
       if (uartrx_go && uartrx_data_ready) begin
 `ifdef DBG
-        $display("%m: %0t: uart data ready  uartrx_data_received: %h", $time, uartrx_data);
+        $display("%m: %0t: uart data ready  uartrx_data_received: 0x%h", $time, uartrx_data);
 `endif
         // if UART has data ready then copy the data and acknowledge (uartrx_go = 0)
         //  note: read data can be overrun

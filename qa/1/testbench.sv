@@ -11,7 +11,7 @@ module testbench;
 
   logic rst;
   logic clk = 1;
-  localparam int unsigned clk_tk = 10;
+  localparam int unsigned clk_tk = 38;  // 26.3 MHz (even number closest to 27 MHz)
   always #(clk_tk / 2) clk = ~clk;
 
   //------------------------------------------------------------------------
