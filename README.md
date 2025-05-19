@@ -79,6 +79,7 @@ welcome to adventure #4
 ## Todo
 ```
 -----------------------------------------------------------------------------
+[x] cache: inconsistent constant naming regarding BIT_WIDTH vs BITWIDTH
 [x] cache: logic [15:0] refresh_cycle_counter; bit width calculated
 [x] cache: logic [4:0] counter; bit width calculated
 [ ] read LEDs

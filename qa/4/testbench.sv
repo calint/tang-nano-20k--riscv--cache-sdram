@@ -7,7 +7,7 @@
 
 module testbench;
 
-  localparam int unsigned RAM_ADDRESS_BIT_WIDTH = 12;  // 2 ^ 12 * 4 B = 16 KB
+  localparam int unsigned RAM_ADDRESS_BITWIDTH = 12;  // 2 ^ 12 * 4 B = 16 KB
   localparam int unsigned FLASH_TRANSFER_BYTE_COUNT = 256;
   localparam int unsigned UART_OUT_ADDRESS = 32'hffff_fff8;
   localparam int unsigned UART_IN_ADDRESS = 32'hffff_fff4;
@@ -115,9 +115,9 @@ module testbench;
   logic [3:0] ramio_led;
 
   ramio #(
-      .RamAddressBitWidth(RAM_ADDRESS_BIT_WIDTH),
+      .RamAddressBitwidth(RAM_ADDRESS_BITWIDTH),
       .RamAddressingMode(2),  // 32 bits word per address in RAM 
-      .CacheLineIndexBitWidth(1),
+      .CacheLineIndexBitwidth(1),
       .ClockFrequencyHz(20_250_000),
       .BaudRate(20_250_000),
       .SDCardSimulate(1),
@@ -167,7 +167,7 @@ module testbench;
 
   flash #(
       .DataFilePath("ram.mem"),
-      .AddressBitWidth(22)  // 4 MB (note: needs to fit file 'ram.mem')
+      .AddressBitwidth(22)  // 4 MB (note: needs to fit file 'ram.mem')
   ) flash (
       .rst_n,
       .clk (flash_clk),

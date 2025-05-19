@@ -7,7 +7,7 @@
 
 module testbench;
 
-  localparam int unsigned RAM_ADDRESS_BIT_WIDTH = 10;  // 2 ^ 10 * 4 B = 4 KB
+  localparam int unsigned RAM_ADDRESS_BITWIDTH = 10;  // 2 ^ 10 * 4 B = 4 KB
 
   logic rst_n;
   logic clk = 1;
@@ -114,9 +114,9 @@ module testbench;
   wire ramio_busy;
 
   ramio #(
-      .RamAddressBitWidth(RAM_ADDRESS_BIT_WIDTH),
+      .RamAddressBitwidth(RAM_ADDRESS_BITWIDTH),
       .RamAddressingMode(2),  // 32 bits word per address in RAM 
-      .CacheLineIndexBitWidth(1),
+      .CacheLineIndexBitwidth(1),
       .ClockFrequencyHz(20_250_000),
       .BaudRate(20_250_000),
       .SDCardSimulate(1),
@@ -166,7 +166,7 @@ module testbench;
 
   flash #(
       .DataFilePath("ram.mem"),
-      .AddressBitWidth(RAM_ADDRESS_BIT_WIDTH + 2)  // in bytes 2 ^ 12 = 4096 B
+      .AddressBitwidth(RAM_ADDRESS_BITWIDTH + 2)  // in bytes 2 ^ 12 = 4096 B
   ) flash (
       .rst_n,
       .clk (flash_clk),

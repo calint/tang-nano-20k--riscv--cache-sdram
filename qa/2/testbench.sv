@@ -7,7 +7,7 @@
 
 module testbench;
 
-  localparam int unsigned RAM_ADDRESS_BIT_WIDTH = 7;  // 2 ^ 7 * 4 B = 512 B
+  localparam int unsigned RAM_ADDRESS_BITWIDTH = 7;  // 2 ^ 7 * 4 B = 512 B
 
   logic rst_n;
   logic clk = 1;
@@ -110,8 +110,8 @@ module testbench;
   wire busy;
 
   cache #(
-      .LineIndexBitWidth (1),
-      .RamAddressBitWidth(RAM_ADDRESS_BIT_WIDTH),
+      .LineIndexBitwidth (1),
+      .RamAddressBitwidth(RAM_ADDRESS_BITWIDTH),
       .RamAddressingMode (2)
   ) cache (
       .rst_n(rst_n && O_sdrc_init_done),
@@ -164,7 +164,7 @@ module testbench;
     address_next = 0;
 
     // write some data
-    for (int i = 0; i < 2 ** RAM_ADDRESS_BIT_WIDTH; i = i + 1) begin
+    for (int i = 0; i < 2 ** RAM_ADDRESS_BITWIDTH; i = i + 1) begin
       enable <= 1;
       address <= address_next;
       address_next <= address_next + 4;

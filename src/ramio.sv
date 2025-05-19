@@ -10,23 +10,23 @@
 // `define INFO
 
 module ramio #(
-    parameter int unsigned RamAddressBitWidth = 10,
+    parameter int unsigned RamAddressBitwidth = 10,
     // passed to 'cache': backing burst RAM depth
 
     parameter int unsigned RamAddressingMode = 3,
     // passed to 'cache': address refers to:
     //  0: byte, 1: half word, 2: word, 3: double word
 
-    parameter int unsigned CacheColumnIndexBitWidth = 3,
+    parameter int unsigned CacheColumnIndexBitwidth = 3,
     // 2 ^ 3 = 8 entries (32 B) per cache line
 
-    parameter int unsigned CacheLineIndexBitWidth = 1,
+    parameter int unsigned CacheLineIndexBitwidth = 1,
     // passed to 'cache': 2 ^ value * 32 B cache size
 
-    parameter int unsigned AddressBitWidth = 32,
+    parameter int unsigned AddressBitwidth = 32,
     // client address bit width
 
-    parameter int unsigned DataBitWidth = 32,
+    parameter int unsigned DataBitwidth = 32,
     // client data bit width
 
     parameter int unsigned ClockFrequencyHz = 30_000_000,
@@ -81,13 +81,13 @@ module ramio #(
     input wire [1:0] write_type,
     // b00 not a write; b01: byte, b10: half word, b11: word
 
-    input wire [AddressBitWidth-1:0] address,
+    input wire [AddressBitwidth-1:0] address,
     // byte address (type aligned)
 
-    input wire [DataBitWidth-1:0] data_in,
+    input wire [DataBitwidth-1:0] data_in,
     // byte, half word, word
 
-    output logic [DataBitWidth-1:0] data_out,
+    output logic [DataBitwidth-1:0] data_out,
     // data at 'address' according to 'read_type'
 
     output logic data_out_ready,
@@ -128,14 +128,14 @@ module ramio #(
   logic cache_enable;
   // enables / disables 'cache' RAM operation
 
-  wire [DataBitWidth-1:0] cache_data_out;
+  wire [DataBitwidth-1:0] cache_data_out;
   wire cache_data_out_ready;
   wire cache_busy;
 
-  logic [AddressBitWidth-1:0] cache_address;
+  logic [AddressBitwidth-1:0] cache_address;
   // 4-byte aligned address to RAM data
 
-  logic [DataBitWidth-1:0] cache_data_in;
+  logic [DataBitwidth-1:0] cache_data_in;
   // data for byte enabled write of 4-byte word
 
   logic [3:0] cache_write_enable;
@@ -186,7 +186,7 @@ module ramio #(
 
   always_comb begin
     // convert address to 4-byte word aligned addressing in RAM
-    cache_address = {address[AddressBitWidth-1:2], 2'b00};
+    cache_address = {address[AddressBitwidth-1:2], 2'b00};
 
     data_out = 0;
 
@@ -437,9 +437,9 @@ module ramio #(
   end
 
   cache #(
-      .LineIndexBitWidth(CacheLineIndexBitWidth),
-      .ColumnIndexBitWidth(CacheColumnIndexBitWidth),
-      .RamAddressBitWidth(RamAddressBitWidth),
+      .LineIndexBitwidth(CacheLineIndexBitwidth),
+      .ColumnIndexBitwidth(CacheColumnIndexBitwidth),
+      .RamAddressBitwidth(RamAddressBitwidth),
       .RamAddressingMode(RamAddressingMode),
       .AutoRefreshPeriodCycles(
         (SDRAMRefreshIntervalMs*1_000_000/SDRAMRefreshCountDuringInterval) // nano seconds per refresh

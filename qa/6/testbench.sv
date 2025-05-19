@@ -24,7 +24,7 @@ module testbench;
 
   flash #(
       .DataFilePath("ram.mem"),
-      .AddressBitWidth(12)  // in bytes 2 ^ 12 = 4 KB (fits file 'ram.mem')
+      .AddressBitwidth(12)  // in bytes 2 ^ 12 = 4 KB (fits file 'ram.mem')
   ) flash (
       .rst_n,
       .clk (flash_clk),
@@ -134,9 +134,9 @@ module testbench;
   wire [ 5:0] led;
 
   ramio #(
-      .RamAddressBitWidth(10),  // 2 ^ 10 * 4 B = 4 KB
+      .RamAddressBitwidth(10),  // 2 ^ 10 * 4 B = 4 KB
       .RamAddressingMode(2),  // 32 bits word per address in RAM 
-      .CacheLineIndexBitWidth(1),
+      .CacheLineIndexBitwidth(1),
       .ClockFrequencyHz(20_250_000),
       .BaudRate(20_250_000),
       .SDCardSimulate(1),

@@ -10,15 +10,13 @@
 //`define INFO
 
 module cache #(
-    parameter int unsigned ColumnIndexBitWidth = 3,
+    parameter int unsigned ColumnIndexBitwidth = 3,
     // 2 ^ 3 = 8 entries (32 B) per cache line
-    // note: minimum value 1
-    //       maximum value 5
 
-    parameter int unsigned LineIndexBitWidth = 6,
+    parameter int unsigned LineIndexBitwidth = 6,
     // 2 ^ 6 * 32 B = 2 KB unified instruction and data cache
 
-    parameter int unsigned RamAddressBitWidth = 10,
+    parameter int unsigned RamAddressBitwidth = 10,
     // bits in the address of underlying burst RAM
 
     parameter int unsigned RamAddressingMode = 0,
@@ -33,14 +31,12 @@ module cache #(
     //  Gowin SDRAM HS IP User Guide page 11
     //  note: default for CL=2
     //        when CL=3 then 5
-    //  note: maximum 2^5-1
 
     parameter int unsigned AutoRefreshPeriodCycles = 600
     // number of cycles before issuing an auto refresh to SDRAM
     //  note: at 54 MHz with Tang Nano 20K SDRAM (EM638325GD):
     //        4096 times in 64 ms (according to the spec)
     //        at 54 MHz gives 843 cycles before refresh
-    //  note: maximum 2^16-2, minimum >0
 ) (
     input wire rst_n,
     input wire clk,
@@ -98,15 +94,15 @@ module cache #(
 `endif
 
   localparam int unsigned ZEROS_BITWIDTH = 2;  // leading zeros in the address
-  localparam int unsigned COLUMN_COUNT = 2 ** ColumnIndexBitWidth;
-  localparam int unsigned LINE_COUNT = 2 ** LineIndexBitWidth;
+  localparam int unsigned COLUMN_COUNT = 2 ** ColumnIndexBitwidth;
+  localparam int unsigned LINE_COUNT = 2 ** LineIndexBitwidth;
   localparam int unsigned TAG_BITWIDTH = 
-    RamAddressBitWidth + RamAddressingMode - LineIndexBitWidth - ColumnIndexBitWidth - ZEROS_BITWIDTH;
+    RamAddressBitwidth + RamAddressingMode - LineIndexBitwidth - ColumnIndexBitwidth - ZEROS_BITWIDTH;
   // note: assumes there are 2 bits free after 'TAG_BITWIDTH' for 'valid' and 'dirty' flags in storage
 
   localparam int unsigned LINE_VALID_BIT = TAG_BITWIDTH;
   localparam int unsigned LINE_DIRTY_BIT = TAG_BITWIDTH + 1;
-  localparam int unsigned LINE_TO_RAM_ADDRESS_LEFT_SHIFT = ColumnIndexBitWidth + ZEROS_BITWIDTH - RamAddressingMode;
+  localparam int unsigned LINE_TO_RAM_ADDRESS_LEFT_SHIFT = ColumnIndexBitwidth + ZEROS_BITWIDTH - RamAddressingMode;
 
   // wires dividing the address into components
   // |tag|line| col |00| address
@@ -116,22 +112,22 @@ module cache #(
   // |tag|               address_tag: upper bits followed by 'valid' and 'dirty' flag
 
   // extract cache line info from current address
-  wire [ColumnIndexBitWidth-1:0] column_ix = address[
-    ColumnIndexBitWidth+ZEROS_BITWIDTH-1
-    -:ColumnIndexBitWidth
+  wire [ColumnIndexBitwidth-1:0] column_ix = address[
+    ColumnIndexBitwidth+ZEROS_BITWIDTH-1
+    -:ColumnIndexBitwidth
   ];
-  wire [LineIndexBitWidth-1:0] line_ix =  address[
-    LineIndexBitWidth+ColumnIndexBitWidth+ZEROS_BITWIDTH-1
-    -:LineIndexBitWidth
+  wire [LineIndexBitwidth-1:0] line_ix =  address[
+    LineIndexBitwidth+ColumnIndexBitwidth+ZEROS_BITWIDTH-1
+    -:LineIndexBitwidth
   ];
   wire [TAG_BITWIDTH-1:0] address_tag = address[
-    TAG_BITWIDTH+LineIndexBitWidth+ColumnIndexBitWidth+ZEROS_BITWIDTH-1
+    TAG_BITWIDTH+LineIndexBitwidth+ColumnIndexBitwidth+ZEROS_BITWIDTH-1
     -:TAG_BITWIDTH
   ];
 
   // starting address of cache line in RAM for current address
-  wire [RamAddressBitWidth-1:0] burst_line_address = {
-    address[TAG_BITWIDTH+LineIndexBitWidth+ColumnIndexBitWidth+ZEROS_BITWIDTH-1:ColumnIndexBitWidth+ZEROS_BITWIDTH],
+  wire [RamAddressBitwidth-1:0] burst_line_address = {
+    address[TAG_BITWIDTH+LineIndexBitwidth+ColumnIndexBitwidth+ZEROS_BITWIDTH-1:ColumnIndexBitwidth+ZEROS_BITWIDTH],
     {LINE_TO_RAM_ADDRESS_LEFT_SHIFT{1'b0}}
   };
 
@@ -147,7 +143,7 @@ module cache #(
   logic [31:0] tag_data_in;  // tag and flags written when cache hit write
 
   bram #(
-      .AddressBitWidth(LineIndexBitWidth)
+      .AddressBitWidth(LineIndexBitwidth)
   ) tag (
       .clk,
       .write_enable({4{tag_write_enable}}),
@@ -162,7 +158,7 @@ module cache #(
   wire [TAG_BITWIDTH-1:0] cached_tag = cached_tag_and_flags[TAG_BITWIDTH-1:0];
 
   // starting address in burst RAM for the cached line
-  wire [RamAddressBitWidth-1:0] cached_line_address = {
+  wire [RamAddressBitwidth-1:0] cached_line_address = {
     {cached_tag, line_ix}, {LINE_TO_RAM_ADDRESS_LEFT_SHIFT{1'b0}}
   };
 
@@ -192,7 +188,7 @@ module cache #(
   generate
     for (genvar i = 0; i < COLUMN_COUNT; i++) begin : column
       bram #(
-          .AddressBitWidth(LineIndexBitWidth)
+          .AddressBitWidth(LineIndexBitwidth)
       ) column (
           .clk,
           .write_enable(column_write_enable[i]),

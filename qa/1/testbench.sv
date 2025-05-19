@@ -26,7 +26,7 @@ module testbench;
 
   flash #(
       .DataFilePath("ram.mem"),
-      .AddressBitWidth(23),  // 8 MB (note: needs to fit file 'ram.mem')
+      .AddressBitwidth(23),  // 8 MB (note: needs to fit file 'ram.mem')
       .AddressOffset(-configuration::FLASH_TRANSFER_FROM_ADDRESS)
       // adjust address so that 'ram.mem' can start at address 0
   ) flash (
