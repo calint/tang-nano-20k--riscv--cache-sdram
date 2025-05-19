@@ -2,6 +2,8 @@
 // top
 // note: the configuration STARTUP_WAIT_CYCLES of 1000000 cycles wait before
 // starting the CPU is excessive for the simulation
+// note: testbench not used since 1 tick of 27 MHz clock results in multiple
+//       cycles after rPLL
 //
 `timescale 1ns / 1ps
 //
