@@ -30,9 +30,6 @@ rm -f $T20KPTH/os/os.bin
 rm -f $T20KPTH/os/os.dat
 rm -f $T20KPTH/os/os.lst
 
-rm -rf $T20KPTH/notes/samples/
-cp -ra $T9KPTH/notes/samples/ $T20KPTH/notes/
-
 cp -rfa $T9KPTH/.vscode/* $T20KPTH/.vscode/
 
 cp -rfa $T9KPTH/scripts/* $T20KPTH/scripts/
