@@ -79,8 +79,8 @@ welcome to adventure #4
 ## Todo
 ```
 -----------------------------------------------------------------------------
-[ ] cache: logic [15:0] refresh_cycle_counter; bit width calculated
-[ ] cache: logic [4:0] counter; bit width calculated
+[x] cache: logic [15:0] refresh_cycle_counter; bit width calculated
+[x] cache: logic [4:0] counter; bit width calculated
 [ ] read LEDs
 [-] study better FSM in /src/emulators/flash.sv
     => simple emulator that implements the boot sequence of the CPU
