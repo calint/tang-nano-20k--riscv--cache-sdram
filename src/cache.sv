@@ -143,7 +143,7 @@ module cache #(
   logic [31:0] tag_data_in;  // tag and flags written when cache hit write
 
   bram #(
-      .AddressBitWidth(LineIndexBitwidth)
+      .AddressBitwidth(LineIndexBitwidth)
   ) tag (
       .clk,
       .write_enable({4{tag_write_enable}}),
@@ -188,7 +188,7 @@ module cache #(
   generate
     for (genvar i = 0; i < COLUMN_COUNT; i++) begin : column
       bram #(
-          .AddressBitWidth(LineIndexBitwidth)
+          .AddressBitwidth(LineIndexBitwidth)
       ) column (
           .clk,
           .write_enable(column_write_enable[i]),
