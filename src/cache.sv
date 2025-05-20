@@ -183,6 +183,7 @@ module cache #(
   localparam int unsigned MAX_COUNTER_VALUE = 
     (COLUMN_COUNT>(WaitsPriorToDataAtRead+1))?COLUMN_COUNT:(WaitsPriorToDataAtRead+1);
   // note: +1 because counter is compared using ==WaitsPriorToDataAtSend
+  // note: Gowin EDA 1.9.11.02 does not support `$max(...)`
   logic [$clog2(MAX_COUNTER_VALUE)-1:0] counter;
 
   generate
