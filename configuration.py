@@ -12,7 +12,7 @@ CPU_FREQUENCY_HZ = 60_000_000
 # frequency that CPU runs on
 
 RAM_ADDRESS_BITWIDTH = 21
-# 2 ^ 21 x 32 b = 8 MB SDRAM (according to hardware)
+# 2 ^ 21 = 2 M addresses
 
 RAM_ADDRESSING_MODE = 2
 # amount of data stored per address

@@ -8,22 +8,20 @@ template <typename Type> class span {
     Type* begin_{};
     Type* end_{};
 
+    span(Type* const begin, Type* const end) : begin_{begin}, end_{end} {
+        if constexpr (safe_span) {
+            if (begin_ > end_) {
+                begin_ = end_ = begin_; // ? hmm
+            }
+        }
+    }
+
   public:
     class position {
         friend class span;
         Type* ptr{};
         position(Type* p) : ptr{p} {}
     };
-
-    span() : begin_{nullptr}, end_{nullptr} {}
-
-    span(Type* const begin, Type* const end) : begin_{begin}, end_{end} {
-        if constexpr (safe_span) {
-            if (begin_ > end_) {
-                begin_ = end_ = nullptr;
-            }
-        }
-    }
 
     span(Type* const begin, size_t const size)
         : begin_{begin}, end_{begin + size} {}
@@ -32,25 +30,13 @@ template <typename Type> class span {
 
     auto is_at_end(position const t) const -> bool { return t.ptr == end_; }
 
-    auto is_null() const -> bool { return begin_ = nullptr && end_ == nullptr; }
-
     auto is_empty() const -> bool { return begin_ == end_; }
 
     auto subspan_starting_at(position const pos) const -> span<Type> {
-        if constexpr (safe_span) {
-            if (pos.ptr > end_ || pos.ptr < begin_) {
-                return {};
-            }
-        }
         return {pos.ptr, end_};
     }
 
     auto subspan_ending_at(position const pos) const -> span<Type> {
-        if constexpr (safe_span) {
-            if (pos.ptr > end_ || pos.ptr < begin_) {
-                return {};
-            }
-        }
         return {begin_, pos.ptr};
     }
 
