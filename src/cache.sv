@@ -98,7 +98,7 @@ module cache #(
   localparam int unsigned ZEROS_BITWIDTH = 2;  // leading zeros in the address
   localparam int unsigned COLUMN_COUNT = 2 ** ColumnIndexBitwidth;
   localparam int unsigned LINE_COUNT = 2 ** LineIndexBitwidth;
-  localparam int unsigned TAG_BITWIDTH = 
+  localparam int unsigned TAG_BITWIDTH =
     RamAddressBitwidth + RamAddressingMode - LineIndexBitwidth - ColumnIndexBitwidth - ZEROS_BITWIDTH;
   // note: assumes there are 2 bits free after 'TAG_BITWIDTH' for 'valid' and 'dirty' flags in storage
 
@@ -182,14 +182,14 @@ module cache #(
   // note: +2 because counter is compared using >AutoRefreshPeriodCycles
 
   // counter used in FSM at read and write cache line
-  localparam int unsigned MAX_COUNTER_VALUE = 
+  localparam int unsigned MAX_COUNTER_VALUE =
     (COLUMN_COUNT>(WaitsPriorToDataAtRead+1))?COLUMN_COUNT:(WaitsPriorToDataAtRead+1);
   // note: +1 because counter is compared using ==WaitsPriorToDataAtSend
   // note: Gowin EDA 1.9.11.02 does not support `$max(...)`
   logic [$clog2(MAX_COUNTER_VALUE)-1:0] counter;
 
   generate
-    for (genvar i = 0; i < COLUMN_COUNT; i++) begin : column
+    for (genvar i = 0; i < COLUMN_COUNT; i++) begin : gen_column
       bram #(
           .AddressBitwidth(LineIndexBitwidth)
       ) column (
