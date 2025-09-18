@@ -11,7 +11,7 @@
 * develop a back-to-basics freestanding bare metal C++23 application
 * explore the FPGA board
 
-## Howto Gowin EDA 1.9.12 build(8202929
+## Howto Gowin EDA 1.9.12 build(82029)
 
 * build bitstream in Gowin EDA or using `/scripts/build-using-gowin.sh` (note: `gw_sh` assumed to be in path)
 * run `/scripts/make-and-flash-os.sh` to flash the firmware
@@ -22,7 +22,7 @@
 
 ## Greeting
 
-```
+```text
                                   oOo.o.
          frameless osca          oOo.oOo
       __________________________  .oOo.
@@ -89,7 +89,7 @@ descriptive, lower snake case
 
 ## Todo
 
-```
+```text
 -----------------------------------------------------------------------------
 [x] cache: inconsistent constant naming regarding BIT_WIDTH vs BITWIDTH
 [x] cache: logic [15:0] refresh_cycle_counter; bit width calculated
@@ -318,4 +318,3 @@ step 13
 [x]    The wildcard import syntax, e.g. import ip_pkg::*; is only allowed where the package is part of the same IP as the module that uses that package. 
 -------------------------------------------------------------------------------------------------------------
 ```
-
