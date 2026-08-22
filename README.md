@@ -3,7 +3,7 @@
 ## Intention
 
 * RISC-V implementation of RV32I for application intended use
-  * no `ecall`, `ebreak`, `fence` or counters
+  * no `ecall`, `ebreak` or counters
 * multi-cycle with ad-hoc pipeline
 * configurable unified instruction and data cache backed by 8 MB of on-board SDRAM
 * transfer binary image from on-board flash to RAM
@@ -59,6 +59,7 @@ welcome to adventure #4
 
 * an "operating system" in `/os/` inspired by text adventure games
 * other examples in `/notes/samples/`
+* project <https://github.com/calint/rust_rv32i_os>
   
 ## Emulator
 
