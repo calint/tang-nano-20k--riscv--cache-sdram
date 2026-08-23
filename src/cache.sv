@@ -168,14 +168,14 @@ module cache #(
 
   assign busy = enable && !cache_line_hit;
 
-  // select data from requested column
-  assign data_out = column_data_out[column_ix];
-  assign data_out_ready = write_enable != 0 ? 0 : enable && cache_line_hit;
-
   // 8 instances of byte enabled semi dual port RAM blocks
   // if cache miss then connect to the state machine that loads a cache line
   logic [3:0] column_write_enable[COLUMN_COUNT];
   logic [31:0] column_data_out[COLUMN_COUNT];
+
+  // select data from requested column
+  assign data_out = column_data_out[column_ix];
+  assign data_out_ready = write_enable != 0 ? 0 : enable && cache_line_hit;
 
   // counter that keeps track of auto refresh interval
   logic [$clog2(AutoRefreshPeriodCycles+2)-1:0] refresh_cycle_counter;

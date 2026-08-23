@@ -6,7 +6,6 @@ echo copy common files
 T9KPTH=../../tang-nano-9k--riscv--cache-psram
 T20KPTH=..
 
-
 cp -a $T9KPTH/src/core.sv $T20KPTH/src/
 cp -a $T9KPTH/src/registers.sv $T20KPTH/src/
 cp -a $T9KPTH/src/bram.sv $T20KPTH/src/
@@ -16,7 +15,6 @@ cp -a $T9KPTH/src/sdcard.sv $T20KPTH/src/
 cp -a $T9KPTH/src/emulators/flash.sv $T20KPTH/src/emulators/
 
 cp -arf $T9KPTH/src/ip/regymm/ $T20KPTH/src/ip/
-
 
 rm -rf $T20KPTH/emulator
 cp -ra $T9KPTH/emulator/ $T20KPTH/
@@ -33,6 +31,8 @@ rm -f $T20KPTH/os/os.lst
 cp -rfa $T9KPTH/.vscode/* $T20KPTH/.vscode/
 
 cp -rfa $T9KPTH/scripts/* $T20KPTH/scripts/
+
+cp -rfa $T9KPTH/configuration-apply.py $T20KPTH/
 
 echo run tests
 ../scripts/run-tests.sh
