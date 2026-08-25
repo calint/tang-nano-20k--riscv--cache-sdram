@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# note: when script fails `cat` process might be active reading from TTY 
+# note: when script fails `cat` process might be active reading from TTY
 #  do `ps aux | grep cat` and terminate the process
 #
 set -e
@@ -26,51 +26,51 @@ cat $TTY | tee test.out &
 
 read -rsp $'program or reset FPGA then press "enter" to continue\n\n'
 
-printf "i\r" > $TTY
+printf "i\r" >$TTY
 sleep $SLP
-printf "t notebook\r" > $TTY
+printf "t notebook\r" >$TTY
 sleep $SLP
-printf "n\r" > $TTY
+printf "n\r" >$TTY
 sleep $SLP
-printf "t lighter\r" > $TTY
+printf "t lighter\r" >$TTY
 sleep $SLP
-printf "g mirror u\r" > $TTY
+printf "g mirror u\r" >$TTY
 sleep $SLP
-printf "i\r" > $TTY
+printf "i\r" >$TTY
 sleep $SLP
-printf "i\r" > $TTY
+printf "i\r" >$TTY
 sleep $SLP
-printf "m\r" > $TTY
+printf "m\r" >$TTY
 sleep 10
-printf "i\r" > $TTY
+printf "i\r" >$TTY
 sleep $SLP
-printf "d lighter\r" > $TTY
+printf "d lighter\r" >$TTY
 sleep $SLP
-printf "t lighter\r" > $TTY
+printf "t lighter\r" >$TTY
 sleep $SLP
-printf "i\r" > $TTY
+printf "i\r" >$TTY
 sleep $SLP
-printf "i\r" > $TTY
+printf "i\r" >$TTY
 sleep $SLP
-printf "sds\r" > $TTY
+printf "sds\r" >$TTY
 sleep $SLP
-printf "sdw 123 hello world\r" > $TTY
+printf "sdw 123 hello world\r" >$TTY
 sleep $SLP
-printf "sdr 123\r" > $TTY
+printf "sdr 123\r" >$TTY
 sleep $SLP
-printf "sdw 123 another hello world\r" > $TTY
+printf "sdw 123 another hello world\r" >$TTY
 sleep $SLP
-printf "sdr 123\r" > $TTY
+printf "sdr 123\r" >$TTY
 sleep $SLP
-printf "sdw 1 sector 1\r" > $TTY
+printf "sdw 1 sector 1\r" >$TTY
 sleep $SLP
-printf "sdr 1\r" > $TTY
+printf "sdr 1\r" >$TTY
 sleep $SLP
-printf "sdw 1 sector 1 again\r" > $TTY
+printf "sdw 1 sector 1 again\r" >$TTY
 sleep $SLP
-printf "sdr 1\r" > $TTY
+printf "sdr 1\r" >$TTY
 sleep $SLP
-printf "sdr 123\r" > $TTY
+printf "sdr 123\r" >$TTY
 sleep $SLP
 
 # send SIGTERM (termination signal) to 'cat'
