@@ -1,30 +1,27 @@
-#!/bin/bash
-#
-# note: when script fails `cat` process might be active reading from TTY
-#  do `ps aux | grep cat` and terminate the process
-#
+#!/bin/sh
 set -e
 cd $(dirname "$0")
 
-TTY=/dev/ttyUSB1
+TTY=${1-/dev/ttyUSB1}
 BAUD=115200
-SLP=0.5
+SLP=0.1
 
-# capture ctrl+c and kill cat
-trap 'kill $(jobs -p); exit 130' INT
+stty --file $TTY $BAUD cs8 -cstopb -parenb -crtscts raw -echo
+#   cs8: 8 data bits per character
+#   -cstopb: 1 stop bit (the - disables 2 stop bits)
+#   -parenb: no parity bit
+#   -crtscts: disables RTS/CTS hardware handshaking
+#   -echo: disables echoing of received input characters back to the sender
 
-stty -F $TTY $BAUD cs8 -cstopb -parenb -crtscts -ixon -ixoff -ignbrk -brkint -icrnl -opost -isig -icanon -iexten -echo -echoe -echok -echoctl -echoke
-#    -crtscts disables hardware flow control
-#    -ixon -ixoff disables software flow control
-#    -ignbrk -brkint ignores break conditions
-#    -icrnl ensures that carriage return characters are not translated to newlines
-#    -opost disables output processing (output will be sent as-is)
-#    -isig -icanon -iexten disables terminal signal handling and canonical input processing
-#    -echo -echoe -echok -echoctl -echoke disables terminal echoing
+# stream serial port to terminal and log file
+tee test.out <$TTY &
+LOG_PID=$!
 
-cat $TTY | tee test.out &
+# ensure background logger is killed on ANY exit (normal, error, or Ctrl+C)
+trap 'kill $LOG_PID 2>/dev/null || true' EXIT
 
-read -rsp $'program or reset FPGA then press "enter" to continue\n\n'
+echo "Assuming the FPGA opens $TTY at $BAUD baud, 8 data bits, 1 stop bit, no parity"
+read -rsp $'Program or reset FPGA then press "Enter" to continue\n\n'
 
 printf "i\r" >$TTY
 sleep $SLP
@@ -41,7 +38,7 @@ sleep $SLP
 printf "i\r" >$TTY
 sleep $SLP
 printf "m\r" >$TTY
-sleep 10
+sleep 15
 printf "i\r" >$TTY
 sleep $SLP
 printf "d lighter\r" >$TTY
@@ -73,13 +70,10 @@ sleep $SLP
 printf "sdr 123\r" >$TTY
 sleep $SLP
 
-# send SIGTERM (termination signal) to 'cat'
-kill -SIGTERM %1
+# stop logger
+kill $LOG_PID
 
-# wait for 'cat' to exit
-wait %1 || true
-
-if cmp -s test.diff test.out; then
+if cmp --silent test.diff test.out; then
     echo
     echo
     echo "test: OK"
@@ -87,5 +81,5 @@ if cmp -s test.diff test.out; then
 else
     echo
     echo
-    echo "test: FAILED, check 'diff test.diff test.out'"
+    echo "test: FAILED, check 'diff --text test.diff test.out'"
 fi
