@@ -5,7 +5,8 @@
 * RISC-V implementation of RV32I for application intended use
   * no `ecall`, `ebreak` or counters
 * multi-cycle with ad-hoc pipeline
-* configurable unified instruction and data cache backed by 8 MB of on-board SDRAM
+* configurable unified instruction and data cache backed by 8 MB of on-board
+  burst SDRAM
 * transfer binary image from on-board flash to RAM
 * read and write sectors to and from the SD card in SPI mode
 * develop a back-to-basics freestanding bare metal C++23 application
@@ -13,7 +14,8 @@
 
 ## Howto Gowin EDA 1.9.12 build(82029)
 
-* build bitstream in Gowin EDA or using `/scripts/build-using-gowin.sh` (note: `gw_sh` assumed to be in path)
+* build bitstream in Gowin EDA or using `/scripts/build-using-gowin.sh`
+  (note: `gw_sh` assumed to be in path)
 * run `/scripts/make-and-flash-os.sh` to flash the firmware
 * then `/scripts/flash-fpga.sh` to flash bitstream file or `/scripts/program-fpga.sh`
 * connect with serial terminal to the tty (e.g. `/dev/ttyUSB1`) at 115200 baud,
@@ -96,36 +98,36 @@ descriptive, lower snake case
 
 ```text
 -----------------------------------------------------------------------------
-[x] cache: inconsistent constant naming regarding BIT_WIDTH vs BITWIDTH
-[x] cache: logic [15:0] refresh_cycle_counter; bit width calculated
-[x] cache: logic [4:0] counter; bit width calculated
 [ ] read LEDs
-[-] study better FSM in /src/emulators/flash.sv
-    => simple emulator that implements the boot sequence of the CPU
-    => look at https://github.com/YosysHQ/picorv32/blob/main/picosoc/spiflash.v
-       for more
 [ ] os: backspace to ctrl+h (0x08) and update putty terminal configuration screenshot
     => move the 0x08 definition to console_application.cpp and 0x7f to os.cpp
 [ ] cat > /dev/ttyUSB1 should echo without dropping input
 [ ] counter[highest_bit] == 1 in decreasing counters into negative instead of counter == 0
+[x] cache: inconsistent constant naming regarding BIT_WIDTH vs BITWIDTH
+[x] cache: logic [15:0] refresh_cycle_counter; bit width calculated
+[x] cache: logic [4:0] counter; bit width calculated
+[-] study better FSM in /src/emulators/flash.sv
+    => simple emulator that implements the boot sequence of the CPU
+    => look at https://github.com/YosysHQ/picorv32/blob/main/picosoc/spiflash.v
+       for more
 
 next step
-[ ] reduce execution cycle by one step by doing CpuExecute in CpuFetch when ramio_data_out_ready
+[-] reduce execution cycle by one step by doing CpuExecute in CpuFetch when ramio_data_out_ready
     => registers module would be a 2 port read, 1 port write per cycle
+    => current implementation meets the goals
 
 step 12
-[ ] always_comb based CPU
-[ ]   1 cycle ALU op
-[ ]   1+ cycle store op
-[ ]   1+ cycle load op
-[ ] FSM in always_comb?
-[ ] dual channel 4 MB PSRAM
-    => reasonable cache size does not fit in fpga resources
-    => study cache synthesized as block ram
+[-] always_comb based CPU
+[-]   1 cycle ALU op
+[-]   1+ cycle store op
+[-]   1+ cycle load op
+[-] FSM in always_comb?
+    => next project
 
 step 13
-[ ] fully pipe-lined core
 [ ] consider FIFO in UART
+[-] fully pipe-lined core
+    => next project
 -------------------------------------------------------------------------------------------------------------
 [x] study why cache code below does not work in emulator but works in hardware:
     if (!rst_n) begin
