@@ -3,36 +3,28 @@ ENTRY(_start)
 SECTIONS
 {
     . = 0x0;
-
     .text : {
         *(.text*)
     }
-
-    .rodata : {
-        *(.rodata*)
-    }
-
     .srodata : {
         *(.srodata*)
     }
-
-    .data : {
-        *(.data*)
+    .rodata : {
+        *(.rodata*)
     }
-
     .sdata : {
         *(.sdata*)
     }
-
-    __bss_start = .; 
-    .bss : {
-        *(.bss*)
+    .data : {
+        *(.data*)
     }
-
+    __bss_start = .;
     .sbss : {
         *(.sbss*)
     }
-    __bss_end = .; 
-
+    .bss : {
+        *(.bss*)
+    }
+    __bss_end = .;
     __heap_start = .;
 }

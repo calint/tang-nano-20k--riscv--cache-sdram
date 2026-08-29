@@ -28,6 +28,11 @@ rm -f $T20KPTH/os/os.bin
 rm -f $T20KPTH/os/os.dat
 rm -f $T20KPTH/os/os.lst
 
+cp -rav $T9KPTH/notes/samples/echo/echo.cpp $T20KPTH/notes/samples/echo/
+cp -rav $T9KPTH/notes/samples/echo/linker.ld $T20KPTH/notes/samples/echo/
+cp -rav $T9KPTH/notes/samples/echo/make.sh $T20KPTH/notes/samples/echo/
+cp -rav $T9KPTH/notes/samples/echo/os_start.S $T20KPTH/notes/samples/echo/
+
 cp -rfa $T9KPTH/.vscode/* $T20KPTH/.vscode/
 
 cp -rfa $T9KPTH/scripts/* $T20KPTH/scripts/
