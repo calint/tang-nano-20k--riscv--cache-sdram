@@ -29,6 +29,7 @@ class cpu final {
   bus bus_{};
   uint32_t pc_{};
   int32_t regs_[32]{};
+  bool is_halted_{};
 
 public:
   using status = uint32_t;
@@ -483,6 +484,19 @@ public:
       // NOP
       break;
     }
+    //-----------------------------------------------------------------------
+    case OPCODE_SYSTEM: //                                             EBREAK
+    {
+      // only ebreak is supported, it halts with pc at the instruction
+      if (instruction != INSTRUCTION_EBREAK) {
+        return 10;
+      }
+#ifdef RV32I_DEBUG
+      printf("ebreak\n");
+#endif
+      is_halted_ = true;
+      return 0;
+    }
     default:
       return 9;
     }
@@ -494,6 +508,7 @@ public:
 
   auto reg(uint32_t const num) const -> int32_t { return regs_[num]; }
   auto pc() const -> uint32_t { return pc_; }
+  auto is_halted() const -> bool { return is_halted_; }
 
 private:
   //
@@ -655,6 +670,9 @@ private:
   static uint32_t constexpr FUNCT3_BGEU = 0b111;
 
   static uint32_t constexpr OPCODE_FENCE_PAUSE = 0b00011'11;
+
+  static uint32_t constexpr OPCODE_SYSTEM = 0b11100'11;
+  static uint32_t constexpr INSTRUCTION_EBREAK = 0x0010'0073;
 };
 
 } // namespace rv32i
