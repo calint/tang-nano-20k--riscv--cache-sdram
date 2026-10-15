@@ -12,8 +12,13 @@ echo " * building emulator"
 echo " * building firmware image"
 ../make-fpga-flash-binary.sh
 
+# the emulator writes to the SD card image, use a copy of the sample
+SDCARD_IMAGE="$(mktemp)"
+trap 'rm -f "$SDCARD_IMAGE"' EXIT
+cp $SDCARD "$SDCARD_IMAGE"
+
 echo " * running test for 2 seconds"
-echo -e "$(cat test.in)" | timeout 2 $EMULATOR $FIRMWARE $SDCARD >test.out || true
+echo -e "$(cat test.in)" | timeout 2 $EMULATOR $FIRMWARE "$SDCARD_IMAGE" >test.out || true
 
 if cmp --silent test.diff test.out; then
     echo "test: PASSED"

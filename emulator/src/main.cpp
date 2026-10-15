@@ -1,4 +1,3 @@
-#include <array>
 #include <cstdint>
 #include <cstdio>
 #include <fcntl.h>
@@ -10,6 +9,7 @@
 #include "rv32i.hpp"
 //
 #include "main_config.hpp"
+#include "sdcard.hpp"
 
 // #define LOG_UART_IN_TO_STDERR
 
@@ -18,12 +18,8 @@ using namespace std;
 // initialize RAM with -1 being the default value from flash
 static vector<uint8_t> ram(osqa::memory_end, 0xff);
 
-// initialize SD card 8 MB
-static vector<uint8_t> sdcard(8 * 1024 * 1024, 0);
-
-// sdcard sector buffer
-static array<uint8_t, 512> sector_buffer;
-static size_t sector_buffer_index;
+// SD card image, sectors are read and written in the file
+static osqa::sdcard sdcard;
 
 // preserved terminal settings
 static struct termios saved_termios;
@@ -83,38 +79,25 @@ static auto bus(uint32_t const address, rv32i::bus_op_width const op_width,
             return 3;
         }
         case osqa::sdcard_next_byte: {
-            sector_buffer[sector_buffer_index] = uint8_t(data);
-            sector_buffer_index =
-                (sector_buffer_index + 1) % sector_buffer.size();
+            sdcard.next_byte(uint8_t(data));
             break;
         }
         case osqa::sdcard_write_sector: {
-            auto const dst = sdcard.begin() + data * sector_buffer.size();
-            auto const bgn = sector_buffer.begin();
-            auto const end = sector_buffer.end();
-            if (dst + sector_buffer.size() > sdcard.end()) {
+            // sector past the end of the image or failed write
+            if (!sdcard.write_sector(data)) {
                 return 4;
             }
-            copy(bgn, end, dst);
             break;
         }
         case osqa::sdcard_read_sector: {
-            auto const bgn = sdcard.begin() + data * sector_buffer.size();
-            auto const end = bgn + sector_buffer.size();
-            if (end > sdcard.end()) {
+            // sector past the end of the image or failed read
+            if (!sdcard.read_sector(data)) {
                 return 5;
             }
-            copy(bgn, end, sector_buffer.data());
             break;
         }
         case osqa::uart_out: {
-            int const ch = data & 0xff;
-            if (ch == 0x7f) {
-                // convert from serial to terminal
-                printf("\b \b");
-            } else {
-                putchar(ch);
-            }
+            putchar(data & 0xff);
             fflush(stdout);
             break;
         }
@@ -147,9 +130,7 @@ static auto bus(uint32_t const address, rv32i::bus_op_width const op_width,
             break;
         }
         case osqa::sdcard_next_byte: {
-            data = sector_buffer.at(sector_buffer_index);
-            sector_buffer_index =
-                (sector_buffer_index + 1) % sector_buffer.size();
+            data = sdcard.next_byte();
             break;
         }
         case osqa::sdcard_read_sector: {
@@ -257,7 +238,8 @@ auto main(int argc, char** argv) -> int {
         return 2;
     }
 
-    if (!load_file(argv[2], "SD card", sdcard)) {
+    if (!sdcard.open(argv[2])) {
+        printf("SD card: error opening file '%s'\n", argv[2]);
         return 3;
     }
 
