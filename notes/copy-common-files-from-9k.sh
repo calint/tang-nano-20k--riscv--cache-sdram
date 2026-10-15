@@ -17,11 +17,11 @@ cp -a $T9KPTH/src/emulators/flash.sv $T20KPTH/src/emulators/
 cp -arf $T9KPTH/src/ip/regymm/ $T20KPTH/src/ip/
 
 rm -rf $T20KPTH/emulator
-cp -ra $T9KPTH/emulator/ $T20KPTH/
+cp -rav $T9KPTH/emulator/ $T20KPTH/
 rm $T20KPTH/emulator/osqa
 
 rm -rf $T20KPTH/os/
-cp -ra $T9KPTH/os/ $T20KPTH/
+cp -rav $T9KPTH/os/ $T20KPTH/
 rm -f $T20KPTH/os/console_application
 rm -f $T20KPTH/os/os
 rm -f $T20KPTH/os/os.bin
